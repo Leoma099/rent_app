@@ -135,7 +135,7 @@ export default
             try {
                 this.isLoading = true;
                 setTimeout(async () => {
-                    const response = await apiClient.get(`/accounts`, {
+                    const response = await apiClient.get(`/admin/accounts`, {
                         params: {
                             search: this.searchQuery,
                             page: this.currentPage,

@@ -109,7 +109,7 @@ export default
             {
                 this.isLoading = true;
                 setTimeout(async () => {
-                    const response = await apiClient.get(`/properties`, {
+                    const response = await apiClient.get(`/admin/properties`, {
                         params: {
                             search: this.searchQuery,
                             page: this.currentPage,

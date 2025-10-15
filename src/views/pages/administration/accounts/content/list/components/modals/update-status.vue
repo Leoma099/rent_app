@@ -87,7 +87,7 @@ export default
                 const newStatus = this.selectedUser.user.status === 1 ? 0 : 1;
 
                 const response = await apiClient.put(
-                    `/accounts/${this.selectedUser.id}`,
+                    `/admin/account/${this.selectedUser.id}/status`,
                     { status: newStatus }
                 );
 

@@ -104,23 +104,23 @@ export default
         {
             try
             {
-                const propertyResponse = await apiClient.get('/totalProperties');
+                const propertyResponse = await apiClient.get('/admin/dashboard/summary/properties');
                 console.log("Property Response:", propertyResponse.data);
                 this.properties = propertyResponse.data.total_properties || 0;
 
-                const landlordResponse = await apiClient.get('/totalLandlords');
+                const landlordResponse = await apiClient.get('/admin/dashboard/summary/user/landlords');
                 console.log("Landlord Response:", landlordResponse.data);
                 this.landlords = landlordResponse.data.total_landlords || 0;
 
-                const tenantResponse = await apiClient.get('/totalTenants');
+                const tenantResponse = await apiClient.get('/admin/dashboard/summary/user/tenants');
                 console.log("Tenant Response:", tenantResponse.data);
                 this.tenants = tenantResponse.data.total_tenants || 0;
 
-                const pendingPropertiesResponse = await apiClient.get('/totalPendingProperties');
+                const pendingPropertiesResponse = await apiClient.get('/admin/dashboard/summary/total/properties');
                 console.log("PendingProperty Response:", pendingPropertiesResponse.data);
                 this.pending_properties = pendingPropertiesResponse.data.total_pending_properties || 0;
 
-                const pendinAccountResponse = await apiClient.get('/totalUserPending');
+                const pendinAccountResponse = await apiClient.get('/admin/dashboard/summary/users');
                 console.log("Pending Account Response:", pendinAccountResponse.data);
                 this.pending_accounts = pendinAccountResponse.data.total_user_pending || 0;
             }

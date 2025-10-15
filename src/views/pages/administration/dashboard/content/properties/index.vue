@@ -83,7 +83,7 @@ export default
             {
                 this.isLoading = true;
                 setTimeout(async () => {
-                    const response = await apiClient.get(`/properties`, {
+                    const response = await apiClient.get(`/admin/dashboard/properties/options`, {
                         params: {
                             search: this.searchQuery,
                             page: this.currentPage,
@@ -93,7 +93,7 @@ export default
 
                     console.log("Fetched Properties Data:", response.data); // Debugging
 
-                    this.items = response.data;
+                    this.items = response.data.properties || [];
                     this.isEmpty = this.items.length === 0; // Check if items array is empty
                     this.isLoading = false;
                 }, 3000);
