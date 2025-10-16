@@ -92,17 +92,11 @@
     <div class="mt-3">
         <label class="form-label">* Property Image:</label>
         <input type="file" class="form-control rounded-0" @change="handlePhotoUpload" />
-        <div v-if="photoPreview" class="mt-2">
-            <img :src="photoPreview" alt="Property Photo" class="img-fluid border" style="max-height: 200px;" />
-        </div>
     </div>
 
     <div class="mt-3">
         <label class="form-label">* Property Floor Plan:</label>
         <input type="file" class="form-control rounded-0" @change="handleFloorPlanUpload" />
-        <div v-if="floorPreview" class="mt-2">
-            <img :src="floorPreview" alt="Floor Plan" class="img-fluid border" style="max-height: 200px;" />
-        </div>
     </div>
 </template>
 

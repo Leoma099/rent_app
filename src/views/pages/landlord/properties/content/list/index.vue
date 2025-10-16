@@ -23,14 +23,14 @@
                 <table class="table table-bordered mb-0">
                     <thead>
                         <tr>
-                            <th class="table-header">PROPERTY NAME</th>
-                            <th class="table-header">ADDRESS</th>
-                            <th class="table-header">PROPERTY STATUS</th>
-                            <th class="table-header">TYPE</th>
-                            <th class="table-header">PRICE</th>
-                            <th class="table-header">STATUS</th>
-                            <th class="table-header">FEATURED</th>
-                            <th class="table-header">ACTION</th>
+                            <th class="table-header"><small>PROPERTY NAME</small></th>
+                            <th class="table-header"><small>ADDRESS</small></th>
+                            <th class="table-header"><small>PROPERTY STATUS</small></th>
+                            <th class="table-header"><small>TYPE</small></th>
+                            <th class="table-header"><small>PRICE</small></th>
+                            <th class="table-header"><small>STATUS</small></th>
+                            <th class="table-header"><small>FEATURED</small></th>
+                            <th class="table-header"><small>ACTION</small></th>
                         </tr>
                     </thead>
                     <tbody v-if="!isEmpty">

@@ -6,15 +6,18 @@
         </td>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.property.title }}</span>
+            <span v-else>{{ item.property?.title || 'Deleted Property' }}</span>
         </td>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.property.property_type }}</span>
+            <span v-else>{{ item.property?.property_type || '-' }}</span>
         </td>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.schedule.available_day }}, {{ formatTime(item.schedule.start_time) }}-{{ formatTime(item.schedule.end_time) }}</span>
+            <span v-else>
+                {{ item.schedule?.available_day || '-' }}, 
+                {{ formatTime(item.schedule?.start_time) }}-{{ formatTime(item.schedule?.end_time) }}
+            </span>
         </td>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>

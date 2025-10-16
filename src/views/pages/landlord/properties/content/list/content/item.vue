@@ -45,6 +45,7 @@
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else>
                 <button
+                    :disabled="item.status === 0"
                     type="button"
                     :class="formatStatus(item.status).badgeClass"
                     @click="openUpdateStatusModal"
@@ -58,6 +59,7 @@
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else>
                 <button
+                    :disabled="item.status === 0"
                     type="button"
                     :class="formatFeature(item.is_featured).badgeClass"
                     @click="openUpdateStatusModal"
@@ -71,11 +73,15 @@
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else class="d-flex align-items-center">
                 <router-link
-                    :to="`/landlord/properties/${this.item.id}/edit`"
-                    class="btn btn-sm btn-info rounded-0 me-3">
+                    :to="item.status === 0 ? '' : `/landlord/properties/${item.id}/edit`"
+                    class="btn btn-sm btn-info rounded-0 me-3"
+                    :class="{ 'disabled-link': item.status === 0 }"
+                    :tabindex="item.status === 0 ? -1 : 0"
+                    :aria-disabled="item.status === 0">
                     <i class="bx bx-edit"></i>
                 </router-link>
                 <button
+                    :disabled="item.status === 0"
                     type="button"
                     class="btn btn-sm btn-danger rounded-0"
                     data-bs-toggle="modal"
@@ -214,5 +220,12 @@ span
 {
     font-size: 1rem;
     font-weight: 600;
+}
+
+/* disable style for router-link */
+.disabled-link
+{
+    pointer-events: none;
+    opacity: 0.6;
 }
 </style>
