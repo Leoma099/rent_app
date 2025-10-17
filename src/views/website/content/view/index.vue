@@ -476,14 +476,14 @@ export default {
         {
             if (!photoPath) return "/default-avatar.png";
             if (photoPath.startsWith("http")) return photoPath;
-            return `http://api.rent-app.loc/storage/${photoPath}`;
+            return `http://api.rent_api.loc/storage/${photoPath}`;
         },
 
         getFloorPlanUrl(floorPlanPath)
         {
             if (!floorPlanPath) return "/default-avatar.png";
             if (floorPlanPath.startsWith("http")) return floorPlanPath;
-            return `http://api.rent-app.loc/storage/${floorPlanPath}`;
+            return `http://api.rent_api.loc/storage/${floorPlanPath}`;
         },
 
         clearAllBusinessMarkers()

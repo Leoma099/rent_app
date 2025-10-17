@@ -36,7 +36,7 @@ export default {
                 return photoPath;
             }
 
-            return `http://api.rent-app.loc/storage/${photoPath}`;
+            return `http://api.rent_api.loc/storage/${photoPath}`;
         },
 
         formatPrice(price)
