@@ -96,7 +96,7 @@ export default
         {
             if (!photoPath) return "/default-avatar.png";
             if (photoPath.startsWith("http")) return photoPath;
-            return `http://api.rent-app.loc/storage/${photoPath}`;
+            return `http://api.rent_api.loc/storage/${photoPath}`;
         },
 
         formatPrice(price)

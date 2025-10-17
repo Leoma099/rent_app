@@ -107,7 +107,7 @@ export default {
             if (photoPath.startsWith("http")) {
                 return photoPath;
             }
-            return `http://api.rent-app.loc/storage/${photoPath}`;
+            return `http://api.rent_api.loc/storage/${photoPath}`;
         },
 
         async fetchFeatured() {
