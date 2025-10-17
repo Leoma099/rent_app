@@ -10,7 +10,10 @@
 
         <div class="row mt-3">
             <div class="col-md-4 mb-3" v-for="property in properties" :key="property.id">
-                <router-link :to="{ name: 'CommercialHubView', params: { id: property.id } }" style="text-decoration: none;">
+                <a 
+                    href="javascript:void(0)" 
+                    style="text-decoration: none;"
+                    @click="navigateToProperty(property.id)">
                     <div class="card h-100 shadow-sm border-0 rounded-0">
                         <img
                             :src="getPhotoUrl(property.photo)"
@@ -23,7 +26,7 @@
                             <span class="fw-bold text-primary">{{ formatPrice(property.price) }} / Monthly</span>
                         </div>
                     </div>
-                </router-link>
+                </a>
             </div>
         </div>
     </div>
@@ -106,6 +109,21 @@ export default
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             }).format(price);
+        },
+
+        // NEW METHOD: Navigate to property with scroll to top
+        navigateToProperty(id) {
+            this.scrollToTop();
+            this.$router.push({ name: 'CommercialHubView', params: { id: id } });
+        },
+
+        // NEW METHOD: Scroll to top
+        scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'instant'
+            });
         }
     }
 };

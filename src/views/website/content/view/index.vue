@@ -15,7 +15,8 @@
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <h1 class="mb-0">{{ property.title }}</h1>
-                            <small><i class="bx bx-pin"></i> {{ property.address }}</small>
+                            <p class="mb-0"><i class="bx bx-pin"></i> {{ property.address }}</p>
+                            <small>{{ formatPropStats( property.propertyStats ) }} | {{ property.property_type }} | Sqm: {{ property.size }}</small>
                         </div>
 
                         <div class="text-end">
@@ -294,6 +295,18 @@ export default {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             }).format(price);
+        },
+
+        formatPropStats(status)
+        {
+            const statuses = {
+                0: "Under Review",
+                1: "For Rent",
+                2: "Rented",
+                3: "Under Maintenance",
+                4: "Reserved",
+            };
+            return statuses[status] || "N/A";
         },
 
         async checkIfSaved()

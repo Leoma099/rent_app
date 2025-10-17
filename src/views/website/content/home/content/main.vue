@@ -10,8 +10,11 @@
 
             <div class="row g-4 mt-2" v-if="featured.length > 0">
                 <div class="col-md-4" v-for="(item, index) in featured" :key="index">
-                    <router-link :to="{ name: 'CommercialHubView', params: { id: item.id } }" style="text-decoration: none;">
-
+                    <a 
+                        href="javascript:void(0)" 
+                        style="text-decoration: none;"
+                        @click="navigateToProperty(item.id)">
+                        
                         <div class="card h-100 shadow-sm">
                             <img
                                 :src="getPhotoUrl(item.photo)"
@@ -26,7 +29,7 @@
                             </div>
                         </div>
 
-                    </router-link>
+                    </a>
                 </div>
             </div>
         </div>
@@ -40,8 +43,11 @@
 
             <div class="row g-4 mt-2" v-if="recents.length > 0">
                 <div class="col-md-4" v-for="(item, index) in recents" :key="index">
-                    <router-link :to="{ name: 'CommercialHubView', params: { id: item.id } }" style="text-decoration: none;">
-
+                    <a 
+                        href="javascript:void(0)" 
+                        style="text-decoration: none;"
+                        @click="navigateToProperty(item.id)">
+                        
                         <div class="card h-100 shadow-sm">
                             <img
                                 :src="getPhotoUrl(item.photo)"
@@ -56,17 +62,18 @@
                             </div>
                         </div>
 
-                    </router-link>
+                    </a>
                 </div>
             </div>
 
             <div class="mt-3">
                 <div class="text-center">
-                    <router-link
-                        :to="'/commercialhub/properties'"
-                        class="btn btn-secondary rounded-0">
+                    <a
+                        href="javascript:void(0)"
+                        class="btn btn-secondary rounded-0"
+                        @click="navigateToAllProperties">
                         View all properties
-                    </router-link>
+                    </a>
                 </div>
             </div>
         </div>
@@ -150,10 +157,30 @@ export default {
             return statuses[status] || "N/A";
         },
 
+        // NEW METHOD: Navigate to property with scroll to top
+        navigateToProperty(id) {
+            this.scrollToTop();
+            this.$router.push({ name: 'CommercialHubView', params: { id: id } });
+        },
+
+        // NEW METHOD: Navigate to all properties with scroll to top
+        navigateToAllProperties() {
+            this.scrollToTop();
+            this.$router.push('/commercialhub/properties');
+        },
+
+        // Scroll to top method
+        scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'instant'
+            });
+        }
+
     }
 }
 </script>
-
 
 <style>
 
