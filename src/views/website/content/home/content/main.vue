@@ -55,7 +55,7 @@
                                 style="height: 200px; object-fit: cover"
                                 class="card-img-top">
                             <div class="card-body">
-                                <small class="text-secondary">{{ formatPropStats( item.propertyStats ) }} . {{ item.property_type }}</small>
+                                <small class="text-secondary">{{ item.propertyStats }} . {{ item.property_type }}</small>
                                 <h5 class="card-title mb-0">{{ item.title }}</h5>
                                 <p class="card-text text-muted mb-0">{{ item.address }}</p>
                                 <span class="fw-bold text-primary">{{ formatPrice(item.price) }} / Monthly</span>
@@ -107,7 +107,7 @@ export default {
             if (photoPath.startsWith("http")) {
                 return photoPath;
             }
-            return `http://api.rent_api.loc/storage/${photoPath}`;
+            return `http://api.rent-app.loc/storage/${photoPath}`;
         },
 
         async fetchFeatured() {
