@@ -1,15 +1,21 @@
 <template>
     <div class="col-md-3">
         <router-link :to="{ name: 'CommercialHubView', params: { id: item.id } }" style="text-decoration: none;">
-            <div class="card h-100 shadow-sm border-0 rounded-0">
+            <div class="card h-100 shadow-sm">
                 <img
-                    :src="getPhotoUrl(item.photo)"
+                    :src="getPhotoUrl(item.photo_1)"
                     :alt="item.property_name"
-                    style="height: 200px; object-fit: cover">
+                    style="height: 200px; object-fit: cover"
+                    class="card-img-top">
                 <div class="card-body">
-                    <small>{{ item.propertyStats }} . {{ item.property_type }}</small>
-                    <h5 class="card-title mb-0">{{ item.property_name }}</h5>
+                    <h5 class="card-title mb-0">{{ item.title }}</h5>
                     <p class="card-text text-muted mb-0">{{ item.address }}</p>
+                    <p class="mb-0">
+                        <span class="badge fs-6 text-bg-secondary rounded-0">{{ formatPropStats( item.propertyStats ) }}</span>
+                    </p>
+                    <p class="mb-0">
+                        <strong>{{ item.property_type }}</strong> ( <i class='bx bx-ruler'></i> {{ item.size }} sqm )
+                    </p>
                     <span class="fw-bold text-primary">{{ formatPrice(item.price) }} / Monthly</span>
                 </div>
             </div>
@@ -49,6 +55,18 @@ export default {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             }).format(price);
+        },
+
+        formatPropStats(status)
+        {
+            const statuses = {
+                0: "Under Review",
+                1: "For Rent",
+                2: "Rented",
+                3: "Under Maintenance",
+                4: "Reserved",
+            };
+            return statuses[status] || "N/A";
         },
     }
 };

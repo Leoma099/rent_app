@@ -1,48 +1,64 @@
 <template>
-    <section class="map-section mt-4">
-        <!-- Nearby Area Summary -->
-        <div class="landmark-summary mb-3">
-            <strong>Nearby area:</strong>
+    <div class="mb-3">
+        <strong>Nearby area:</strong>
+        <div class="mt-3">
             <span 
                 v-for="(b, index) in property.landmarksSummary" 
                 :key="index" 
-                class="landmark-item">
-                <img 
-                    v-if="b?.icon" 
-                    :src="b.icon" 
-                    alt="" 
-                    class="landmark-icon" />
-                {{ b?.label || 'Unknown' }}
-                <strong>({{ b?.count || 0 }})</strong>
+                class="badge fs-6 rounded-0 bg-secondary me-2 mb-2">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <img 
+                            v-if="b?.icon" 
+                            :src="b.icon" 
+                            alt="" 
+                            class="landmark-icon" />
+                    </div>
+                    <div>
+                        {{ b?.label || 'Unknown' }}
+                        <strong>({{ b?.count || 0 }})</strong>
+                    </div>
+                </div>
             </span>
         </div>
 
-        <!-- Map -->
-        <div id="googleMap" class="map-container rounded shadow-sm"></div>
+        <div class="row mt-3">
+            <div class="col-md-8">
+                <div id="googleMap" class="map-container rounded-0 shadow-sm"></div>
+            </div>
 
-        <!-- Nearby Places -->
-        <div class="places-list card border-0 shadow-sm mt-3">
-            <ul class="list-group list-group-flush">
-                <li 
-                    v-for="(place, index) in selectedBusinessPlaces" 
-                    :key="index"
-                    class="list-group-item py-2">
-                    <p class="mb-0 fw-semibold d-flex align-items-center">
-                        <img 
-                            v-if="place?.icon" 
-                            :src="place.icon" 
-                            alt="" 
-                            class="place-icon me-2" />
-                        <small>{{ place.name }}</small>
-                    </p>
-                    <small class="text-muted">
-                        {{ place.vicinity }}
-                        <span v-if="place.distance"> ({{ place.distance }})</span>
-                    </small>
-                </li>
-            </ul>
+            <div class="col-md-4">
+                <select 
+                    v-model="selectedBusinessTypeLocal" 
+                    @change="showBusinessMarkers" 
+                    class="form-select rounded-0">
+                    <option value="">-- View All --</option>
+                    <option
+                        v-for="(b, index) in property.landmarksSummary"
+                        :key="index"
+                        :value="String(b.type_id)"> {{ b.label }} ({{ b.count }}) </option>
+                </select>
+
+                <div class="places-list card rounded-0 shadow-sm mt-3">
+                    <ul class="list-group" style="max-height: 450px; overflow-y: auto;">
+                        <li v-for="(place, index) in selectedBusinessPlaces" :key="index" class="px-2">
+                            <p class="mb-0 fw-semibold d-flex align-items-center">
+                                <img 
+                                    v-if="place?.icon" 
+                                    :src="place.icon" 
+                                    alt="" 
+                                    class="place-icon me-2" />
+                                <small>{{ place.name }}</small>
+                            </p>
+                            <small> {{ place.vicinity }}
+                                <span v-if="place.distance"> ({{ place.distance }})</span>
+                            </small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-    </section>
+    </div>
 </template>
 
 <script>
@@ -84,7 +100,7 @@ export default
             }
 
             const selected = this.property.landmarksSummary.find(
-                (l) => l.type_id === this.selectedBusinessTypeLocal
+                l => String(l.type_id) === String(this.selectedBusinessTypeLocal)
             );
 
             return selected
@@ -93,7 +109,8 @@ export default
                     return {
                         name: place.name,
                         vicinity: place.vicinity,
-                        distance: place.distance || ""
+                        distance: place.distance || "",
+                        icon: selected.icon || place.icon || this.businessTypes[selected.type_id]?.icon || ""
                     };
                 })
                 : [];
@@ -112,6 +129,12 @@ export default
                     this.$nextTick(this.initMap);
                 }
             }
+        },
+
+        selectedBusinessTypeLocal()
+        {
+            console.log('Changed business type to:', this.selectedBusinessTypeLocal);
+            this.showBusinessMarkers();
         }
     },
 
@@ -123,59 +146,30 @@ export default
 
             const lat = parseFloat(this.property.lat);
             const lng = parseFloat(this.property.lng);
-
             if (isNaN(lat) || isNaN(lng)) return;
 
             const center = { lat, lng };
 
-            // Minimalist map style
             const mapStyle = [
-                {
-                    featureType: "all",
-                    elementType: "labels.text.fill",
-                    stylers: [{ color: "#333" }]
-                },
-                {
-                    featureType: "all",
-                    elementType: "labels.text.stroke",
-                    stylers: [{ color: "#ffffff" }]
-                },
-                {
-                    featureType: "poi",
-                    elementType: "labels.icon",
-                    stylers: [{ visibility: "off" }]
-                },
-                {
-                    featureType: "road",
-                    elementType: "geometry",
-                    stylers: [{ color: "#e6e6e6" }]
-                },
-                {
-                    featureType: "water",
-                    elementType: "geometry.fill",
-                    stylers: [{ color: "#d6e6f2" }]
-                },
-                {
-                    featureType: "landscape",
-                    elementType: "geometry.fill",
-                    stylers: [{ color: "#f8f8f8" }]
-                }
+                { featureType: "all", elementType: "labels.text.fill", stylers: [{ color: "#333" }] },
+                { featureType: "all", elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
+                { featureType: "poi", elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+                { featureType: "road", elementType: "geometry", stylers: [{ color: "#e6e6e6" }] },
+                { featureType: "water", elementType: "geometry.fill", stylers: [{ color: "#d6e6f2" }] },
+                { featureType: "landscape", elementType: "geometry.fill", stylers: [{ color: "#f8f8f8" }] }
             ];
 
             this.map = new window.google.maps.Map(document.getElementById("googleMap"), {
                 center,
-                zoom: 14, // ✅ good for city/town level
+                zoom: 19,
                 styles: mapStyle,
-                scrollwheel: false,
                 zoomControl: true,
                 streetViewControl: false,
                 mapTypeControl: false,
                 fullscreenControl: false
             });
 
-
-            this.mainMarker = new window.google.maps.Marker(
-            {
+            this.mainMarker = new window.google.maps.Marker({
                 position: center,
                 map: this.map,
                 title: this.property.title || "Property",
@@ -210,8 +204,7 @@ export default
 
             const latLng = new window.google.maps.LatLng(center.lat, center.lng);
 
-            this.circle1km = new window.google.maps.Circle(
-            {
+            this.circle1km = new window.google.maps.Circle({
                 strokeColor: "#007bff",
                 strokeOpacity: 0.6,
                 strokeWeight: 2,
@@ -222,8 +215,7 @@ export default
                 radius: 1000
             });
 
-            this.circle10km = new window.google.maps.Circle(
-            {
+            this.circle10km = new window.google.maps.Circle({
                 strokeColor: "#28a745",
                 strokeOpacity: 0.5,
                 strokeWeight: 2,
@@ -248,25 +240,22 @@ export default
                         const placesWithDistance = results.map(place =>
                         {
                             let distanceStr = "";
-
                             if (window.google && window.google.maps.geometry && place.geometry)
                             {
                                 const distanceMeters = window.google.maps.geometry.spherical.computeDistanceBetween(
                                     new window.google.maps.LatLng(center.lat, center.lng),
                                     place.geometry.location
                                 );
-
                                 distanceStr = distanceMeters < 1000
                                     ? Math.round(distanceMeters) + " m"
                                     : (distanceMeters / 1000).toFixed(2) + " km";
                             }
-
                             return { ...place, distance: distanceStr };
                         });
 
                         const summary =
                         {
-                            type_id: type,
+                            type_id: String(type),   // <- force it to string
                             label: this.businessTypes[type].name,
                             icon: this.businessTypes[type].icon,
                             count: results.length,
@@ -284,8 +273,7 @@ export default
                                 title: place.name
                             });
 
-                            const infoWindow = new window.google.maps.InfoWindow(
-                            {
+                            const infoWindow = new window.google.maps.InfoWindow({
                                 content: "<strong>" + place.name + "</strong><br>" + (place.vicinity || "")
                             });
 
@@ -297,7 +285,8 @@ export default
                             return marker;
                         });
 
-                        this.landmarkMarkers[type] = markers;
+                        this.landmarkMarkers[String(type)] = markers;
+                        console.log("Fetched business type:", type);
                     }
 
                     resolve();
@@ -309,6 +298,10 @@ export default
         {
             if (!this.markersReady) return;
 
+            console.log('Selected type:', this.selectedBusinessTypeLocal);
+            console.log('Available types:', Object.keys(this.landmarkMarkers));
+
+            // Clear previous markers
             Object.values(this.landmarkMarkers).forEach(markers =>
             {
                 markers.forEach(marker => marker.setMap(null));
@@ -316,28 +309,13 @@ export default
 
             this.activeMarkers = [];
 
-            let typesToShow = [];
-
-            if (this.selectedBusinessTypeLocal)
-            {
-                const selectedTypeObj = this.property.landmarksSummary.find(
-                    l => l.type_id === this.selectedBusinessTypeLocal
-                );
-
-                if (selectedTypeObj)
-                {
-                    typesToShow.push(selectedTypeObj.type_id);
-                }
-            }
-            else
-            {
-                typesToShow = Object.keys(this.landmarkMarkers);
-            }
+            const typesToShow = !this.selectedBusinessTypeLocal
+                ? Object.keys(this.landmarkMarkers)
+                : [String(this.selectedBusinessTypeLocal)];
 
             typesToShow.forEach(type =>
             {
                 const markers = this.landmarkMarkers[type] || [];
-
                 markers.forEach(marker =>
                 {
                     marker.setMap(this.map);
@@ -345,23 +323,17 @@ export default
                 });
             });
 
-            const bounds = new window.google.maps.LatLngBounds();
+            console.log('Types to show:', typesToShow);
 
+            const bounds = new window.google.maps.LatLngBounds();
             if (this.mainMarker?.getPosition)
             {
                 bounds.extend(this.mainMarker.getPosition());
             }
-
             this.activeMarkers.forEach(marker => bounds.extend(marker.getPosition()));
-
-            try
+            if (!bounds.isEmpty())
             {
                 this.map.fitBounds(bounds);
-            }
-            catch (e)
-            {
-                this.map.setCenter(this.mainMarker.getPosition());
-                this.map.setZoom(14);
             }
         }
     }
@@ -369,69 +341,22 @@ export default
 </script>
 
 <style scoped>
-.map-section 
-{
-    font-family: "Inter", sans-serif;
-    color: #333;
-}
-
-.landmark-summary 
-{
-    font-size: 0.95rem;
-}
-
-.landmark-item 
-{
-    display: inline-flex;
-    align-items: center;
-    background: #f8f9fa;
-    border-radius: 20px;
-    padding: 4px 10px;
-    margin: 0 5px 5px 0;
-    transition: background 0.2s;
-}
-
-.landmark-item:hover 
-{
-    background: #e9ecef;
-}
-
-.landmark-icon 
-{
-    width: 18px;
-    height: 18px;
-    margin-right: 6px;
-    vertical-align: middle;
-}
-
-.map-container 
+.map-container
 {
     width: 100%;
-    height: 350px;
+    height: 450px;
     border-radius: 12px;
     overflow: hidden;
 }
 
-.places-list 
+.landmark-icon
 {
-    max-height: 300px;
-    overflow-y: auto;
-    border-radius: 10px;
+    width: 18px;
+    height: 18px;
+    margin-right: 6px;
 }
 
-.list-group-item 
-{
-    background: #fff;
-    border: none;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.list-group-item:last-child 
-{
-    border-bottom: none;
-}
-
-.place-icon 
+.place-icon
 {
     width: 18px;
     height: 18px;
@@ -439,27 +364,22 @@ export default
     opacity: 0.7;
 }
 
-::-webkit-scrollbar 
+.places-list
 {
-    width: 6px;
-}
-
-::-webkit-scrollbar-thumb 
-{
-    background: #ccc;
+    max-height: 450px;
+    overflow-y: auto;
     border-radius: 10px;
 }
 
-@media (max-width: 768px) 
+.list-group-item
 {
-    .map-container 
-    {
-        height: 300px;
-    }
+    background: #fff;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+}
 
-    .places-list 
-    {
-        max-height: 250px;
-    }
+.list-group-item:last-child
+{
+    border-bottom: none;
 }
 </style>

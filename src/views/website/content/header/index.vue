@@ -3,7 +3,7 @@
         <div class="container">
             <!-- Left Logo -->
             <router-link :to="'/commercialhub'">
-                <img src="@/assets/images/capas_logo.png" alt="" width="50">
+                <img src="@/assets/images/capas_logo.png" alt="" width="30">
             </router-link>
 
             <button

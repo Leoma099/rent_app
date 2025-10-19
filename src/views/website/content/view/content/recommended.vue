@@ -14,15 +14,21 @@
                     href="javascript:void(0)" 
                     style="text-decoration: none;"
                     @click="navigateToProperty(property.id)">
-                    <div class="card h-100 shadow-sm border-0 rounded-0">
+                    <div class="card h-100 shadow-sm">
                         <img
-                            :src="getPhotoUrl(property.photo)"
-                            :alt="property.title"
-                            style="height: 200px; object-fit: cover">
+                            :src="getPhotoUrl(property.photo_1)"
+                            :alt="property.property_name"
+                            style="height: 200px; object-fit: cover"
+                            class="card-img-top">
                         <div class="card-body">
-                            <small>{{ property.property_type }}</small>
                             <h5 class="card-title mb-0">{{ property.title }}</h5>
                             <p class="card-text text-muted mb-0">{{ property.address }}</p>
+                            <p class="mb-0">
+                                <span class="badge fs-6 text-bg-secondary rounded-0">{{ formatPropStats( property.propertyStats ) }}</span>
+                            </p>
+                            <p class="mb-0">
+                                <strong>{{ property.property_type }}</strong> ( <i class='bx bx-ruler'></i> {{ property.size }} sqm )
+                            </p>
                             <span class="fw-bold text-primary">{{ formatPrice(property.price) }} / Monthly</span>
                         </div>
                     </div>

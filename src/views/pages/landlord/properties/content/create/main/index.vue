@@ -53,7 +53,10 @@ export default
                 lng: "",
                 price: "",
                 property_type: "",
-                photo: "",
+                photo_1: "",
+                photo_2: "",
+                photo_3: "",
+                photo_4: "",
                 floor_plan: "",
                 size: "",
                 search_address: "",
@@ -93,7 +96,7 @@ export default
 
                 for (const key in this.form)
                 {
-                    if ((key === "photo" || key === "floor_plan") && this.form[key])
+                    if ((key === "photo_1" || key === "photo_2" || key === "photo_3" || key === "photo_4" || key === "floor_plan") && this.form[key])
                     {
                         formData.append(key, this.form[key]);
                     }

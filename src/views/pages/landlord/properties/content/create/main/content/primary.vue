@@ -68,11 +68,36 @@
     </div>
 
     <div class="mt-3">
-        <label class="form-label">* Property Image:</label>
-        <input
-            type="file"
-            class="form-control rounded-0"
-            @change="handlePhotoUpload">
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">* Property First View:</label>
+                <input
+                    type="file"
+                    class="form-control rounded-0"
+                    @change="uploadFirstImage">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">* Property Second View:</label>
+                <input
+                    type="file"
+                    class="form-control rounded-0"
+                    @change="uploadSecondImage">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">* Property Third View:</label>
+                <input
+                    type="file"
+                    class="form-control rounded-0"
+                    @change="uploadThirdImage">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">* Property Fourth View:</label>
+                <input
+                    type="file"
+                    class="form-control rounded-0"
+                    @change="uploadFourthImage">
+            </div>
+        </div>
     </div>
 
     <div class="mt-3">
@@ -98,21 +123,51 @@ export default
 
     methods:
     {
-        // ✅ handle file upload for photo
-        handlePhotoUpload(event) {
+        uploadFirstImage(event)
+        {
             const file = event.target.files[0];
             if (file) {
-                this.form.photo = file; // store file in parent form
+                this.form.photo_1 = file; // ✅ Fixed: changed from 'photo' to 'photo_1'
             } else {
-                this.form.photo = null;
+                this.form.photo_1 = null;
             }
         },
 
-        // ✅ handle file upload for floor plan
+        uploadSecondImage(event)
+        {
+            const file = event.target.files[0];
+            if (file) {
+                this.form.photo_2 = file; // ✅ Fixed: changed from 'photo' to 'photo_2'
+            } else {
+                this.form.photo_2 = null;
+            }
+        },
+
+        uploadThirdImage(event)
+        {
+            const file = event.target.files[0];
+            if (file) {
+                this.form.photo_3 = file; // ✅ Fixed: changed from 'photo' to 'photo_3'
+            } else {
+                this.form.photo_3 = null;
+            }
+        },
+
+        uploadFourthImage(event)
+        {
+            const file = event.target.files[0];
+            if (file) {
+                this.form.photo_4 = file; // ✅ Fixed: changed from 'photo' to 'photo_4'
+            } else {
+                this.form.photo_4 = null;
+            }
+        },
+
+        // ✅ handle file upload for floor plan (this one is correct)
         handleFloorPlanUpload(event) {
             const file = event.target.files[0];
             if (file) {
-                this.form.floor_plan = file; // store file in parent form
+                this.form.floor_plan = file;
             } else {
                 this.form.floor_plan = null;
             }

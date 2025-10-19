@@ -2,51 +2,30 @@
     <div class="card card-body card-white rounded-0 p-4">
         <h3 class="fw-bold text-primary mb-0">Location Info</h3>
 
-        <div class="mt-3 d-flex gap-2">
-            <input
-                type="text"
-                class="form-control rounded-0"
-                placeholder="Search Address"
-                v-model="searchAddress"
-                ref="inputRef"
-            />
-            <button class="btn btn-outline-secondary" @click="clearMap">Clear Map</button>
+        <div class="mt-3">
+            <div class="position-relative">
+                <input
+                    type="text"
+                    class="form-control rounded-0 pe-5"
+                    placeholder="Search Address"
+                    v-model="searchAddress"
+                    ref="inputRef"
+                />
+
+                <span
+                    class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold"
+                    style="cursor: pointer; font-size: 1.25rem; line-height: 1;"
+                    @click.prevent="clearMap()"
+                >
+                    <i class="bx bx-x"></i>
+                </span>
+            </div>
         </div>
+
 
         <div class="mt-3">
             <div id="googleMap" style="width: 100%; height: 400px;"></div>
         </div>
-
-        <!-- <div class="mt-3">
-            <label>* Address:</label>
-            <input
-                type="text"
-                class="form-control rounded-0"
-                readonly
-                :value="form.address"
-            >
-        </div>
-
-        <div class="mt-3 row">
-            <div class="col-md-6">
-                <label>* Latitude:</label>
-                <input
-                    type="text"
-                    class="form-control rounded-0"
-                    readonly
-                    :value="form.lat"
-                >
-            </div>
-            <div class="col-md-6">
-                <label>* Longitude:</label>
-                <input
-                    type="text"
-                    class="form-control rounded-0"
-                    readonly
-                    :value="form.lng"
-                >
-            </div>
-        </div> -->
     </div>
 
     <div class="card card-body card-white rounded-0 p-4 mt-3">
@@ -74,9 +53,11 @@
 </template>
 
 <script>
-export default {
-    data() {
-        return {
+export default
+{
+    data()
+    {
+        return{
             searchAddress: "",
             map: null,
             marker: null,
@@ -87,32 +68,49 @@ export default {
             apiKey: "AIzaSyCn9IGzgS41HOIRhMz_-RXlodu0mqsTgyU"
         };
     },
-    computed: {
-        form() {
+
+    computed:
+    {
+        form()
+        {
             return this.$parent.$data.form;
         }
     },
-    mounted() {
-        if (!window.google) {
+
+    mounted()
+    {
+        if (!window.google)
+        {
             const script = document.createElement("script");
             script.src = `https://maps.googleapis.com/maps/api/js?key=${this.apiKey}&libraries=places,geometry,visualization`;
             script.async = true;
             script.defer = true;
             script.onload = () => this.initMap();
             document.head.appendChild(script);
-        } else {
+        }
+        else
+        {
             this.initMap();
         }
     },
-    methods: {
-        initMap() {
+
+    methods:
+    {
+        initMap()
+        {
             const mapEl = document.getElementById("googleMap");
             if (!mapEl) return;
 
-            const centerPoint = { lat: 15.2871, lng: 120.5860 };
-            this.map = new window.google.maps.Map(mapEl, {
+            const centerPoint =
+            {
+                lat: 15.3461466,
+                lng: 120.5926823
+            };
+
+            this.map = new window.google.maps.Map(mapEl,
+            {
                 center: centerPoint,
-                zoom: 12,
+                zoom: 19,
                 scrollwheel: true
             });
 
@@ -137,7 +135,8 @@ export default {
             }
         },
 
-        placeMarker(location) {
+        placeMarker(location)
+        {
             const latLng = location instanceof window.google.maps.LatLng
                 ? location
                 : new window.google.maps.LatLng(location.lat(), location.lng());
@@ -168,7 +167,8 @@ export default {
             this.map.panTo(latLng);
         },
 
-        updateAddress(location) {
+        updateAddress(location)
+        {
             const geocoder = new window.google.maps.Geocoder();
             geocoder.geocode({ location }, (results, status) => {
                 if (status === "OK" && results[0]) {
@@ -178,7 +178,8 @@ export default {
             });
         },
 
-        updateCircles(location) {
+        updateCircles(location)
+        {
             const latLng = location instanceof window.google.maps.LatLng
                 ? location
                 : new window.google.maps.LatLng(location.lat, location.lng);
@@ -287,40 +288,60 @@ export default {
             });
         },
 
-        clearMap() {
-            this.$parent.$data.skipValidation = true;
+        clearMap()
+        {
+            // ✅ Prevent triggering parent validation
+            // Temporarily disable validation (if parent uses watchers)
+            if (this.$parent && this.$parent.disableValidation) {
+                this.$parent.disableValidation = true;
+            }
 
+            // ✅ Clear main marker
             if (this.marker) {
                 this.marker.setMap(null);
                 this.marker = null;
             }
 
-            if (this.innerCircle) {
-                this.innerCircle.setMap(null);
-                this.innerCircle = null;
-            }
-            if (this.outerCircle) {
-                this.outerCircle.setMap(null);
-                this.outerCircle = null;
-            }
-
-            this.landmarkMarkers.forEach((m) => {
-                m.setMap(null);
+            // ✅ Clear circles
+            [this.innerCircle, this.outerCircle].forEach(circle => {
+                if (circle) {
+                    circle.setMap(null);
+                }
             });
+            this.innerCircle = null;
+            this.outerCircle = null;
+
+            // ✅ Clear nearby landmarks and their markers
+            this.landmarkMarkers.forEach(marker => marker.setMap(null));
             this.landmarkMarkers = [];
             this.nearbyLandmarks = [];
-            this.$parent.form.nearbyAreaLandmark = []; // clear in parent too
 
-            this.form.lat = null;
-            this.form.lng = null;
-            this.form.address = "";
+            // ✅ Reset parent form fields safely
+            if (this.$parent?.form) {
+                this.$parent.form.nearbyAreaLandmark = [];
+                this.$parent.form.lat = "";
+                this.$parent.form.lng = "";
+                this.$parent.form.address = "";
+            }
+
+            // ✅ Reset local input and search field
             this.searchAddress = "";
 
-            const centerPoint = { lat: 15.2871, lng: 120.5860 };
-            if (this.map) this.map.panTo(centerPoint);
+            // ✅ Recenter the map
+            const centerPoint = { lat: 15.3461466, lng: 120.5926823 };
+            if (this.map) {
+                this.map.panTo(centerPoint);
+                this.map.setZoom(19);
+            }
 
-            this.$parent.$data.skipValidation = false;
+            // ✅ Small timeout to re-enable validation after clearing
+            if (this.$parent && this.$parent.disableValidation) {
+                setTimeout(() => {
+                    this.$parent.disableValidation = false;
+                }, 500);
+            }
         },
+
     }
 };
 </script>

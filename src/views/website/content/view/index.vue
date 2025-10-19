@@ -9,56 +9,96 @@
 
         <header-component />
 
+        <div class="d-flex justify-content-between align-items-start mt-3">
+            <div>
+                <h1 class="mb-0">{{ property.title }}</h1>
+                <p class="my-2">
+                    <span v-if="property.is_featured !== 0" class="badge fs-6 text-bg-success rounded-0 me-2">{{ formatFeature(property.is_featured) }}</span>
+                    <span class="badge fs-6 text-bg-secondary rounded-0">{{ formatPropStats( property.propertyStats ) }}</span>
+                </p>
+                <p class="mb-0 text-secondary"><i class="bx bx-map"></i> {{ property.address }}</p>
+            </div>
+
+            <div class="text-end">
+                <div v-if="!isLoggedIn">
+                    <router-link
+                        :to="`/signin`"
+                        class="btn btn-secondary rounded-0 d-inline-flex align-items-center">
+                        <i class="bx bx-bookmark me-2"></i>
+                        <span>Save</span>
+                    </router-link>
+                </div>
+                <div v-else>
+                    <button
+                        v-if="!isSaved"
+                        type="button"
+                        class="btn btn-secondary rounded-0 d-inline-flex align-items-center"
+                        @click="saveProperty">
+                        <i class="bx bx-bookmark me-2"></i>
+                        <span>Save</span>
+                    </button>
+                    <button
+                        v-else
+                        type="button"
+                        class="btn btn-danger rounded-0 d-inline-flex align-items-center"
+                        @click="unsaveProperty">
+                        <i class="bx bxs-bookmark me-2"></i>
+                        <span>Unsave</span>
+                    </button>
+                </div>
+
+                <p class="mb-0 mt-2"><strong>{{ formatPrice(property.price) }}</strong> /month</p>
+            </div>
+        </div>
+
         <div class="row mt-3">
-            <div class="col-md-8">
+            <div class="col-md-9">
                 <div class="card card-body rounded-0 card-white shadow-sm">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h1 class="mb-0">{{ property.title }}</h1>
-                            <p class="mb-0"><i class="bx bx-pin"></i> {{ property.address }}</p>
-                            <small>{{ formatPropStats( property.propertyStats ) }} | {{ property.property_type }} | Sqm: {{ property.size }}</small>
+                    <div id="propertyCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-indicators">
+                            <button 
+                                v-for="(photo, index) in propertyPhotos" 
+                                :key="index"
+                                type="button" 
+                                data-bs-target="#propertyCarousel" 
+                                :data-bs-slide-to="index"
+                                :class="index === 0 ? 'active' : ''"
+                                :aria-current="index === 0 ? 'true' : 'false'"
+                                :aria-label="'Slide ' + (index + 1)">
+                            </button>
                         </div>
-
-                        <div class="text-end">
-                            <div v-if="!isLoggedIn">
-                                <router-link
-                                    :to="`/signin`"
-                                    class="btn btn-secondary rounded-0 d-inline-flex align-items-center">
-                                    <i class="bx bx-bookmark me-2"></i>
-                                    <span>Save</span>
-                                </router-link>
+                        <div class="carousel-inner rounded-0 shadow-sm">
+                            <div 
+                                v-for="(photo, index) in propertyPhotos" 
+                                :key="index"
+                                class="carousel-item"
+                                :class="index === 0 ? 'active' : ''">
+                                <img
+                                    :src="photo"
+                                    :alt="property.title + ' - Photo ' + (index + 1)"
+                                    class="d-block w-100"
+                                    style="height: 30rem; object-fit: cover;"
+                                />
                             </div>
-                            <div v-else>
-                                <button
-                                    v-if="!isSaved"
-                                    type="button"
-                                    class="btn btn-secondary rounded-0 d-inline-flex align-items-center"
-                                    @click="saveProperty">
-                                    <i class="bx bx-bookmark me-2"></i>
-                                    <span>Save</span>
-                                </button>
-                                <button
-                                    v-else
-                                    type="button"
-                                    class="btn btn-danger rounded-0 d-inline-flex align-items-center"
-                                    @click="unsaveProperty">
-                                    <i class="bx bxs-bookmark me-2"></i>
-                                    <span>Unsave</span>
-                                </button>
-                            </div>
-
-                            <p class="mb-0 mt-2"><strong>{{ formatPrice(property.price) }}</strong> /month</p>
                         </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
                     </div>
 
-                    <img
-                        :src="getPhotoUrl(property.photo)"
-                        :alt="property.property_name"
-                        class="img-fluid rounded shadow-sm card-img-top mt-3"
-                        style="height: 30rem; object-fit: cover;"
-                    />
-
                     <hr />
+
+                    <div>
+                        <p class="mb-0"><strong>Type and Size:</strong></p>
+                        <p class="mb-0">{{ property.property_type }} ( <i class='bx bx-ruler'></i> {{ property.size }} sqm )</p>
+                    </div>
+
+                    <hr>
 
                     <div>
                         <div>
@@ -88,7 +128,7 @@
                             <img
                                 :src="getFloorPlanUrl(property.floor_plan)"
                                 :alt="property.title"
-                                class="img-fluid card-img-top"
+                                class="img-fluid card-img-top rounded-0"
                                 style="height: 100%; object-fit: cover;"
                             />
                         </div>
@@ -97,7 +137,7 @@
             </div>
 
             <!-- Right Column -->
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card card-body rounded-0 card-white shadow-sm">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -257,12 +297,23 @@ export default {
 
     computed:
     {
-
         isLoggedIn()
         {
-            // Example: check localStorage token or user object
-            return !!localStorage.getItem("access_token"); 
-            // Or: return this.$store.state.user != null;
+            return !!localStorage.getItem("access_token");
+        },
+
+        propertyPhotos()
+        {
+            if (!this.property) return [];
+            
+            const photos = [];
+            // Add all available photos in order
+            if (this.property.photo_1) photos.push(this.getPhotoUrl(this.property.photo_1));
+            if (this.property.photo_2) photos.push(this.getPhotoUrl(this.property.photo_2));
+            if (this.property.photo_3) photos.push(this.getPhotoUrl(this.property.photo_3));
+            if (this.property.photo_4) photos.push(this.getPhotoUrl(this.property.photo_4));
+            
+            return photos;
         }
     },
 
@@ -299,7 +350,8 @@ export default {
 
         formatPropStats(status)
         {
-            const statuses = {
+            const statuses =
+            {
                 0: "Under Review",
                 1: "For Rent",
                 2: "Rented",
@@ -307,6 +359,15 @@ export default {
                 4: "Reserved",
             };
             return statuses[status] || "N/A";
+        },
+
+        formatFeature(feature)
+        {
+            const featured =
+            {
+                1: 'Featured',
+            };
+            return featured[feature] || "N/A";
         },
 
         async checkIfSaved()
@@ -354,25 +415,21 @@ export default {
 
         isScheduleDisabled(schedule)
         {
-            // 🔹 disable if already booked OR if user has selected it
             if (this.selectedScheduleId === schedule.id) {
                 return true;
             }
 
-            // 🔹 disable if schedule.status is pending/approved
             return [0,1].includes(schedule.status);
         },
 
         async bookSched()
         {
-            // simple guard
             if (!this.bookForm.sched)
             {
                 alert("Please select a schedule before booking.");
                 return;
             }
 
-            // optional UI lock to prevent double-submit
             this.isBooking = true;
 
             try
@@ -380,15 +437,14 @@ export default {
                 const payload =
                 {
                     property_id: this.property.id,
-                    landlord_id: this.property.landlord.id,   // correct reference from your JSON
-                    schedule_id: Number(this.bookForm.sched) // send a number (backend usually expects integer)
+                    landlord_id: this.property.landlord.id,
+                    schedule_id: Number(this.bookForm.sched)
                 };
 
                 const response = await apiClient.post("/bookings", payload);
 
                 console.log("Book success:", response.data);
 
-                // --- Update UI: mark selected schedule as booked/disabled locally ---
                 const schedId = Number(this.bookForm.sched);
                 const idx = this.property.schedules.findIndex(function (s)
                 {
@@ -397,17 +453,14 @@ export default {
 
                 if (idx !== -1)
                 {
-                    // add a flag so your template can disable that option
                     this.$set
-                        ? this.$set(this.property.schedules[idx], "booked", true) // if you use Vue.set (Vue2 style)
-                        : (this.property.schedules[idx].booked = true);           // Vue3: direct assignment works
+                        ? this.$set(this.property.schedules[idx], "booked", true)
+                        : (this.property.schedules[idx].booked = true);
                 }
 
-                // reset selection
                 this.selectedScheduleId = null;
                 this.bookForm.sched = "";
 
-                // toast if available
                 if (this.toast && typeof this.toast.success === "function")
                 {
                     this.toast.success("Booked successfully!");
@@ -463,6 +516,7 @@ export default {
 
                 this.property.landmarksSummary = [];
                 this.property.landmarks = [];
+                this.form.message = `Hello, I am interested in ${this.property.title}`;
 
                 this.checkIfSaved();
             }
@@ -511,7 +565,7 @@ export default {
                 const payload =
                 {
                     property_id: this.property.id,
-                    landlord_id: this.property.landlord.id, // or landlord_id from property object
+                    landlord_id: this.property.landlord.id,
                     message: this.form.message,
                 }
                 const response = await apiClient.post(`/inquiries`, payload);
@@ -559,5 +613,16 @@ ul.list-unstyled li img
     width: 120px;
     height: auto;
     margin-bottom: 15px;
+}
+
+/* Carousel styling to maintain same position */
+#propertyCarousel {
+    height: 30rem;
+}
+
+.carousel-inner,
+.carousel-item,
+.carousel-item img {
+    height: 100%;
 }
 </style>

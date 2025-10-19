@@ -8,8 +8,8 @@
                 <p class="mb-0">Top Locations Curated for Your Success.</p>
             </div>
 
-            <div class="row g-4 mt-2" v-if="featured.length > 0">
-                <div class="col-md-4" v-for="(item, index) in featured" :key="index">
+            <div class="row g-4 mt-2" v-if="recents.length > 0">
+                <div class="col-md-4" v-for="(item, index) in recents" :key="index">
                     <a 
                         href="javascript:void(0)" 
                         style="text-decoration: none;"
@@ -17,14 +17,19 @@
                         
                         <div class="card h-100 shadow-sm">
                             <img
-                                :src="getPhotoUrl(item.photo)"
+                                :src="getPhotoUrl(item.photo_1)"
                                 :alt="item.property_name"
                                 style="height: 200px; object-fit: cover"
                                 class="card-img-top">
                             <div class="card-body">
-                                <small class="text-secondary">{{ formatPropStats( item.propertyStats ) }} . {{ item.property_type }}</small>
                                 <h5 class="card-title mb-0">{{ item.title }}</h5>
                                 <p class="card-text text-muted mb-0">{{ item.address }}</p>
+                                <p class="mb-0">
+                                    <span class="badge fs-6 text-bg-secondary rounded-0">{{ formatPropStats( item.propertyStats ) }}</span>
+                                </p>
+                                <p class="mb-0">
+                                    <strong>{{ item.property_type }}</strong> ( <i class='bx bx-ruler'></i> {{ item.size }} sqm )
+                                </p>
                                 <span class="fw-bold text-primary">{{ formatPrice(item.price) }} / Monthly</span>
                             </div>
                         </div>
@@ -50,14 +55,19 @@
                         
                         <div class="card h-100 shadow-sm">
                             <img
-                                :src="getPhotoUrl(item.photo)"
+                                :src="getPhotoUrl(item.photo_1)"
                                 :alt="item.property_name"
                                 style="height: 200px; object-fit: cover"
                                 class="card-img-top">
                             <div class="card-body">
-                                <small class="text-secondary">{{ formatPropStats( item.propertyStats ) }} . {{ item.property_type }}</small>
                                 <h5 class="card-title mb-0">{{ item.title }}</h5>
                                 <p class="card-text text-muted mb-0">{{ item.address }}</p>
+                                <p class="mb-0">
+                                    <span class="badge fs-6 text-bg-secondary rounded-0">{{ formatPropStats( item.propertyStats ) }}</span>
+                                </p>
+                                <p class="mb-0">
+                                    <strong>{{ item.property_type }}</strong> ( <i class='bx bx-ruler'></i> {{ item.size }} sqm )
+                                </p>
                                 <span class="fw-bold text-primary">{{ formatPrice(item.price) }} / Monthly</span>
                             </div>
                         </div>
@@ -155,6 +165,15 @@ export default {
                 4: "Reserved",
             };
             return statuses[status] || "N/A";
+        },
+
+        formatFeature(feature)
+        {
+            const featured =
+            {
+                1: 'Featured',
+            };
+            return featured[feature] || "N/A";
         },
 
         // NEW METHOD: Navigate to property with scroll to top
