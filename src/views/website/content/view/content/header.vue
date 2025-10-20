@@ -3,12 +3,12 @@
     <div class="d-flex justify-content-between">
 
         <div>
-            <router-link
-                :to="'/commercialHub'"
-                class="btn btn-sm btn-primary d-flex align-items-center">
+            <button
+                class="btn btn-sm btn-primary d-flex align-items-center"
+                @click="goBack()">
                 <i class="bx bx-chevrons-left me-2"></i>
                 <span>Back to page</span>
-            </router-link>
+            </button>
         </div>
 
     </div>
@@ -16,8 +16,15 @@
 </template>
 
 <script>
-export default {
-
+export default
+{
+    methods:
+    {
+        goBack()
+        {
+            this.$router.back();
+        }
+    }
 }
 </script>
 
