@@ -130,7 +130,19 @@ export default
                 left: 0,
                 behavior: 'instant'
             });
-        }
+        },
+
+        formatPropStats(status)
+        {
+            const statuses = {
+                0: "Under Review",
+                1: "For Rent",
+                2: "Rented",
+                3: "Under Maintenance",
+                4: "Reserved",
+            };
+            return statuses[status] || "N/A";
+        },
     }
 };
 </script>
