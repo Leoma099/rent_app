@@ -15,7 +15,7 @@
                         <!-- property image -->
                         <div style="width: 120px; flex-shrink: 0; margin-right: 12px;">
                             <img
-                                :src="getPhotoUrl(n.property?.photo)"
+                                :src="getPhotoUrl(n.property?.photo_1)"
                                 :alt="n.property?.title || 'Property'"
                                 class="img-fluid rounded"
                                 style="height: 80px; width: 120px; object-fit: cover;"
