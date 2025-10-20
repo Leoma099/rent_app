@@ -11,6 +11,7 @@
                     <h5 class="card-title mb-0">{{ item.title }}</h5>
                     <p class="card-text text-muted mb-0">{{ item.address }}</p>
                     <p class="mb-0">
+                        <span v-if="item.is_featured !== 0" class="badge fs-6 text-bg-success rounded-0 me-2">{{ formatFeature( item.is_featured ) }}</span>
                         <span class="badge fs-6 text-bg-secondary rounded-0">{{ formatPropStats( item.propertyStats ) }}</span>
                     </p>
                     <p class="mb-0">
@@ -55,6 +56,15 @@ export default {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             }).format(price);
+        },
+
+        formatFeature(feature)
+        {
+            const featured =
+            {
+                1: 'Featured',
+            };
+            return featured[feature] || "N/A";
         },
 
         formatPropStats(status)
