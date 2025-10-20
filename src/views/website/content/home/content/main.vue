@@ -8,8 +8,8 @@
                 <p class="mb-0">Top Locations Curated for Your Success.</p>
             </div>
 
-            <div class="row g-4 mt-2" v-if="recents.length > 0">
-                <div class="col-md-4" v-for="(item, index) in recents" :key="index">
+            <div class="row g-4 mt-2" v-if="featured.length > 0">
+                <div class="col-md-4" v-for="(item, index) in featured" :key="index">
                     <a 
                         href="javascript:void(0)" 
                         style="text-decoration: none;"
@@ -25,6 +25,7 @@
                                 <h5 class="card-title mb-0">{{ item.title }}</h5>
                                 <p class="card-text text-muted mb-0">{{ item.address }}</p>
                                 <p class="mb-0">
+                                    <span v-if="item.is_featured !== 0" class="badge fs-6 text-bg-success rounded-0 me-2">{{ formatFeature( item.is_featured ) }}</span>
                                     <span class="badge fs-6 text-bg-secondary rounded-0">{{ formatPropStats( item.propertyStats ) }}</span>
                                 </p>
                                 <p class="mb-0">
@@ -63,6 +64,7 @@
                                 <h5 class="card-title mb-0">{{ item.title }}</h5>
                                 <p class="card-text text-muted mb-0">{{ item.address }}</p>
                                 <p class="mb-0">
+                                    <span v-if="item.is_featured !== 0" class="badge fs-6 text-bg-success rounded-0 me-2">{{ formatFeature( item.is_featured ) }}</span>
                                     <span class="badge fs-6 text-bg-secondary rounded-0">{{ formatPropStats( item.propertyStats ) }}</span>
                                 </p>
                                 <p class="mb-0">
