@@ -68,12 +68,18 @@
         :selectedUser="selectedUser"
         @refresh-list="fetchAccount" />
 
+    <delete-modal
+        v-show="selectedUser"
+        :selectedUser="selectedUser"
+        @refresh-list="fetchAccount"/>
+
 </template>
 
 <script>
 import apiClient from "@/services/index"
 import ItemComponent from "./content/item"
 import UpdateStatusModal from "./components/modals/update-status.vue";
+import DeleteModal from "./components/modals/delete.vue";
 export default
 {
 
@@ -81,6 +87,7 @@ export default
     {
         ItemComponent,
         UpdateStatusModal,
+        DeleteModal,
     },
 
     data() {
@@ -131,8 +138,10 @@ export default
 
     methods:
     {
-        async fetchAccount() {
-            try {
+        async fetchAccount()
+        {
+            try
+            {
                 this.isLoading = true;
                 setTimeout(async () => {
                     const response = await apiClient.get(`/admin/accounts`, {
@@ -149,7 +158,9 @@ export default
                     this.isEmpty = this.items.length === 0; // Check if items array is empty
                     this.isLoading = false;
                 }, 3000);
-            } catch (error) {
+            }
+            catch (error)
+            {
                 console.error("Error fetching equipment:", error);
                 this.isLoading = false;
                 this.isEmpty = true; // Assume empty on error

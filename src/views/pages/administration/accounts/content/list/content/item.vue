@@ -36,7 +36,7 @@
 
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.user.role }}</span>
+            <span v-else>{{ formatRoles( item.user.role ) }}</span>
         </td>
 
         <td class="table-data">
@@ -56,7 +56,9 @@
                 <button
                     type="button"
                     class="btn btn-sm btn-danger rounded-0"
-                    @click="deleteAccount">
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteModal"
+                    @click="openUpdateStatusModal">
                     <i class="bx bx-trash"></i>
                 </button>
             </div>
@@ -75,6 +77,18 @@ export default
 
     methods:
     {
+        formatRoles(role)
+        {
+            const roles =
+            {
+                1: "Admin",
+                2: "Landlord",
+                3: "Tenant"
+            };
+
+            return roles[role] || "n/a";
+        },
+
         formatStatus(status)
         {
             const statuses =

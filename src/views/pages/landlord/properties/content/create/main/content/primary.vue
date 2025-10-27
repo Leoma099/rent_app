@@ -13,7 +13,10 @@
 
     <div class="mt-3">
         <label class="form-label">* Description:</label>
-        <textarea rows="10" class="form-control rounded-0" v-model="form.description"></textarea>
+        <textarea
+            rows="10"
+            class="form-control rounded-0"
+            v-model="form.description"></textarea>
     </div>
 
     <div class="mt-3">
@@ -26,29 +29,38 @@
     </div>
 
     <div class="mt-3">
+        <label class="form-label">* Business Type:</label>
+        <input
+            type="text"
+            class="form-control rounded-0"
+            :value="Array.isArray(form.property_type) ? form.property_type.join(', ') : ''"
+            readonly>
+
+        <select
+            class="form-select rounded-0 mt-3"
+            @change="handleBusinessTypeSelect">
+            <option value="" disabled selected>-- select business type --</option>
+            <option value="Office Space">Office Space</option>
+            <option value="Retail Shop">Retail Shop</option>
+            <option value="Restaurant">Restaurant</option>
+            <option value="Warehouse">Warehouse</option>
+            <option value="Industrial">Industrial</option>
+            <option value="Co-working">Co-working</option>
+            <option value="Hotel">Hotel</option>
+            <option value="Clinic">Clinic</option>
+            <option value="House">House</option>
+            <option value="Apartment">Apartment</option>
+            <option value="Townhouse">Townhouse</option>
+            <option value="Studio">Studio</option>
+            <option value="Land">Land</option>
+            <option value="Commercial">Commercial</option>
+            <option value="Parking Space">Parking Space</option>
+        </select>
+    </div>
+
+    <div class="mt-3">
         <div class="row">
             <div class="col-md-6">
-                <label class="form-label">* Business Type:</label>
-                <select class="form-select rounded-0" v-model="form.property_type">
-                    <option value="" disabled selected>-- select business type --</option>
-                    <option value="Office Space">Office Space</option>
-                    <option value="Retail Shop">Retail Shop</option>
-                    <option value="Restaurant">Restaurant</option>
-                    <option value="Warehouse">Warehouse</option>
-                    <option value="Industrial">Industrial</option>
-                    <option value="Co-working">Co-working</option>
-                    <option value="Hotel">Hotel</option>
-                    <option value="Clinic">Clinic</option>
-                    <option value="House">House</option>
-                    <option value="Apartment">Apartment</option>
-                    <option value="Townhouse">Townhouse</option>
-                    <option value="Studio">Studio</option>
-                    <option value="Land">Land</option>
-                    <option value="Commercial">Commercial</option>
-                    <option value="Parking Space">Parking Space</option>
-                </select>
-            </div>
-            <div class="col-md-3">
                 <label class="form-label">* Price:</label>
                 <input
                     type="number"
@@ -56,7 +68,7 @@
                     class="form-control rounded-0"
                     v-model="form.price">
             </div>
-            <div class="col-md-3">
+            <div class="col-md-6">
                 <label class="form-label">* Square Meter:</label>
                 <input
                     type="number"
@@ -121,56 +133,73 @@ export default
         }
     },
 
+    props:
+    {
+        selectedDisplay:
+        {
+            type: String,
+            default: ''
+        }
+    },
+
     methods:
     {
+        handleBusinessTypeSelect(event)
+        {
+            const value = event.target.value;
+
+            if (!Array.isArray(this.form.property_type))
+            {
+                this.form.property_type = [];
+            }
+
+            if (this.form.property_type.includes(value))
+            {
+                this.form.property_type = this.form.property_type.filter(type => type !== value);
+            }
+            else
+            {
+                if (this.form.property_type.length >= 3)
+                {
+                    alert("You can only select up to 3 business types.");
+                    event.target.value = "";
+                    return;
+                }
+
+                this.form.property_type.push(value);
+            }
+
+            event.target.value = "";
+        },
+
         uploadFirstImage(event)
         {
             const file = event.target.files[0];
-            if (file) {
-                this.form.photo_1 = file; // ✅ Fixed: changed from 'photo' to 'photo_1'
-            } else {
-                this.form.photo_1 = null;
-            }
+            this.form.photo_1 = file || null;
         },
 
         uploadSecondImage(event)
         {
             const file = event.target.files[0];
-            if (file) {
-                this.form.photo_2 = file; // ✅ Fixed: changed from 'photo' to 'photo_2'
-            } else {
-                this.form.photo_2 = null;
-            }
+            this.form.photo_2 = file || null;
         },
 
         uploadThirdImage(event)
         {
             const file = event.target.files[0];
-            if (file) {
-                this.form.photo_3 = file; // ✅ Fixed: changed from 'photo' to 'photo_3'
-            } else {
-                this.form.photo_3 = null;
-            }
+            this.form.photo_3 = file || null;
         },
 
         uploadFourthImage(event)
         {
             const file = event.target.files[0];
-            if (file) {
-                this.form.photo_4 = file; // ✅ Fixed: changed from 'photo' to 'photo_4'
-            } else {
-                this.form.photo_4 = null;
-            }
+            this.form.photo_4 = file || null;
         },
 
-        // ✅ handle file upload for floor plan (this one is correct)
-        handleFloorPlanUpload(event) {
+        handleFloorPlanUpload(event)
+        {
             const file = event.target.files[0];
-            if (file) {
-                this.form.floor_plan = file;
-            } else {
-                this.form.floor_plan = null;
-            }
+            this.form.floor_plan = file || null;
         }
     }
 }

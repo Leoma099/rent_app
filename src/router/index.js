@@ -12,7 +12,7 @@ router.beforeEach((to, from, next) => {
     const hasAccessToken = !!localStorage.getItem("access_token");
     const role = parseInt(localStorage.getItem("role")); 
 
-    const publicPages = ["signin", "commercialhub", "registration", "view"];
+    const publicPages = ["signin", "commercialhub", "registration", "forgot-password", "reset-password", "view"];
 
     const isPublic = to.matched.some(record => {
         return record.meta && publicPages.includes(record.meta.page);
@@ -26,7 +26,7 @@ router.beforeEach((to, from, next) => {
 
     if (hasAccessToken) {
         const isAuthPage = to.matched.some(record => {
-            return record.meta && (record.meta.page === "signin" || record.meta.page === "registration");
+            return record.meta && (record.meta.page === "signin" || record.meta.page === "registration" || record.meta.page === "forgot-password" || record.meta.page === "reset-password");
         });
 
         if (isAuthPage) {

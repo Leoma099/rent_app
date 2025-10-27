@@ -23,11 +23,19 @@
                         <div class="card-body">
                             <h5 class="card-title mb-0">{{ property.title }}</h5>
                             <p class="card-text text-muted mb-0">{{ property.address }}</p>
-                            <p class="mb-0">
-                                <span class="badge fs-6 text-bg-secondary rounded-0">{{ formatPropStats( property.propertyStats ) }}</span>
+                            <p class="mb-1">
+                                <span v-if="property.is_featured !== 0" class="badge text-bg-success rounded-pill me-2">{{ formatFeature( property.is_featured ) }}</span>
+                                <span class="badge text-bg-secondary rounded-pill">{{ formatPropStats( property.propertyStats ) }}</span>
                             </p>
                             <p class="mb-0">
-                                <strong>{{ property.property_type }}</strong> ( <i class='bx bx-ruler'></i> {{ property.size }} sqm )
+                                <span
+                                    v-for="(type, index) in property.property_type.split(',')"
+                                    :key="index"
+                                    class="badge text-bg-info rounded-pill me-1"
+                                >
+                                    {{ type.trim() }}
+                                </span>
+                                ( <i class='bx bx-ruler'></i> {{ property.size }} sqm )
                             </p>
                             <span class="fw-bold text-primary">{{ formatPrice(property.price) }} / Monthly</span>
                         </div>
@@ -90,7 +98,7 @@ export default
                 setTimeout(() =>
                 {
                     this.showSplash = false;
-                }, 1500);
+                }, 1000);
             }
             catch(error)
             {
@@ -143,11 +151,27 @@ export default
             };
             return statuses[status] || "N/A";
         },
+
+        formatFeature(feature)
+        {
+            const featured =
+            {
+                1: 'Featured',
+            };
+            return featured[feature] || "N/A";
+        },
     }
 };
 </script>
 
 <style scoped>
+.badge {
+    background-color: #e9ecef;
+    color: #333;
+    border-radius: 0.25rem;
+    font-weight: 500;
+    padding: 0.4em 0.6em;
+}
 .card-title
 {
     font-size: 1.1rem;

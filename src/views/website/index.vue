@@ -11,6 +11,7 @@
             <account-page-component v-if="$route.meta.page === 'profile'" />
             <notification-page-component v-if="$route.meta.page === 'notification'" />
             <favorite-page-component v-if="$route.meta.page === 'favorite'" />
+            <message-page-component v-if="$route.meta.page === 'message'" />
             <listing-properties-page-component v-if="$route.meta.page === 'listing-properties'" />
 
         </main>
@@ -28,6 +29,7 @@ import ViewPageComponent from "./content/view";
 import AccountPageComponent from "./content/account";
 import NotificationPageComponent from "./content/notification";
 import FavoritePageComponent from "./content/favorite";
+import MessagePageComponent from "./content/message";
 import ListingPropertiesPageComponent from "./content/properties";
 import FooterComponent from "./content/footer";
 export default
@@ -41,6 +43,7 @@ export default
         AccountPageComponent,
         NotificationPageComponent,
         FavoritePageComponent,
+        MessagePageComponent,
         ListingPropertiesPageComponent,
         FooterComponent
     }

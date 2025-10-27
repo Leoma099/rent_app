@@ -5,7 +5,7 @@
             <span 
                 v-for="(b, index) in property.landmarksSummary" 
                 :key="index" 
-                class="badge fs-6 rounded-0 bg-secondary me-2 mb-2">
+                class="badge fs-6 rounded-pill bg-secondary me-2 mb-2">
                 <div class="d-flex align-items-center">
                     <div>
                         <img 

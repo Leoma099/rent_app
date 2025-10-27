@@ -5,7 +5,7 @@
             <h2>Loading...</h2>
         </div>
     </div>
-    <div class="container my-5" v-else :key="$route.fullPath">
+    <div class="container my-5" v-if="!showSplash" :key="$route.fullPath">
 
         <header-component />
 
@@ -13,8 +13,8 @@
             <div>
                 <h1 class="mb-0">{{ property.title }}</h1>
                 <p class="my-2">
-                    <span v-if="property.is_featured !== 0" class="badge fs-6 text-bg-success rounded-0 me-2">{{ formatFeature(property.is_featured) }}</span>
-                    <span class="badge fs-6 text-bg-secondary rounded-0">{{ formatPropStats( property.propertyStats ) }}</span>
+                    <span v-if="property.is_featured !== 0" class="badge fs-6 text-bg-success rounded-pill me-2">{{ formatFeature(property.is_featured) }}</span>
+                    <span class="badge fs-6 text-bg-secondary rounded-pill">{{ formatPropStats( property.propertyStats ) }}</span>
                 </p>
                 <p class="mb-0 text-secondary"><i class="bx bx-map"></i> {{ property.address }}</p>
             </div>
@@ -93,9 +93,19 @@
 
                     <hr />
 
+                    <!-- MAKE IT BADGE -->
                     <div>
                         <p class="mb-0"><strong>Type and Size:</strong></p>
-                        <p class="mb-0">{{ property.property_type }} ( <i class='bx bx-ruler'></i> {{ property.size }} sqm )</p>
+                        <p class="mb-0">
+                            <span
+                                v-for="(type, index) in property.property_type.split(',')"
+                                :key="index"
+                                class="badge text-bg-info rounded-pill me-1"
+                            >
+                                {{ type.trim() }}
+                            </span>
+                            ( <i class='bx bx-ruler'></i> {{ property.size }} sqm )
+                        </p>
                     </div>
 
                     <hr>
@@ -292,7 +302,7 @@ export default {
         setTimeout(() =>
         {
             this.showSplash = false;
-        }, 1500);
+        }, 1000);
     },
 
     computed:
@@ -582,11 +592,37 @@ export default {
 </script>
 
 <style scoped>
+.badge {
+    background-color: #e9ecef;
+    color: #333;
+    border-radius: 0.25rem;
+    font-weight: 500;
+    padding: 0.4em 0.6em;
+}
+
 ul.list-unstyled li img
 {
     display: inline-block;
     margin-right: 6px;
 }
+.fade-enter-active,
+.fade-leave-active
+{
+    transition: opacity 0.6s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to
+{
+    opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from
+{
+    opacity: 1;
+}
+
 .splashscreen
 {
     position: fixed;
@@ -599,13 +635,12 @@ ul.list-unstyled li img
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    animation: fadeIn 0.4s ease-in;
 }
 
 .splash-content
 {
     text-align: center;
-    animation: fadeInUp 1s ease;
+    animation: fadeInUp 0.6s ease;
 }
 
 .splash-logo
@@ -613,6 +648,20 @@ ul.list-unstyled li img
     width: 120px;
     height: auto;
     margin-bottom: 15px;
+}
+
+@keyframes fadeInUp
+{
+    from
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to
+    {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Carousel styling to maintain same position */

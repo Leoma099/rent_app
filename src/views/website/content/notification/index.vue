@@ -20,8 +20,7 @@
                 <div
                     class="card card-body card-white shadow-sm mb-3"
                     v-for="item in items"
-                    :key="item.id"
-                >
+                    :key="item.id">
                     <div class="notification-box d-flex justify-content-between">
                         <div>
                             <strong>{{ item.data.title }}</strong>

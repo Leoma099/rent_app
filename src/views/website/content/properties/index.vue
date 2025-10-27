@@ -137,7 +137,7 @@ export default
         setTimeout(() =>
         {
             this.showSplash = false;
-        }, 1500);
+        }, 1000);
     },
 
     methods:
@@ -170,13 +170,31 @@ export default
                 {
                     this.isLoading = false;
                 }
-            }, 3000); // 3 seconds delay
+            }, 1000); // 3 seconds delay
         }
     }
 };
 </script>
 
 <style scoped>
+.fade-enter-active,
+.fade-leave-active
+{
+    transition: opacity 0.6s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to
+{
+    opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from
+{
+    opacity: 1;
+}
+
 .splashscreen
 {
     position: fixed;
@@ -189,13 +207,12 @@ export default
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    animation: fadeIn 0.4s ease-in;
 }
 
 .splash-content
 {
     text-align: center;
-    animation: fadeInUp 1s ease;
+    animation: fadeInUp 0.6s ease;
 }
 
 .splash-logo
@@ -203,5 +220,19 @@ export default
     width: 120px;
     height: auto;
     margin-bottom: 15px;
+}
+
+@keyframes fadeInUp
+{
+    from
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to
+    {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 </style>

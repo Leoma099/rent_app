@@ -75,6 +75,7 @@
 import apiClient from "@/services/index"
 import ItemComponent from "./content/item"
 import UpdateStatusModal from "./components/modals/update-status.vue";
+import DeleteModal from "./components/modals/delete.vue";
 export default
 {
     data()
@@ -94,6 +95,7 @@ export default
     {
         ItemComponent,
         UpdateStatusModal,
+        DeleteModal
     },
 
     mounted()
@@ -122,7 +124,7 @@ export default
                     this.items = response.data;
                     this.isEmpty = this.items.length === 0; // Check if items array is empty
                     this.isLoading = false;
-                }, 3000);
+                }, 1000);
             }
             catch (error)
             {

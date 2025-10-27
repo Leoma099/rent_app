@@ -46,7 +46,7 @@ export default {
                     setTimeout(() => {
                         card.value = response.data[card.key] || 0;
                         card.loading = false;
-                    }, 3000);
+                    }, 1000);
                 }
             } catch (error) {
                 console.error("Error loading data:", error);

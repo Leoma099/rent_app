@@ -52,7 +52,7 @@ export default
                 lat: "",
                 lng: "",
                 price: "",
-                property_type: "",
+                property_type: [],
                 photo_1: "",
                 photo_2: "",
                 photo_3: "",

@@ -1,23 +1,27 @@
 <template>
-    <!-- Splash screen while loading -->
-    <div v-if="isLoading" class="splashscreen">
-        <div class="splash-content">
-            <img src="@/assets/images/capas_logo.png" alt="Logo" class="splash-logo" />
-            <h2>Loading...</h2>
+    <div>
+        <!-- Splashscreen with fade-in transition -->
+        <div v-if="isLoading" class="splashscreen">
+            <div class="splash-content">
+                <img src="@/assets/images/capas_logo.png" alt="Logo" class="splash-logo" />
+                <h2>Loading...</h2>
+            </div>
         </div>
-    </div>
 
-    <!-- Main content -->
-    <div v-else>
-        <hero-component
-            :filters="filters"
-            @search="fetchProperties"
-        />
-
-        <main-component
-            :items="items"
-            :isLoading="isLoading"
-        />
+        <!-- Main content with fade-in transition -->
+        <transition name="fade" appear>
+            <div v-if="!isLoading">
+                <hero-component
+                    :filters="filters"
+                    @search="fetchProperties"
+                />
+                
+                <main-component
+                    :items="items"
+                    :isLoading="isLoading"
+                />
+            </div>
+        </transition>
     </div>
 </template>
 
@@ -26,20 +30,24 @@ import HeroComponent from "./content/hero.vue";
 import MainComponent from "./content/main.vue";
 import apiClient from "@/services";
 
-export default {
-    components: {
+export default
+{
+    components:
+    {
         HeroComponent,
         MainComponent
     },
 
-    data() {
-        return {
-            filters: {
+    data()
+    {
+        return{
+            filters:
+            {
                 property_type: "",
                 search: ""
             },
             items: [],
-            isLoading: false,
+            isLoading: false
         };
     },
 
@@ -47,14 +55,15 @@ export default {
     {
         async fetchProperties()
         {
+            this.isLoading = true;
+
             try
             {
-                this.isLoading = true;
-
                 const token = localStorage.getItem("access_token");
                 const endpoint = token ? "/properties" : "/properties";
 
-                const response = await apiClient.get(endpoint, {
+                const response = await apiClient.get(endpoint,
+                {
                     headers: token ? { Authorization: `Bearer ${token}` } : {},
                     params: this.filters
                 });
@@ -68,22 +77,41 @@ export default {
             }
             finally
             {
-                // Simulate small delay to show splash animation smoothly
                 setTimeout(() => {
                     this.isLoading = false;
-                }, 3000);
+                }, 1000);
             }
         }
     },
 
-    created() {
+    created()
+    {
         this.fetchProperties();
     }
 };
 </script>
 
 <style scoped>
-.splashscreen {
+.fade-enter-active,
+.fade-leave-active
+{
+    transition: opacity 0.6s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to
+{
+    opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from
+{
+    opacity: 1;
+}
+
+.splashscreen
+{
     position: fixed;
     top: 0;
     left: 0;
@@ -94,33 +122,32 @@ export default {
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    animation: fadeIn 0.4s ease-in;
 }
 
-.splash-content {
+.splash-content
+{
     text-align: center;
-    animation: fadeInUp 1s ease;
+    animation: fadeInUp 0.6s ease;
 }
 
-.splash-logo {
+.splash-logo
+{
     width: 120px;
     height: auto;
     margin-bottom: 15px;
 }
 
-/* @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes fadeInUp {
-    from {
+@keyframes fadeInUp
+{
+    from
+    {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(20px);
     }
-    to {
+    to
+    {
         opacity: 1;
         transform: translateY(0);
     }
-} */
+}
 </style>

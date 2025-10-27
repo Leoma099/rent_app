@@ -58,6 +58,19 @@ export default [
                 }
             },
             {
+                path: '/message',
+
+                name: 'Message',
+
+                component: () => import('@/views/website'),
+
+                meta:
+                {
+                    page: 'message',
+                    public: true
+                }
+            },
+            {
                 path: '/commercialhub/properties',
 
                 name: 'Listing Properties',

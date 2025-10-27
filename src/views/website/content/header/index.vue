@@ -66,15 +66,30 @@
                             aria-expanded="false">
                             <i class="bx bx-user"></i>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end rounded-0 mt-2" style="height: auto;">
+                        <ul class="dropdown-menu dropdown-menu-end rounded-0 mt-4" style="height: auto;">
                             <li class="m-0">
-                                <router-link class="dropdown-item" :to="`/account/profile`"><i class="bx bx-user me-2"></i> My Profile</router-link>
+                                <router-link class="dropdown-item d-flex align-items-center" :to="`/account/profile`">
+                                    <i class="bx bx-user me-2"></i>
+                                    <span>My Profile</span>
+                                </router-link>
                             </li>
                             <li class="m-0">
-                                <router-link class="dropdown-item" :to="`/favorite`"><i class="bx bx-heart me-2"></i> Saved Properties</router-link>
+                                <router-link class="dropdown-item d-flex align-items-center" :to="`/favorite`">
+                                    <i class="bx bx-heart me-2"></i>
+                                <span>Saved Properties</span>
+                            </router-link>
+                            </li>
+                            <li class="m-0">
+                                <router-link class="dropdown-item d-flex align-items-center" :to="`/message`">
+                                    <i class="bx bx-message me-2"></i>
+                                    <span>Messages</span>
+                                </router-link>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="#" @click.prevent="logout"><i class="bx bx-log-out me-2"></i> Logout</a>
+                                <a class="dropdown-item d-flex align-items-center" href="#" @click.prevent="logout">
+                                    <i class="bx bx-log-out me-2"></i>
+                                    <span>Logout</span>
+                                </a>
                             </li>
                         </ul>
                     </li>

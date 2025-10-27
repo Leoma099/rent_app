@@ -51,7 +51,8 @@
                         <span
                             class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold cursor-pointer"
                             @click="togglePassword"
-                            style="user-select: none;">
+                            style="user-select: none;"
+                        >
                             {{ showPassword ? 'Hide' : 'Show' }}
                         </span>
                     </div>
@@ -61,7 +62,8 @@
                 <button
                     type="submit"
                     class="btn btn-primary w-100 mb-3"
-                    :disabled="isLoading">
+                    :disabled="isLoading"
+                >
                     <span v-if="!isLoading">Sign In</span>
                     <span v-else>Signing in...</span>
                 </button>
@@ -72,10 +74,12 @@
                 <p class="mb-1 small">
                     New member? <a href="/registration">Register here</a>
                 </p>
+                <p class="mb-1 small">
+                    Forgot your password? <a href="/forgot-password">Recover account</a>
+                </p>
                 <p class="mb-0 small">
                     Visit our website
-                    <router-link
-                        :to="'/commercialhub'">
+                    <router-link :to="'/commercialhub'">
                         Commercial Hub
                     </router-link>
                 </p>
@@ -83,96 +87,16 @@
         </div>
     </div>
 
-    <!-- <div class="animation animation-fade-in">
-        <div :style="{
-            'height': '100vh',
-            'background-image': 'url(/assets/image/it-equipment.jpg)',
-            'background-repeat': 'no-repeat',
-            'background-size': 'cover',
-            'background-position': 'center',
-            'display': 'flex',
-            'align-items': 'center',
-            'justify-content': 'center',
-        }">
-            <div class="container">
-                <div class="login-image mb-3">
-                    <img src="@/assets/images/sbma.png" class="img-fluid">
-                </div>
-                <div class="align-items-center box-area">
-                    <div class="row border-0 rounded-5 p-3 bg-white shadow-sm">
-                        <div class="col-md-6 rounded-5 left-box">
-                            <div class="featured-image d-flex justify-content-center align-items-center">
-                                <img src="@/assets/images/equipment-picture.png" class="img-fluid">
-                            </div>
-                        </div>
-                        <div class="col-md-6 rounded-4 right-box" style="background: #007bff;">
-                            <div v-if="isLoading" class="loading-overlay">
-                                <div class="spinner"></div>
-                            </div>
-                            <div class="mb-3">
-                                <h2 class="text-center text-white">Welcome to e-MISO APP</h2>
-                                <p class="text-center text-white">Please sign in to continue</p>
-                            </div>
-                            <div class="row align-items-center">
-                                <div class="header-text mb-4">
-                                    <form @submit.prevent="submit()">
-                                        <div class="input-group mb-3">
-                                            <input type="text" class="form-control box-input" placeholder="Username" v-model="form.username" required>
-                                        </div>
-                                        
-                                        <div class="input-group mb-3">
-                                            <input 
-                                                :type="showPassword ? 'text' : 'password'" 
-                                                class="form-control box-input" 
-                                                placeholder="Password" 
-                                                v-model="form.password"
-                                                autocomplete="on"
-                                                required>
-                                            <button 
-                                                type="button" 
-                                                class="btn btn-secondary" 
-                                                @click="showPassword = !showPassword">
-                                                <i :class="showPassword ? 'bx bx-low-vision' : 'bx bx-show'"></i>
-                                            </button>
-                                        </div>
-
-                                        <div class="input-group">
-                                            <button
-                                                type="submit"
-                                                class="btn button-signin w-100"
-                                                :disabled="isLoading">
-                                                <span v-if="!isLoading">Sign In</span>
-                                                <span v-else>Signing in...</span>
-                                            </button>
-                                        </div>
-                                    </form>
-                                    <div class="text-center mt-3">
-                                        <small class="text-white">
-                                            Visit our website
-                                            (
-                                                <router-link
-                                                    :to="'/commercialhub'"
-                                                    class="text-white">
-                                                    Commercial Hub
-                                                </router-link>
-                                            )
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
 </template>
 
 <script>
 import apiClient from "@/services/index";
 import { useToast } from "vue-toastification";
-export default {
-    data() {
+
+export default
+{
+    data()
+    {
         return {
             form: {
                 username: "",
@@ -180,6 +104,7 @@ export default {
             },
             isLoading: false,
             showPassword: false, // ✅ Added for toggling password visibility
+            errors: {} // ✅ Added for error validation tracking
         };
     },
 
@@ -193,7 +118,8 @@ export default {
         async submit()
         {
             this.isLoading = true;
-            
+            this.errors = {};
+
             try
             {
                 const response = await apiClient.post('/login', this.form);
@@ -215,21 +141,24 @@ export default {
                 localStorage.setItem('address', response.data.address);
 
                 // Redirect based on role
-                setTimeout(() => {
+                setTimeout(() =>
+                {
                     if (response.data.role === 1 || response.data.role === 2)
                     {
                         this.$router.push('/dashboard');
                     }
-                    else if (response.data.role === 3) {
+                    else if (response.data.role === 3)
+                    {
                         this.$router.push('/commercialhub');
                     }
                 }, 1000);
-                
+
                 this.toast.success("Login successfully!");
             }
             catch (error)
             {
                 this.isLoading = false;
+                this.errors = {};
 
                 const status = error.response?.status;
                 const message = error.response?.data?.error || "Login failed";
@@ -249,7 +178,6 @@ export default {
 
                 console.error('Login failed:', message);
             }
-
             finally
             {
                 this.isLoading = false;
@@ -265,41 +193,64 @@ export default {
 </script>
 
 <style scoped>
-.animation {
+.animation
+{
     animation-duration: 1s;
     animation-fill-mode: none;
 }
-.animation-fade-in {
+
+.animation-fade-in
+{
     animation-name: fadeIn;
 }
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+
+@keyframes fadeIn
+{
+    from
+    {
+        opacity: 0;
+    }
+    to
+    {
+        opacity: 1;
+    }
 }
-.container {
+
+.container
+{
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 }
-.box-area {
+
+.box-area
+{
     width: 930px;
 }
-.right-box {
+
+.right-box
+{
     padding: 40px;
 }
-.button-signin {
+
+.button-signin
+{
     border: 2px solid #ffffff;
     color: #ffffff;
     transition: all 0.2s ease-in-out;
 }
-.button-signin:hover {
+
+.button-signin:hover
+{
     background: #ffffff;
     color: #007bff;
     font-weight: 600;
 }
-.login-image {
+
+.login-image
+{
     width: 400px;
     overflow: hidden;
     text-align: center;
@@ -308,12 +259,16 @@ export default {
     justify-content: center;
     align-items: center;
 }
-.login-image img {
+
+.login-image img
+{
     width: 100%;
     object-fit: cover;
 }
+
 /* Add styles for the loading spinner */
-.loading-overlay {
+.loading-overlay
+{
     position: fixed;
     top: 0;
     left: 0;
@@ -326,7 +281,8 @@ export default {
     z-index: 9999;
 }
 
-.spinner {
+.spinner
+{
     border: 4px solid #f3f3f3; /* Light grey */
     border-top: 4px solid #3498db; /* Blue */
     border-radius: 50%;
@@ -335,8 +291,15 @@ export default {
     animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+@keyframes spin
+{
+    0%
+    {
+        transform: rotate(0deg);
+    }
+    100%
+    {
+        transform: rotate(360deg);
+    }
 }
 </style>

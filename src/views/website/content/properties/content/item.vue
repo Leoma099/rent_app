@@ -1,6 +1,9 @@
 <template>
     <div class="col-md-3">
-        <router-link :to="{ name: 'CommercialHubView', params: { id: item.id } }" style="text-decoration: none;">
+        <a
+            href="javascript:void(0)" 
+            style="text-decoration: none;"
+            @click="navigateToProperty(item.id)">
             <div class="card h-100 shadow-sm">
                 <img
                     :src="getPhotoUrl(item.photo_1)"
@@ -10,17 +13,24 @@
                 <div class="card-body">
                     <h5 class="card-title mb-0">{{ item.title }}</h5>
                     <p class="card-text text-muted mb-0">{{ item.address }}</p>
-                    <p class="mb-0">
-                        <span v-if="item.is_featured !== 0" class="badge fs-6 text-bg-success rounded-0 me-2">{{ formatFeature( item.is_featured ) }}</span>
-                        <span class="badge fs-6 text-bg-secondary rounded-0">{{ formatPropStats( item.propertyStats ) }}</span>
+                    <p class="mb-1">
+                        <span v-if="item.is_featured !== 0" class="badge text-bg-success rounded-pill me-2">{{ formatFeature( item.is_featured ) }}</span>
+                        <span class="badge text-bg-secondary rounded-pill">{{ formatPropStats( item.propertyStats ) }}</span>
                     </p>
                     <p class="mb-0">
-                        <strong>{{ item.property_type }}</strong> ( <i class='bx bx-ruler'></i> {{ item.size }} sqm )
+                        <span 
+                            v-for="(type, index) in item.property_type.split(',')"
+                            :key="index"
+                            class="badge text-bg-info rounded-pill me-1"
+                        >
+                            {{ type.trim() }}
+                        </span>
+                        ( <i class='bx bx-ruler'></i> {{ item.size }} sqm )
                     </p>
                     <span class="fw-bold text-primary">{{ formatPrice(item.price) }} / Monthly</span>
                 </div>
             </div>
-        </router-link>
+        </a>
     </div>
 </template>
 
@@ -78,6 +88,33 @@ export default {
             };
             return statuses[status] || "N/A";
         },
+
+        // NEW METHOD: Navigate to property with scroll to top
+        navigateToProperty(id)
+        {
+            this.scrollToTop();
+            this.$router.push({ name: 'CommercialHubView', params: { id: id } });
+        },
+
+        // NEW METHOD: Scroll to top
+        scrollToTop() 
+        {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'instant'
+            });
+        },
     }
 };
 </script>
+<style scoped>
+.badge
+{
+    background-color: #e9ecef;
+    color: #333;
+    border-radius: 0.25rem;
+    font-weight: 500;
+    padding: 0.4em 0.6em;
+}
+</style>

@@ -1,0 +1,108 @@
+<template>
+    <div
+        class="modal fade"
+        id="deleteModal"
+        tabindex="-1"
+        aria-labelledby="deleteModal"
+        aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-0">
+
+                <div class="modal-body">
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <div>
+                            <h3 class="mb-0">
+                                Are you sure?
+                            </h3>
+                        </div>
+                        <div>
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close">
+                            </button>
+                        </div>
+                    </div>
+
+                    <p class="mb-3">
+                        You're about to delete the <strong>{{ selectedProperty?.title }}</strong>
+                    </p>
+
+                    <p>Do you want to continue?</p>
+
+                    <div class="text-end">
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-outeline-secondary me-3 rounded-0"
+                            data-bs-dismiss="modal">
+                            No
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-primary rounded-0"
+                            @click="updateStatus()"
+                            data-bs-dismiss="modal">
+                            Yes
+                        </button>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import apiClient from "@/services";
+import { useToast } from "vue-toastification";
+
+export default
+{
+    props:
+    {
+        selectedProperty: Object
+    },
+
+    data()
+    {
+        return {
+            isUpdating: false,
+            toast: useToast()
+        };
+    },
+
+    methods:
+    {
+        async updateStatus()
+        {
+            try
+            {
+                this.isUpdating = true;
+
+                const response = await apiClient.delete(`/admin/property/${this.selectedProperty.id}`);
+
+                this.toast.success("Deleted successfully!");
+                this.$emit("refresh-list");
+
+                console.log("Deleted:", response.data);
+            }
+            catch (error)
+            {
+                console.error(error);
+                this.toast.error("Delete unsuccessful! Please try again.");
+            }
+            finally
+            {
+                this.isUpdating = false;
+            }
+        }
+
+    }
+};
+</script>
