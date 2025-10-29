@@ -12,13 +12,10 @@
         <td class="table-data">
             <div class="text-end">
                 <button
-                class="btn btn-sm btn-info rounded-0 me-2">
-                <i class="bx bx-edit"></i>
-            </button>
-            <button
-                class="btn btn-sm btn-danger rounded-0">
-                <i class="bx bx-trash"></i>
-            </button>
+                    class="btn btn-sm btn-danger rounded-0"
+                    @click="deleteSchedule(schedule)">
+                    <i class="bx bx-trash"></i>
+                </button>
             </div>
         </td>
     </tr>
@@ -32,6 +29,7 @@ export default
     {
         schedule: Object,
         isLoading: Boolean, // Receive isLoading prop from parent
+        deleteSchedule: Function,
     },
 
     methods:
@@ -41,7 +39,7 @@ export default
             if (!time) return '';
             const date = new Date(`1970-01-01T${time}`);
             return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-        }
+        },
     }
 }
 </script>

@@ -4,7 +4,7 @@
             class="img-fluid w-100"
             src="../../../../../assets/images/property/residences.jpg"
             alt="Featured Property"
-            style="height: 100vh; object-fit: cover; filter: brightness(50%)">
+            style="height: 45vh; object-fit: cover; filter: brightness(50%)">
 
         <div class="position-absolute top-50 start-50 translate-middle text-center">
             <h1 class="display-4 fw-bold">Find the Perfect Space for your Business</h1>

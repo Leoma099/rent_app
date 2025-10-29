@@ -6,19 +6,16 @@
 
     <div class="login-page d-flex justify-content-center align-items-center vh-100" :style="{ backgroundColor: '#faf9f6' }">
         <div class="card shadow-sm border-0 p-4" style="width: 380px;">
-            <!-- Logo -->
             <div class="text-center mb-3">
                 <img src="@/assets/images/capas_logo.png" alt="Logo" width="80" />
             </div>
 
-            <!-- Title & Header -->
             <div class="text-center mb-3">
                 <h2 class="fw-bold mb-0">Reset Password</h2>
             </div>
 
-            <!-- Login Form -->
             <form @submit.prevent="submit()">
-                <!-- Username -->
+                <label for="password" class="form-label">Password</label>
                 <div class="position-relative mb-3">
                     <input
                         :type="showPassword ? 'text' : 'password'"
@@ -28,7 +25,6 @@
                         placeholder="Enter your password"
                         required
                     />
-
                     <span
                         class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold cursor-pointer"
                         @click="togglePassword"
@@ -38,7 +34,6 @@
                     </span>
                 </div>
 
-                <!-- ✅ Simplified password validation -->
                 <ul class="list-unstyled mt-2 small">
                     <li :class="{'text-success fw-bold': passwordChecks.minLength, 'text-danger': !passwordChecks.minLength}">
                         {{ passwordChecks.minLength ? '✓' : '•' }} At least 8 characters
@@ -46,21 +41,27 @@
                     <li :class="{'text-success fw-bold': passwordChecks.uppercase, 'text-danger': !passwordChecks.uppercase}">
                         {{ passwordChecks.uppercase ? '✓' : '•' }} 1 uppercase letter
                     </li>
-                    <li :class="{'text-success fw-bold': passwordChecks.numberOrSymbol, 'text-danger': !passwordChecks.numberOrSymbol}">
-                        {{ passwordChecks.numberOrSymbol ? '✓' : '•' }} Contains a number or symbol
+                    <li :class="{'text-success fw-bold': passwordChecks.lowercase, 'text-danger': !passwordChecks.lowercase}">
+                        {{ passwordChecks.lowercase ? '✓' : '•' }} 1 lowercase letter
+                    </li>
+                    <li :class="{'text-success fw-bold': passwordChecks.number, 'text-danger': !passwordChecks.number}">
+                        {{ passwordChecks.number ? '✓' : '•' }} 1 number
+                    </li>
+                    <li :class="{'text-success fw-bold': passwordChecks.symbol, 'text-danger': !passwordChecks.symbol}">
+                        {{ passwordChecks.symbol ? '✓' : '•' }} 1 special character (@$!%*?&)
                     </li>
                 </ul>
 
-                <div class="position-relative my-3">
+                <label for="confirm_password" class="form-label">Confirm Password</label>
+                <div class="position-relative mb-3">
                     <input
-                        :type="showPassword ? 'text' : 'password'"
-                        id="password"
+                        :type="showConfirmPassword ? 'text' : 'password'"
+                        id="password_confirmation"
                         v-model="form.password_confirmation"
                         class="form-control pe-5"
                         placeholder="Enter your confirm password"
                         required
                     />
-
                     <span
                         class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold cursor-pointer"
                         @click="toggleConfirmPassword"
@@ -70,7 +71,6 @@
                     </span>
                 </div>
 
-                <!-- Login Button -->
                 <button
                     type="submit"
                     class="btn btn-primary w-100 mb-3"
@@ -81,7 +81,6 @@
                 </button>
             </form>
 
-            <!-- Links -->
             <div class="text-center">
                 <a href="/signin">Back to sign in</a>
             </div>
@@ -91,9 +90,10 @@
 </template>
 
 <script>
-import apiClient from "@/services/index";
-import { useToast } from "vue-toastification";
-import { useRoute } from "vue-router";
+import apiClient from "@/services/index"
+import { useToast } from "vue-toastification"
+import { useRoute } from "vue-router"
+
 export default
 {
     data()
@@ -115,7 +115,6 @@ export default
     created()
     {
         this.toast = useToast();
-
         const route = useRoute();
         this.form.email = route.query.email || "";
         this.form.token = route.query.token || "";
@@ -129,7 +128,9 @@ export default
             return {
                 minLength: password.length >= 8,
                 uppercase: /[A-Z]/.test(password),
-                numberOrSymbol: /[0-9@$!%*?&]/.test(password)
+                lowercase: /[a-z]/.test(password),
+                number: /[0-9]/.test(password),
+                symbol: /[@$!%*?&]/.test(password)
             };
         }
     },
@@ -244,7 +245,6 @@ export default
     object-fit: cover;
 }
 
-/* Add styles for the loading spinner */
 .loading-overlay
 {
     position: fixed;
@@ -261,8 +261,8 @@ export default
 
 .spinner
 {
-    border: 4px solid #f3f3f3; /* Light grey */
-    border-top: 4px solid #3498db; /* Blue */
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
     border-radius: 50%;
     width: 40px;
     height: 40px;

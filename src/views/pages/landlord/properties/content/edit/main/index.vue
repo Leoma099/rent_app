@@ -9,7 +9,6 @@
                     <schedule-component />
                 </div>
             </div>
-
             <div class="col-md-5">
                 <location-component />
             </div>
@@ -23,8 +22,8 @@
                 Cancel
             </router-link>
             <button type="submit" class="btn rounded-0 button-color" :disabled="isLoading">
-                <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-                Submit
+                <span v-if="isLoading">Submitting...</span>
+                <span v-else>Submit</span>
             </button>
         </div>
     </form>
@@ -54,8 +53,8 @@ export default
                 title: "",
                 description: "",
                 address: "",
-                lat: "",
-                lng: "",
+                lat: null,
+                lng: null,
                 price: "",
                 property_type: [],
                 photo_1: "",
@@ -88,9 +87,12 @@ export default
             {
                 const response = await apiClient.get(`/properties/${this.$route.params.id}`)
                 const property = response.data
-                this.form = {
+                this.form =
+                {
                     ...this.form,
                     ...property,
+                    lat: parseFloat(property.lat) || null,
+                    lng: parseFloat(property.lng) || null,
                     property_type: Array.isArray(property.property_type)
                         ? property.property_type
                         : property.property_type?.split(',') || [],
@@ -170,6 +172,20 @@ export default
             finally
             {
                 this.isLoading = false
+            }
+        },
+
+        async deleteItem(scheduleId)
+        {
+            try
+            {
+                const response = await apiClient.delete(`/schedule/${scheduleId}`);
+                this.form.schedules = this.form.schedules.filter(s => s.id !== scheduleId);
+                console.log(response);
+            }
+            catch(error)
+            {
+                console.error(error);
             }
         }
     }

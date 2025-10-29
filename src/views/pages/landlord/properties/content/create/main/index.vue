@@ -23,8 +23,9 @@
             <router-link :to="'/landlord/properties'"
                 class="btn rounded-0 btn-secondary me-3">Cancel
             </router-link>
-            <button type="submit" class="btn rounded-0 button-color">
-                Submit
+            <button type="submit" class="btn rounded-0 button-color" :disabled="isLoading">
+                <span v-if="isLoading">Submitting...</span>
+                <span v-else>Submit</span>
             </button>
         </div>
 
@@ -146,6 +147,14 @@ export default
             finally
             {
                 this.isLoading = false;
+            }
+        },
+
+        deleteSchedule(schedule)
+        {
+            const index = this.form.schedules.indexOf(schedule);
+            if (index !== -1) {
+                this.form.schedules.splice(index, 1);
             }
         }
 

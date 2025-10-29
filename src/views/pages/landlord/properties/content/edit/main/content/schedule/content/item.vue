@@ -1,4 +1,5 @@
 <template>
+
     <tr>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
@@ -10,42 +11,55 @@
         </td>
         <td class="table-data">
             <div class="text-end">
-                <button class="btn btn-sm btn-info rounded-0 me-2">
-                    <i class="bx bx-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-danger rounded-0">
+                <button
+                    type="button"
+                    class="btn btn-sm btn-danger rounded-0"
+                    @click="removeSchedule">
                     <i class="bx bx-trash"></i>
                 </button>
             </div>
         </td>
     </tr>
+
 </template>
 
 <script>
-export default {
-    props: {
+export default
+{
+    props:
+    {
         schedule: Object,
-        isLoading: Boolean,
+        isLoading: Boolean, // Receive isLoading prop from parent
+        deleteItem: Function,
     },
 
-    methods: {
-        formatTime(time) {
-            if (!time) return "";
+    methods:
+    {
+        formatTime(time)
+        {
+            if (!time) return '';
             const date = new Date(`1970-01-01T${time}`);
-            return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true });
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
         },
-    },
-};
+
+        removeSchedule()
+        {
+            this.deleteItem(this.schedule.id)
+        }
+    }
+}
 </script>
 
 <style scoped>
 .table-data {
-    font-size: 0.9rem;
+    font-size: 0.10rem;
     font-weight: 400;
     padding: 5px;
+    position: relative;
     text-transform: uppercase;
 }
 
+/* Shimmer Loader */
 .shimmer-loader {
     height: 16px;
     width: 100%;
@@ -59,8 +73,36 @@ export default {
     0% {
         background-position: -200% 0;
     }
+
     100% {
         background-position: 200% 0;
     }
+}
+
+.button-manage {
+    background-color: #007bff;
+    font-size: 0.80rem;
+    font-weight: 500;
+    padding: 10px;
+    color: #ffffff;
+}
+
+.equipment-image {
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    background: #e0e0e0;
+}
+
+.equipment-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+span
+{
+    font-size: 1rem;
+    font-weight: 600;
 }
 </style>

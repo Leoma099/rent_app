@@ -7,12 +7,12 @@
         <div class="card card-body shadow-sm border-0 rounded-0">
 
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
+                <!-- <div>
                     <router-link :to="'/administration/accounts/create'" class="btn rounded-0 button-color me-3 d-flex align-items-center">
                         <i class="bx bx-plus me-2"></i>
                         <span>Add New Lease</span>
                     </router-link>
-                </div>
+                </div> -->
                 <div class="col-md-4">
                     <input type="text" v-model="searchQuery" @input="loadList" placeholder="Type your search here"
                         class="form-control rounded-0">
@@ -157,7 +157,7 @@ export default
                     this.isEmpty = this.items.length === 0;
                     this.isLoading = false;
 
-                }, 3000);
+                }, 1000);
             }
             catch (error)
             {

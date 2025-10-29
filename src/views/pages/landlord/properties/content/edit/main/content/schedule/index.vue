@@ -11,7 +11,8 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="">* Available Day:</label>
-                            <select class="form-select rounded-0" v-model="form.available_day">
+                            <select class="form-select rounded-0" v-model="form.available_day"
+                            required>
                                 <option value="" disabled selected>-- select day --</option>
                                 <option value="Monday">Monday</option>
                                 <option value="Tuesday">Tuesday</option>
@@ -25,21 +26,21 @@
 
                         <div class="mb-3">
                             <label for="">* Select Start Time:</label>
-                            <input type="time" class="form-control rounded-0" v-model="form.start_time" />
+                            <input type="time" class="form-control rounded-0" v-model="form.start_time"
+                            required/>
                         </div>
 
                         <div class="mb-3">
                             <label for="">* Select End Time:</label>
-                            <input type="time" class="form-control rounded-0" v-model="form.end_time" />
+                            <input type="time" class="form-control rounded-0" v-model="form.end_time"
+                            required/>
                         </div>
 
                         <div class="text-end">
                             <button type="button" class="btn btn-sm rounded-0 btn-secondary me-2" data-bs-dismiss="modal">
                                 Close
                             </button>
-                            <button type="submit" class="btn btn-sm rounded-0 btn-primary" data-bs-dismiss="modal">
-                                Save
-                            </button>
+                            <button type="submit" class="btn btn-sm rounded-0 btn-primary">Save</button>
                         </div>
                     </div>
                 </form>
@@ -76,7 +77,10 @@
                 </tr>
             </thead>
             <tbody v-if="schedules.length > 0">
-                <item-component v-for="(schedule, index) in schedules" :key="index" :schedule="schedule" />
+                <item-component
+                    v-for="(schedule, index) in schedules"
+                    :key="index" :schedule="schedule"
+                    :deleteItem="deleteItem" />
             </tbody>
             <tbody v-else>
                 <tr>
@@ -90,10 +94,13 @@
 <script>
 import ItemComponent from "./content/item.vue";
 
-export default {
-    data() {
+export default
+{
+    data() 
+    {
         return {
-            form: {
+            form:
+            {
                 available_day: "",
                 start_time: this.getCurrentTime(),
                 end_time: this.getEndTime(this.getCurrentTime()),
@@ -101,29 +108,53 @@ export default {
         };
     },
 
-    computed: {
-        schedules() {
+    computed:
+    {
+        schedules()
+        {
             return this.$parent.$data.form.schedules;
         },
+
+        deleteItem()
+        {
+            return this.$parent.deleteItem;
+        }
     },
 
-    components: {
+    components:
+    {
         ItemComponent,
     },
 
-    methods: {
-        async submit() {
+    methods:
+    {
+        async submit() 
+        {
+            if (
+                !this.form.available_day ||
+                !this.form.start_time ||
+                !this.form.end_time
+            ) 
+            {
+                alert("Please fill out all required fields.");
+                return;
+            }
+
             this.schedules.unshift(Object.assign({}, this.form));
+
+            this.form.available_day = "";
         },
 
-        getCurrentTime() {
+        getCurrentTime()
+        {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, "0");
             const minutes = String(now.getMinutes()).padStart(2, "0");
             return `${hours}:${minutes}`;
         },
 
-        getEndTime(startTime) {
+        getEndTime(startTime)
+        {
             const [h, m] = startTime.split(":").map(Number);
             const date = new Date();
             date.setHours(h);
