@@ -87,7 +87,7 @@ export default
 
                 const newStatus = this.selectedProperty.status === 1 ? 0 : 1;
 
-                const response = await apiClient.put(`/status-properties/${this.selectedProperty.id}`,
+                const response = await apiClient.put(`/properties/${this.selectedProperty.id}/approved`,
                 {
                     status: newStatus
                 });
