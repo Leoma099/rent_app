@@ -33,6 +33,14 @@
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else>
+                <router-link
+                    :to="`/administration/properties/${item.id}`"
+                    class="btn btn-sm btn-info rounded-0 me-3"
+                    :class="{ 'disabled-link': item.status === 0 }"
+                    :tabindex="item.status === 0 ? -1 : 0"
+                    :aria-disabled="item.status === 0">
+                    <i class="bx bx-edit"></i>
+                </router-link>
                 <button
                     type="button"
                     class="btn btn-sm btn-danger rounded-0"

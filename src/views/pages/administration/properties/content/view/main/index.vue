@@ -14,7 +14,7 @@
             </div>
         </div>
 
-        <div class="text-end mt-3">
+        <!-- <div class="text-end mt-3">
             <router-link
                 :to="'/landlord/properties'"
                 class="btn rounded-0 btn-secondary me-3"
@@ -25,7 +25,7 @@
                 <span v-if="isLoading">Submitting...</span>
                 <span v-else>Submit</span>
             </button>
-        </div>
+        </div> -->
     </form>
 </template>
 

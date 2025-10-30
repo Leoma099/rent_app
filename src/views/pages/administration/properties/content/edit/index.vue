@@ -2,8 +2,8 @@
 
     <div class="animate animate-fade-in">
 
-        <h1 class="page-title mb-0">Edit Property</h1>
-        <router-link :to="'/administration/properties'">Back to page</router-link>
+        <h2 class="page-title mb-0">Add New Property</h2>
+        <router-link :to="'/administration/properties'">Go back to page</router-link>
 
         <main-component v-if="$route.meta.subPage === 'main'" />
 

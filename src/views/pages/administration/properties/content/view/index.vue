@@ -2,34 +2,35 @@
 
     <div class="animate animate-fade-in">
 
-        <list-component v-if="$route.meta.page === 'list'" />
-        <create-component v-if="$route.meta.page === 'create'" />
-        <view-component v-if="$route.meta.page === 'view'" />
+        <h2 class="page-title mb-0">View Property</h2>
+        <router-link :to="'/administration/properties'">Go back to page</router-link>
+
+        <main-component v-if="$route.meta.subPage === 'main'" />
 
     </div>
 
 </template>
 
 <script>
-import ListComponent from "./content/list";
-import ViewComponent from "./content/view";
+import MainComponent from "./main";
 export default
 {
+    name: 'Create',
+
     components:
     {
-        ListComponent,
-        ViewComponent
+        MainComponent
     }
 }
 </script>
 
 <style scoped>
-.animation
+.animate
 {
     animation-duration: 1s;
     animation-fill-mode: none;
 }
-.animation-fade-in
+.animate-fade-in
 {
     animation-name: fadeIn;
 }
@@ -41,5 +42,8 @@ export default
     to{
         opacity: 1;
     }
+}
+.page-title {
+    color: #007bff;
 }
 </style>

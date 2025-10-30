@@ -8,6 +8,7 @@
             placeholder="ex. BUILDING 1"
             class="form-control rounded-0"
             v-model="form.title"
+            disabled
         />
     </div>
 
@@ -17,6 +18,7 @@
             rows="5"
             class="form-control rounded-0"
             v-model="form.description"
+            disabled
         ></textarea>
     </div>
 
@@ -28,11 +30,12 @@
                 placeholder="ex. ADDRESS 1"
                 class="form-control rounded-0"
                 v-model="form.address"
+                disabled
             />
         </div>
         <div class="col-md-4">
             <label class="form-label">* Property Status</label>
-            <select class="form-select rounded-0" v-model="form.propertyStats">
+            <select class="form-select rounded-0" v-model="form.propertyStats" disabled>
                 <option value="" disabled>-- select property status --</option>
                 <option value="0">UNDER REVIEW</option>
                 <option value="1">FOR RENT</option>
@@ -51,12 +54,12 @@
                     type="text"
                     class="form-control rounded-0"
                     :value="Array.isArray(form.property_type) ? form.property_type.join(', ') : ''"
-                    readonly
+                    disabled
                 />
                 <select
                     class="form-select rounded-0 mt-3"
                     @change="handleBusinessTypeSelect"
-                >
+                    disabled>
                     <option value="" disabled selected>-- select business type --</option>
                     <option value="Office Space">Office Space</option>
                     <option value="Retail Shop">Retail Shop</option>
@@ -83,6 +86,7 @@
                     placeholder="ex. 25000"
                     class="form-control rounded-0"
                     v-model="form.price"
+                    disabled
                 />
             </div>
 
@@ -93,6 +97,7 @@
                     placeholder="ex. 25"
                     class="form-control rounded-0"
                     v-model="form.size"
+                    disabled
                 />
             </div>
         </div>
@@ -106,7 +111,7 @@
                     type="file"
                     class="form-control rounded-0"
                     @change="uploadFirstImage"
-                />
+                    disabled/>
             </div>
             <div class="col-md-3">
                 <label class="form-label">* Property Second View:</label>
@@ -114,7 +119,7 @@
                     type="file"
                     class="form-control rounded-0"
                     @change="uploadSecondImage"
-                />
+                    disabled/>
             </div>
             <div class="col-md-3">
                 <label class="form-label">* Property Third View:</label>
@@ -122,7 +127,7 @@
                     type="file"
                     class="form-control rounded-0"
                     @change="uploadThirdImage"
-                />
+                    disabled/>
             </div>
             <div class="col-md-3">
                 <label class="form-label">* Property Fourth View:</label>
@@ -130,7 +135,7 @@
                     type="file"
                     class="form-control rounded-0"
                     @change="uploadFourthImage"
-                />
+                    disabled/>
             </div>
         </div>
     </div>
@@ -141,7 +146,7 @@
             type="file"
             class="form-control rounded-0"
             @change="handleFloorPlanUpload"
-        />
+            disabled/>
     </div>
 </template>
 

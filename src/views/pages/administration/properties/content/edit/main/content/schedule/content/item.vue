@@ -14,7 +14,7 @@
                 <button
                     type="button"
                     class="btn btn-sm btn-danger rounded-0"
-                    @click="deleteSchedule(schedule)">
+                    @click="removeSchedule">
                     <i class="bx bx-trash"></i>
                 </button>
             </div>
@@ -30,7 +30,7 @@ export default
     {
         schedule: Object,
         isLoading: Boolean, // Receive isLoading prop from parent
-        deleteSchedule: Function,
+        deleteItem: Function,
     },
 
     methods:
@@ -41,6 +41,11 @@ export default
             const date = new Date(`1970-01-01T${time}`);
             return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
         },
+
+        removeSchedule()
+        {
+            this.deleteItem(this.schedule.id)
+        }
     }
 }
 </script>

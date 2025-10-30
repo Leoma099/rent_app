@@ -29,22 +29,23 @@ export default [
                     {
                         name: 'View Properties',
                         page: 'view',
+                        subPage: 'main',
                     },
-                    children:
-                        [
-                            {
-                                path: 'edit',
-                                name: 'Edit Administration / Properties',
-                                component: () => import('@/views/pages/administration/properties'),
-                                meta:
-                                {
-                                    name: 'Edit Properties',
+                    // children:
+                    // [
+                    //     {
+                    //         path: 'edit',
+                    //         name: 'Edit Administration / Properties',
+                    //         component: () => import('@/views/pages/administration/properties'),
+                    //         meta:
+                    //         {
+                    //             name: 'Edit Properties',
 
-                                    page: 'edit',
-                                    subPage: 'main',
-                                },
-                            },
-                        ],
+                    //             page: 'edit',
+                    //             subPage: 'main',
+                    //         },
+                    //     },
+                    // ],
                 },
             ],
     },
