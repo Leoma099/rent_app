@@ -35,11 +35,11 @@
             <span v-else>
                 <router-link
                     :to="`/administration/properties/${item.id}`"
-                    class="btn btn-sm btn-info rounded-0 me-3"
+                    class="btn btn-sm btn-warning rounded-0 me-3"
                     :class="{ 'disabled-link': item.status === 0 }"
                     :tabindex="item.status === 0 ? -1 : 0"
                     :aria-disabled="item.status === 0">
-                    <i class="bx bx-edit"></i>
+                    <i class="bx bx-show"></i>
                 </router-link>
                 <button
                     type="button"
