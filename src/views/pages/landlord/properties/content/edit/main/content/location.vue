@@ -350,26 +350,26 @@ export default
         }
     },
 
-    watch:
-    {
-        'form.lat'(newLat)
-        {
-            if (this.isClearing) return;
-            if (newLat && this.form.lng && this.map && !this.marker)
-            {
-                this.loadInitialMarker();
-            }
-        },
+    // watch:
+    // {
+    //     'form.lat'(newLat)
+    //     {
+    //         if (this.isClearing) return;
+    //         if (newLat && this.form.lng && this.map && !this.marker)
+    //         {
+    //             this.loadInitialMarker();
+    //         }
+    //     },
 
-        'form.lng'(newLng)
-        {
-            if (this.isClearing) return;
-            if (newLng && this.form.lat && this.map && !this.marker)
-            {
-                this.loadInitialMarker();
-            }
-        },
+    //     'form.lng'(newLng)
+    //     {
+    //         if (this.isClearing) return;
+    //         if (newLng && this.form.lat && this.map && !this.marker)
+    //         {
+    //             this.loadInitialMarker();
+    //         }
+    //     },
 
-    }
+    // }
 }
 </script>
