@@ -110,7 +110,7 @@ export default
         {
             if (!photoPath) return "/default-avatar.png";
             if (photoPath.startsWith("http")) return photoPath;
-            return `https://floralwhite-butterfly-259901.hostingersite.com//storage/${photoPath}`;
+            return `https://floralwhite-butterfly-259901.hostingersite.com/uploads/${photoPath}`;
         },
 
         formatPrice(price)
