@@ -65,7 +65,7 @@ export default
             outerCircle: null,
             landmarkMarkers: [],
             nearbyLandmarks:[],
-            apiKey: "AIzaSyCn9IGzgS41HOIRhMz_-RXlodu0mqsTgyU",
+            apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY, // <-- use .env
             isClearing: false,
         };
     },
