@@ -548,7 +548,7 @@ export default {
         {
             if (!floorPlanPath) return "/default-avatar.png";
             if (floorPlanPath.startsWith("http")) return floorPlanPath;
-            return `https://floralwhite-butterfly-259901.hostingersite.com/${floorPlanPath}`;
+            return `https://floralwhite-butterfly-259901.hostingersite.com/${floorPlanPath.replace(/^\/+/, '')}`;
         },
 
         clearAllBusinessMarkers()
