@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an Axios instance
 const apiClient = axios.create({
-    baseURL: 'http://api.rent-app.loc/api', // Replace with your Laravel API URL
+    baseURL: 'https://floralwhite-butterfly-259901.hostingersite.com/api', // Replace with your Laravel API URL
     headers: {
         'Content-Type': 'application/json',
     },
