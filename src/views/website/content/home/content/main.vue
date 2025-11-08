@@ -188,7 +188,7 @@ export default
             {
                 return photoPath;
             }
-            return `http://api.rent-app.loc/storage/${photoPath}`;
+            return `https://floralwhite-butterfly-259901.hostingersite.com//storage/${photoPath}`;
         },
 
         async fetchFeatured()
