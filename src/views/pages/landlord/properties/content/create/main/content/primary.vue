@@ -226,20 +226,36 @@ export default
             return this.$parent.$data.form;
         },
         photo1Url() {
-            return this.form.photo_1 instanceof File ? URL.createObjectURL(this.form.photo_1) : '';
+            if (!this.form.photo_1) return '';
+            return this.form.photo_1 instanceof File
+                ? URL.createObjectURL(this.form.photo_1)
+                : `https://floralwhite-butterfly-259901.hostingersite.com/${this.form.photo_1}`;
         },
         photo2Url() {
-            return this.form.photo_2 instanceof File ? URL.createObjectURL(this.form.photo_2) : '';
+            if (!this.form.photo_2) return '';
+            return this.form.photo_2 instanceof File
+                ? URL.createObjectURL(this.form.photo_2)
+                : `https://floralwhite-butterfly-259901.hostingersite.com/${this.form.photo_2}`;
         },
         photo3Url() {
-            return this.form.photo_3 instanceof File ? URL.createObjectURL(this.form.photo_3) : '';
+            if (!this.form.photo_3) return '';
+            return this.form.photo_3 instanceof File
+                ? URL.createObjectURL(this.form.photo_3)
+                : `https://floralwhite-butterfly-259901.hostingersite.com/${this.form.photo_3}`;
         },
         photo4Url() {
-            return this.form.photo_4 instanceof File ? URL.createObjectURL(this.form.photo_4) : '';
+            if (!this.form.photo_4) return '';
+            return this.form.photo_4 instanceof File
+                ? URL.createObjectURL(this.form.photo_4)
+                : `https://floralwhite-butterfly-259901.hostingersite.com/${this.form.photo_4}`;
         },
         floorPlanUrl() {
-            return this.form.floor_plan instanceof File ? URL.createObjectURL(this.form.floor_plan) : '';
+            if (!this.form.floor_plan) return '';
+            return this.form.floor_plan instanceof File
+                ? URL.createObjectURL(this.form.floor_plan)
+                : `https://floralwhite-butterfly-259901.hostingersite.com/${this.form.floor_plan}`;
         }
+
     },
 
     props:

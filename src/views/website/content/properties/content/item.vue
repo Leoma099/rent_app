@@ -72,7 +72,7 @@ export default
                 return photoPath;
             }
 
-            return `https://floralwhite-butterfly-259901.hostingersite.com/uploads/${photoPath}`;
+            return `https://floralwhite-butterfly-259901.hostingersite.com/${photoPath}`;
         },
 
         formatPrice(price)

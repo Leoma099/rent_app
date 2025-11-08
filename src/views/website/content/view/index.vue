@@ -541,14 +541,14 @@ export default {
         {
             if (!photoPath) return "/default-avatar.png";
             if (photoPath.startsWith("http")) return photoPath;
-            return `https://floralwhite-butterfly-259901.hostingersite.com/uploads/${photoPath}`;
+            return `https://floralwhite-butterfly-259901.hostingersite.com/${photoPath}`;
         },
 
         getFloorPlanUrl(floorPlanPath)
         {
             if (!floorPlanPath) return "/default-avatar.png";
             if (floorPlanPath.startsWith("http")) return floorPlanPath;
-            return `https://floralwhite-butterfly-259901.hostingersite.com/uploads/${floorPlanPath}`;
+            return `https://floralwhite-butterfly-259901.hostingersite.com/${floorPlanPath}`;
         },
 
         clearAllBusinessMarkers()
