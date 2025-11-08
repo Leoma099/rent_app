@@ -59,7 +59,7 @@ export default
             outerCircle: null,
             landmarkMarkers: [],
             nearbyLandmarks: [],
-            apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY, // <-- use .env
+            apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY, // <-- use .env
             isClearing: false // 👈 Added flag to prevent reloading during clear
         };
     },
