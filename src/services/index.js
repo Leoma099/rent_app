@@ -3,7 +3,6 @@ import axios from 'axios';
 // Create an Axios instance
 const apiClient = axios.create({
     baseURL: 'https://floralwhite-butterfly-259901.hostingersite.com/api', // Live URL
-    withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
     },

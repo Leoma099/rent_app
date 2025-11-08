@@ -126,7 +126,7 @@ export default
 
             try
             {
-                const response = await apiClient.post('/login', this.form, { withCredentials: true });
+                const response = await apiClient.post('/login', this.form);
 
                 localStorage.setItem('access_token', response.data.token);
                 localStorage.setItem('role', response.data.role);
