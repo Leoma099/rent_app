@@ -57,15 +57,16 @@ export default
 {
     data()
     {
-        return{
+        return {
             searchAddress: "",
             map: null,
             marker: null,
             innerCircle: null,
             outerCircle: null,
             landmarkMarkers: [],
-            nearbyLandmarks: [],
-            apiKey: "AIzaSyCn9IGzgS41HOIRhMz_-RXlodu0mqsTgyU"
+            nearbyLandmarks:[],
+            apiKey: "AIzaSyCn9IGzgS41HOIRhMz_-RXlodu0mqsTgyU",
+            isClearing: false,
         };
     },
 
@@ -82,7 +83,7 @@ export default
         if (!window.google)
         {
             const script = document.createElement("script");
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${this.apiKey}&libraries=places,geometry,visualization`;
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${this.apiKey}&libraries=places,geometry&loading=async`;
             script.async = true;
             script.defer = true;
             script.onload = () => this.initMap();
@@ -110,24 +111,29 @@ export default
             this.map = new window.google.maps.Map(mapEl,
             {
                 center: centerPoint,
-                zoom: 19,
+                zoom: 12,
                 scrollwheel: true
             });
 
-            this.map.addListener("click", (e) => {
+            this.map.addListener("click", (e) =>
+            {
                 this.placeMarker(e.latLng);
             });
 
-            if (this.form.lat && this.form.lng) {
+            if (this.form.lat && this.form.lng)
+            {
                 this.placeMarker(new window.google.maps.LatLng(this.form.lat, this.form.lng));
             }
 
-            if (this.$refs.inputRef) {
-                const autocomplete = new window.google.maps.places.Autocomplete(this.$refs.inputRef, {
+            if (this.$refs.inputRef)
+            {
+                const autocomplete = new window.google.maps.places.Autocomplete(this.$refs.inputRef,
+                {
                     componentRestrictions: { country: "ph" },
                     fields: ["geometry", "formatted_address"]
                 });
-                autocomplete.addListener("place_changed", () => {
+                autocomplete.addListener("place_changed", () =>
+                {
                     const place = autocomplete.getPlace();
                     if (!place.geometry || !place.geometry.location) return;
                     this.placeMarker(place.geometry.location);
@@ -137,20 +143,33 @@ export default
 
         placeMarker(location)
         {
+            if (this.isClearing) return;
+
+            console.log("📍 Placing marker at:", location);
+
             const latLng = location instanceof window.google.maps.LatLng
                 ? location
                 : new window.google.maps.LatLng(location.lat(), location.lng());
 
-            if (this.marker) {
+            if (this.marker)
+            {
+                console.log("🔁 Marker already exists, updating position...");
                 this.marker.setPosition(latLng);
-            } else {
-                this.marker = new window.google.maps.Marker({
+            }
+            else
+            {
+                console.log("🆕 Creating new marker...");
+                this.marker = new window.google.maps.Marker(
+                {
                     position: latLng,
                     map: this.map,
                     draggable: true
                 });
-                this.marker.addListener("dragend", (e) => {
+
+                this.marker.addListener("dragend", (e) =>
+                {
                     const newLatLng = e.latLng;
+                    console.log("📍 Marker dragged to:", newLatLng.lat(), newLatLng.lng());
                     this.form.lat = newLatLng.lat();
                     this.form.lng = newLatLng.lng();
                     this.updateAddress(newLatLng);
@@ -161,6 +180,8 @@ export default
 
             this.form.lat = latLng.lat();
             this.form.lng = latLng.lng();
+            console.log("🧭 Updated form coordinates:", this.form.lat, this.form.lng);
+
             this.updateAddress(latLng);
             this.showLandmarks(latLng);
             this.updateCircles(latLng);
@@ -170,8 +191,10 @@ export default
         updateAddress(location)
         {
             const geocoder = new window.google.maps.Geocoder();
-            geocoder.geocode({ location }, (results, status) => {
-                if (status === "OK" && results[0]) {
+            geocoder.geocode({ location }, (results, status) =>
+            {
+                if (status === "OK" && results[0])
+                {
                     this.form.address = results[0].formatted_address;
                     this.searchAddress = results[0].formatted_address;
                 }
@@ -184,16 +207,19 @@ export default
                 ? location
                 : new window.google.maps.LatLng(location.lat, location.lng);
 
-            if (this.innerCircle) {
+            if (this.innerCircle)
+            {
                 this.innerCircle.setMap(null);
                 this.innerCircle = null;
             }
-            if (this.outerCircle) {
+            if (this.outerCircle)
+            {
                 this.outerCircle.setMap(null);
                 this.outerCircle = null;
             }
 
-            this.innerCircle = new window.google.maps.Circle({
+            this.innerCircle = new window.google.maps.Circle(
+            {
                 strokeColor: "#007bff",
                 strokeOpacity: 0.6,
                 strokeWeight: 2,
@@ -204,7 +230,8 @@ export default
                 radius: 1000
             });
 
-            this.outerCircle = new window.google.maps.Circle({
+            this.outerCircle = new window.google.maps.Circle(
+            {
                 strokeColor: "#00FF00",
                 strokeOpacity: 0.6,
                 strokeWeight: 2,
@@ -218,34 +245,72 @@ export default
 
         showLandmarks(location)
         {
-            if (!window.google || !this.map) return;
+            if (!window.google || !this.map || this.isClearing)
+            {
+                return;
+            }
+
+            console.log("🗺️ Showing landmarks near:", location);
 
             // Clear previous markers
-            this.landmarkMarkers.forEach((m) => m.setMap(null));
+            this.landmarkMarkers.forEach((m) =>
+            {
+                m.setMap(null);
+            });
             this.landmarkMarkers = [];
             this.nearbyLandmarks = [];
 
+            const allowedTypes = ["restaurant", "convenience_store", "supermarket", "bank", "hospital", "school", "gym", "park", "hotel"];
             const service = new window.google.maps.places.PlacesService(this.map);
-            const types = ["restaurant", "school", "hospital", "supermarket", "gas station", "store"];
 
-            types.forEach((type) => {
-                const request = {
+            allowedTypes.forEach((type) =>
+            {
+                const request =
+                {
                     location: location,
                     radius: 5000,
                     type: type
                 };
 
-                service.nearbySearch(request, (results, status) => {
-                    if (status === window.google.maps.places.PlacesServiceStatus.OK && results.length) {
-                        results.forEach((place) => {
-                            if (!place.geometry || !place.geometry.location) return;
+                service.nearbySearch(request, (results, status) =>
+                {
+                    if (this.isClearing)
+                    {
+                        return;
+                    }
 
-                            // Create individual marker
-                            const marker = new window.google.maps.Marker({
+                    console.log(`📌 Type "${type}" search status:`, status, "Results:", results?.length || 0);
+
+                    if (status === window.google.maps.places.PlacesServiceStatus.OK && results.length)
+                    {
+                        results.forEach((place) =>
+                        {
+                            if (!place.geometry || !place.geometry.location)
+                            {
+                                return;
+                            }
+
+                            // Check if place type is in allowedTypes
+                            const placeType = place.types?.find((t) => allowedTypes.includes(t));
+                            if (!placeType)
+                            {
+                                return;
+                            }
+
+                            const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
+                                location,
+                                place.geometry.location
+                            );
+                            const distanceKm = (distance / 1000).toFixed(2);
+
+                            // Create marker
+                            const marker = new window.google.maps.Marker(
+                            {
                                 position: place.geometry.location,
                                 map: this.map,
                                 title: place.name,
-                                icon: {
+                                icon:
+                                {
                                     path: window.google.maps.SymbolPath.CIRCLE,
                                     scale: 8,
                                     fillColor: "#4285F4",
@@ -254,35 +319,21 @@ export default
                                 }
                             });
 
-                            const infoWindow = new window.google.maps.InfoWindow({
-                                content: `<strong>${place.name}</strong><br/>${place.vicinity || ""}`
-                            });
-
-                            marker.addListener("click", () => {
-                                infoWindow.open(this.map, marker);
-                            });
-
-                            // Calculate distance
-                            const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
-                                location,
-                                place.geometry.location
-                            );
-                            const distanceKm = (distance / 1000).toFixed(2); // km
-
                             this.landmarkMarkers.push(marker);
-
-                            // Push locally
-                            this.nearbyLandmarks.push({
+                            this.nearbyLandmarks.push(
+                            {
                                 name: place.name,
                                 vicinity: place.vicinity || "",
                                 distance: distanceKm,
                                 lat: place.geometry.location.lat(),
-                                lng: place.geometry.location.lng()
+                                lng: place.geometry.location.lng(),
+                                type: placeType
                             });
 
-                            // 🔹 Sync to parent form every time we add:
                             this.$parent.form.landmarks = [...this.nearbyLandmarks];
                         });
+
+                        console.log(`✅ Updated landmarks: ${this.nearbyLandmarks.length} total`);
                     }
                 });
             });
@@ -290,58 +341,85 @@ export default
 
         clearMap()
         {
-            // ✅ Prevent triggering parent validation
-            // Temporarily disable validation (if parent uses watchers)
-            if (this.$parent && this.$parent.disableValidation) {
-                this.$parent.disableValidation = true;
-            }
+            console.log("🧹 Clearing map and resetting state...");
+            this.isClearing = true;
 
-            // ✅ Clear main marker
-            if (this.marker) {
+            // 1️⃣ Remove the main marker
+            if (this.marker)
+            {
+                console.log("❌ Removing main marker...");
                 this.marker.setMap(null);
                 this.marker = null;
             }
 
-            // ✅ Clear circles
-            [this.innerCircle, this.outerCircle].forEach(circle => {
-                if (circle) {
-                    circle.setMap(null);
-                }
-            });
-            this.innerCircle = null;
-            this.outerCircle = null;
+            // 2️⃣ Remove the circles
+            if (this.innerCircle)
+            {
+                console.log("❌ Removing inner circle...");
+                this.innerCircle.setMap(null);
+                this.innerCircle = null;
+            }
+            if (this.outerCircle)
+            {
+                console.log("❌ Removing outer circle...");
+                this.outerCircle.setMap(null);
+                this.outerCircle = null;
+            }
 
-            // ✅ Clear nearby landmarks and their markers
-            this.landmarkMarkers.forEach(marker => marker.setMap(null));
+            // 3️⃣ Remove landmark markers
+            if (this.landmarkMarkers.length)
+            {
+                console.log(`❌ Removing ${this.landmarkMarkers.length} landmark markers...`);
+                this.landmarkMarkers.forEach(marker => marker.setMap(null));
+            }
             this.landmarkMarkers = [];
             this.nearbyLandmarks = [];
 
-            // ✅ Reset parent form fields safely
-            if (this.$parent?.form) {
-                this.$parent.form.nearbyAreaLandmark = [];
+            // 4️⃣ Reset parent form data (if exists)
+            if (this.$parent?.form)
+            {
+                console.log("🧾 Resetting parent form data...");
+                this.$parent.form.landmarks = [];
                 this.$parent.form.lat = "";
                 this.$parent.form.lng = "";
                 this.$parent.form.address = "";
             }
 
-            // ✅ Reset local input and search field
+            // 5️⃣ Clear search input
             this.searchAddress = "";
 
-            // ✅ Recenter the map
-            const centerPoint = { lat: 15.3461466, lng: 120.5926823 };
-            if (this.map) {
-                this.map.panTo(centerPoint);
-                this.map.setZoom(19);
+            // 6️⃣ Reset map center and zoom
+            const defaultCenter = { lat: 15.3461466, lng: 120.5926823 };
+            if (this.map)
+            {
+                console.log("🔄 Resetting map center and zoom...");
+                this.map.panTo(defaultCenter);
+                this.map.setZoom(12);
             }
 
-            // ✅ Small timeout to re-enable validation after clearing
-            if (this.$parent && this.$parent.disableValidation) {
-                setTimeout(() => {
-                    this.$parent.disableValidation = false;
-                }, 500);
-            }
-        },
+            // 7️⃣ Reinitialize map properly (to allow repinning)
+            console.log("🗺️ Reinitializing map...");
+            this.map = new window.google.maps.Map(document.getElementById("googleMap"), {
+                center: defaultCenter,
+                zoom: 12,
+                scrollwheel: true
+            });
 
+            // Reattach map click event
+            this.map.addListener("click", (e) =>
+            {
+                console.log("📍 Map clicked — placing new marker...");
+                this.isClearing = false; // allow new marker again
+                this.placeMarker(e.latLng);
+            });
+
+            // 8️⃣ Reset state flag
+            setTimeout(() =>
+            {
+                this.isClearing = false;
+                console.log("✅ Map cleared and ready for new pin.");
+            }, 300);
+        }
     }
 };
 </script>

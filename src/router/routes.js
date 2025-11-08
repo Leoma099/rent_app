@@ -12,8 +12,18 @@ const routesData = [];
     const root = {
         path: '/',
         name: 'Root',
-        redirect: '/commercialhub',
+        redirect: () => {
+            const token = localStorage.getItem("access_token");
+            const role = parseInt(localStorage.getItem("role"));
+
+            if (token) {
+                if (role === 1 || role === 2) return '/dashboard';
+                if (role === 3) return '/commercialhub';
+            }
+            return '/commercialhub';
+        }
     };
+
 
     routesData.push(root);
 

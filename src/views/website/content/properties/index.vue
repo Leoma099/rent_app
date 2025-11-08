@@ -46,11 +46,21 @@
                         </div>
 
                         <div class="col-md-6">
-                            <input
-                                v-model="filters.search"
-                                type="text"
-                                class="form-control"
-                                placeholder="Enter location or property name">
+                            <div class="position-relative">
+                                <input
+                                    v-model="filters.search"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Enter location or property name">
+                                <span
+                                    v-if="filters.search"
+                                    class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold cursor-pointer"
+                                    @click="clearSearch"
+                                    style="user-select: none;"
+                                >
+                                    x
+                                </span>
+                            </div>
                         </div>
 
                         <div class="col-md-3 d-grid">
@@ -91,6 +101,12 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div v-if="!isLoading && items.length === 0" class="text-center py-5 fade-in">
+            <i class='bx bx-file-find text-secondary' style="font-size: 55px; opacity: .4;"></i>
+            <h5 class="mt-2 text-muted">No properties found</h5>
+            <p class="text-secondary small">Check back soon for new listings.</p>
         </div>
     </div>
 </template>
@@ -170,12 +186,28 @@ export default
                     this.isLoading = false;
                 }
             }, 1000);
+        },
+
+        clearSearch()
+        {
+            this.filters.search = "";
+            this.fetchProperties();
         }
     }
 };
 </script>
 
 <style scoped>
+.fade-in
+{
+    animation: fadeIn .3s ease-in-out;
+}
+
+@keyframes fadeIn
+{
+    0% { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
 .fade-enter-active,
 .fade-leave-active
 {

@@ -1,14 +1,20 @@
 <template>
     <div class="container my-5">
+
+        <!-- FEATURED PROPERTIES -->
         <div class="mt-5">
             <div>
                 <h2 class="mb-0"><strong>FEATURED PROPERTIES</strong></h2>
-                <p class="mb-0">Top Locations Curated for Your Success.</p>
+                <p class="mb-0 text-muted">Top Locations Curated for Your Success.</p>
             </div>
-            <div class="row g-4 mt-2">
+
+            <!-- Loading OR Has Data -->
+            <div class="row g-4 mt-2" v-if="isLoadingFeatured || featured.length > 0">
+
+                <!-- LOADING STATE -->
                 <template v-if="isLoadingFeatured">
-                    <div class="col-md-4" v-for="n in 3" :key="'shimmer-featured-' + n">
-                        <div class="card h-100 shadow-sm shimmer-card border-0">
+                    <div class="col-md-4 fade-in" v-for="n in 3" :key="'shimmer-featured-' + n">
+                        <div class="card h-100 shadow-sm shimmer-card border-0 rounded-3 overflow-hidden">
                             <div class="shimmer-img"></div>
                             <div class="card-body">
                                 <div class="shimmer-text title"></div>
@@ -20,51 +26,67 @@
                         </div>
                     </div>
                 </template>
+
+                <!-- DATA STATE -->
                 <template v-else>
-                    <div class="col-md-4" v-for="item in featured" :key="item.id">
-                        <a href="javascript:void(0)" style="text-decoration: none;" @click="navigateToProperty(item.id)">
-                            <div class="card h-100 shadow-sm">
+                    <div class="col-md-4 fade-in" v-for="item in featured" :key="item.id">
+                        <a href="javascript:void(0)" class="text-decoration-none" @click="navigateToProperty(item.id)">
+                            <div class="card h-100 shadow-sm hover-card border-0 rounded-3 overflow-hidden">
                                 <img
                                     :src="getPhotoUrl(item.photo_1)"
                                     :alt="item.property_name"
-                                    style="height: 200px; object-fit: cover"
-                                    class="card-img-top">
+                                    class="card-img-top"
+                                    style="height: 200px; object-fit: cover;">
                                 <div class="card-body">
-                                    <h5 class="card-title mb-0">{{ item.title }}</h5>
-                                    <p class="card-text text-muted mb-0">{{ item.address }}</p>
-                                    <p class="mb-1">
-                                        <span v-if="item.is_featured !== 0" class="badge rounded-pill text-bg-success me-2">
-                                            {{ formatFeature(item.is_featured) }}
-                                        </span>
-                                        <span class="badge text-bg-secondary rounded-pill">{{ formatPropStats(item.propertyStats) }}</span>
-                                    </p>
-                                    <p class="mb-0">
-                                        <span
+                                    <h5 class="card-title mb-0 fw-bold">{{ item.title }}</h5>
+                                    <p class="text-muted small mb-1">{{ item.address }}</p>
+
+                                    <div class="mb-1">
+                                        <span v-if="item.is_featured !== 0" class="badge bg-success me-2">FEATURED</span>
+                                        <span class="badge bg-secondary">{{ formatPropStats(item.propertyStats) }}</span>
+                                    </div>
+
+                                    <div class="mb-1">
+                                        <span class="badge bg-light text-dark border me-1"
                                             v-for="(type, index) in item.property_type.split(',')"
-                                            :key="index"
-                                            class="badge text-bg-info rounded-pill me-1">
-                                            {{ type.trim() }}
-                                        </span>
-                                        ( <i class='bx bx-ruler'></i> {{ item.size }} sqm )
-                                    </p>
-                                    <span class="fw-bold text-primary">{{ formatPrice(item.price) }} / Monthly</span>
+                                            :key="index">{{ type.trim() }}</span>
+
+                                        <small class="text-muted"><i class='bx bx-ruler'></i> {{ item.size }} sqm</small>
+                                    </div>
+
+                                    <div class="fw-bold text-primary">{{ formatPrice(item.price) }} / Monthly</div>
                                 </div>
                             </div>
                         </a>
                     </div>
                 </template>
+
+            </div>
+
+            <!-- EMPTY STATE -->
+            <div v-else class="text-center py-5 fade-in">
+                <i class='bx bx-buildings text-secondary' style="font-size: 55px; opacity: .4;"></i>
+                <h5 class="mt-2 text-muted">No featured properties yet</h5>
+                <p class="text-secondary small">Check back soon for fresh listings in Capas.</p>
             </div>
         </div>
+        <!-- END FEATURED -->
 
+
+
+        <!-- RECENT PROPERTIES -->
         <div class="mt-5">
             <div>
                 <h2 class="mb-0"><strong>RECENT PROPERTIES</strong></h2>
-                <p class="mb-0">Explore the Latest Offices and Stores for Lease.</p>
+                <p class="mb-0 text-muted">Explore the Latest Offices and Stores for Lease.</p>
             </div>
-            <div class="row g-4 mt-2">
+
+            <div class="row g-4 mt-2" v-if="isLoadingRecent || recents.length > 0">
+
+                <!-- LOADING -->
                 <template v-if="isLoadingRecent">
-                    <div class="col-md-4" v-for="n in 3" :key="'shimmer-recent-' + n">
-                        <div class="card h-100 shadow-sm shimmer-card border-0">
+                    <div class="col-md-4 fade-in" v-for="n in 3" :key="'shimmer-recent-' + n">
+                        <div class="card h-100 shadow-sm shimmer-card border-0 rounded-3 overflow-hidden">
                             <div class="shimmer-img"></div>
                             <div class="card-body">
                                 <div class="shimmer-text title"></div>
@@ -76,46 +98,58 @@
                         </div>
                     </div>
                 </template>
+
+                <!-- DATA -->
                 <template v-else>
-                    <div class="col-md-4" v-for="item in recents" :key="item.id">
-                        <a href="javascript:void(0)" style="text-decoration: none;" @click="navigateToProperty(item.id)">
-                            <div class="card h-100 shadow-sm">
+                    <div class="col-md-4 fade-in" v-for="item in recents" :key="item.id">
+                        <a href="javascript:void(0)" class="text-decoration-none" @click="navigateToProperty(item.id)">
+                            <div class="card h-100 shadow-sm hover-card border-0 rounded-3 overflow-hidden">
                                 <img
                                     :src="getPhotoUrl(item.photo_1)"
                                     :alt="item.property_name"
-                                    style="height: 200px; object-fit: cover"
-                                    class="card-img-top">
+                                    class="card-img-top"
+                                    style="height: 200px; object-fit: cover;">
                                 <div class="card-body">
-                                    <h5 class="card-title mb-0">{{ item.title }}</h5>
-                                    <p class="card-text text-muted mb-0">{{ item.address }}</p>
-                                    <p class="mb-1">
-                                        <span v-if="item.is_featured !== 0" class="badge text-bg-success rounded-pill me-2">
-                                            {{ formatFeature(item.is_featured) }}
-                                        </span>
-                                        <span class="badge text-bg-secondary rounded-pill">{{ formatPropStats(item.propertyStats) }}</span>
-                                    </p>
-                                    <p class="mb-0">
-                                        <span
+                                    <h5 class="card-title mb-0 fw-bold">{{ item.title }}</h5>
+                                    <p class="text-muted small mb-1">{{ item.address }}</p>
+
+                                    <div class="mb-1">
+                                        <span v-if="item.is_featured !== 0" class="badge bg-success me-2">FEATURED</span>
+                                        <span class="badge bg-secondary">{{ formatPropStats(item.propertyStats) }}</span>
+                                    </div>
+
+                                    <div class="mb-1">
+                                        <span class="badge bg-light text-dark border me-1"
                                             v-for="(type, index) in item.property_type.split(',')"
-                                            :key="index"
-                                            class="badge text-bg-info rounded-pill me-1">
-                                            {{ type.trim() }}
-                                        </span>
-                                        ( <i class='bx bx-ruler'></i> {{ item.size }} sqm )
-                                    </p>
-                                    <span class="fw-bold text-primary">{{ formatPrice(item.price) }} / Monthly</span>
+                                            :key="index">{{ type.trim() }}</span>
+
+                                        <small class="text-muted"><i class='bx bx-ruler'></i> {{ item.size }} sqm</small>
+                                    </div>
+
+                                    <div class="fw-bold text-primary">{{ formatPrice(item.price) }} / Monthly</div>
                                 </div>
                             </div>
                         </a>
                     </div>
                 </template>
+
             </div>
-            <div class="mt-3">
-                <div class="text-center">
-                    <a href="javascript:void(0)" class="btn btn-secondary rounded-0" @click="navigateToAllProperties">
-                        View all properties
-                    </a>
-                </div>
+
+            <!-- EMPTY -->
+            <div v-else class="text-center py-5 fade-in">
+                <i class='bx bx-file-find text-secondary' style="font-size: 55px; opacity: .4;"></i>
+                <h5 class="mt-2 text-muted">No recent properties found</h5>
+                <p class="text-secondary small">New rental spaces will appear here soon.</p>
+            </div>
+        </div>
+        <!-- END RECENT -->
+
+
+        <div class="mt-3">
+            <div class="text-center">
+                <a href="javascript:void(0)" class="btn btn-secondary rounded-0" @click="navigateToAllProperties">
+                    View all properties
+                </a>
             </div>
         </div>
     </div>
@@ -259,6 +293,19 @@ export default
 </script>
 
 <style scoped>
+.fade-in
+{
+    animation: fadeIn .3s ease-in-out;
+}
+
+@keyframes fadeIn
+{
+    0% { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+
+
 .badge
 {
     background-color: #e9ecef;

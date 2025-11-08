@@ -261,7 +261,8 @@ export default {
         return {
             property: null,
             selectedScheduleId: null,
-            businessTypes: {
+            businessTypes:
+            {
                 restaurant: { name: "Restaurant", icon: restaurantIcon },
                 convenience_store: { name: "Convenience Store", icon: convienceIcon },
                 supermarket: { name: "Supermarket", icon: supermarketIcon },

@@ -4,7 +4,7 @@ import App from './App.vue'
 
 import Toast, { POSITION } from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
-
+// import VueGoogleMaps from '@fawmi/vue-google-maps';
 import { router } from "./router";
 // import store from "./stores";
 
@@ -26,7 +26,11 @@ const app = createApp(App)
         pauseOnHover: true,
         draggable: true,
       })
-    // .use(store)
+    // .use(VueGoogleMaps, {
+    //     load: {
+    //         key: 'AIzaSyCn9IGzgS41HOIRhMz_-RXlodu0mqsTgyU',
+    //     }
+    // })
 
 app.mount('#app');
 

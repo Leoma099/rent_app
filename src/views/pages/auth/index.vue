@@ -1,25 +1,20 @@
 <template>
-
     <div v-if="isLoading" class="loading-overlay">
         <div class="spinner"></div>
     </div>
 
     <div class="login-page d-flex justify-content-center align-items-center vh-100" :style="{ backgroundColor: '#faf9f6' }">
         <div class="card shadow-sm border-0 p-4" style="width: 380px;">
-            <!-- Logo -->
             <div class="text-center mb-3">
                 <img src="@/assets/images/capas_logo.png" alt="Logo" width="80" />
             </div>
 
-            <!-- Title & Header -->
             <div class="text-center mb-3">
                 <h6 class="mb-0">Welcome to</h6>
                 <h2 class="fw-bold mb-1">Commercial Hub</h2>
             </div>
 
-            <!-- Login Form -->
             <form @submit.prevent="submit()">
-                <!-- Username -->
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input
@@ -28,15 +23,12 @@
                         v-model="form.username"
                         class="form-control"
                         placeholder="Enter your username"
-                        required
                     />
+                    <small v-if="errors.username" class="text-danger">{{ errors.username }}</small>
                 </div>
 
-                <!-- Password -->
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
-
-                    <!-- ✅ Wrap input + show button in position-relative -->
                     <div class="position-relative">
                         <input
                             :type="showPassword ? 'text' : 'password'"
@@ -44,10 +36,7 @@
                             v-model="form.password"
                             class="form-control pe-5"
                             placeholder="Enter your password"
-                            required
                         />
-
-                        <!-- ✅ This is the SHOW/HIDE toggle -->
                         <span
                             class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold cursor-pointer"
                             @click="togglePassword"
@@ -56,9 +45,9 @@
                             {{ showPassword ? 'Hide' : 'Show' }}
                         </span>
                     </div>
+                    <small v-if="errors.password" class="text-danger">{{ errors.password }}</small>
                 </div>
 
-                <!-- Login Button -->
                 <button
                     type="submit"
                     class="btn btn-primary w-100 mb-3"
@@ -69,7 +58,6 @@
                 </button>
             </form>
 
-            <!-- Links -->
             <div class="text-center">
                 <p class="mb-1 small">
                     New member? <a href="/registration">Register here</a>
@@ -86,7 +74,6 @@
             </div>
         </div>
     </div>
-
 </template>
 
 <script>
@@ -98,13 +85,14 @@ export default
     data()
     {
         return {
-            form: {
+            form:
+            {
                 username: "",
                 password: "",
             },
             isLoading: false,
-            showPassword: false, // ✅ Added for toggling password visibility
-            errors: {} // ✅ Added for error validation tracking
+            showPassword: false,
+            errors: {}
         };
     },
 
@@ -117,8 +105,24 @@ export default
     {
         async submit()
         {
-            this.isLoading = true;
             this.errors = {};
+
+            if (!this.form.username)
+            {
+                this.errors.username = "Username is required";
+            }
+
+            if (!this.form.password)
+            {
+                this.errors.password = "Password is required";
+            }
+
+            if (Object.keys(this.errors).length)
+            {
+                return;
+            }
+
+            this.isLoading = true;
 
             try
             {
@@ -127,8 +131,6 @@ export default
                 localStorage.setItem('access_token', response.data.token);
                 localStorage.setItem('role', response.data.role);
                 localStorage.setItem("user_id", response.data.id);
-
-                // ACCOUNT INFO
                 localStorage.setItem("account", response.data.account ? response.data.account.id : "");
                 localStorage.setItem('full_name', response.data.full_name);
                 localStorage.setItem('id_number', response.data.id_number);
@@ -140,7 +142,6 @@ export default
                 localStorage.setItem('email', response.data.email);
                 localStorage.setItem('address', response.data.address);
 
-                // Redirect based on role
                 setTimeout(() =>
                 {
                     if (response.data.role === 1 || response.data.role === 2)
@@ -157,14 +158,13 @@ export default
             }
             catch (error)
             {
-                this.isLoading = false;
-                this.errors = {};
-
                 const status = error.response?.status;
                 const message = error.response?.data?.error || "Login failed";
 
                 if (status === 401)
                 {
+                    this.errors.password = "Incorrect password";
+                    this.form.password = "";
                     this.toast.error("Login unsuccessful! Wrong username or password.");
                 }
                 else if (status === 403)
@@ -193,80 +193,6 @@ export default
 </script>
 
 <style scoped>
-.animation
-{
-    animation-duration: 1s;
-    animation-fill-mode: none;
-}
-
-.animation-fade-in
-{
-    animation-name: fadeIn;
-}
-
-@keyframes fadeIn
-{
-    from
-    {
-        opacity: 0;
-    }
-    to
-    {
-        opacity: 1;
-    }
-}
-
-.container
-{
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-.box-area
-{
-    width: 930px;
-}
-
-.right-box
-{
-    padding: 40px;
-}
-
-.button-signin
-{
-    border: 2px solid #ffffff;
-    color: #ffffff;
-    transition: all 0.2s ease-in-out;
-}
-
-.button-signin:hover
-{
-    background: #ffffff;
-    color: #007bff;
-    font-weight: 600;
-}
-
-.login-image
-{
-    width: 400px;
-    overflow: hidden;
-    text-align: center;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.login-image img
-{
-    width: 100%;
-    object-fit: cover;
-}
-
-/* Add styles for the loading spinner */
 .loading-overlay
 {
     position: fixed;
@@ -283,8 +209,8 @@ export default
 
 .spinner
 {
-    border: 4px solid #f3f3f3; /* Light grey */
-    border-top: 4px solid #3498db; /* Blue */
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -301,5 +227,10 @@ export default
     {
         transform: rotate(360deg);
     }
+}
+
+.text-danger
+{
+    font-size: 0.8rem;
 }
 </style>

@@ -8,31 +8,24 @@
     <div v-else class="recommended mt-5">
         <h2>Recommended Properties</h2>
 
-        <div class="row mt-3">
+        <div v-if="properties.length > 0" class="row mt-3">
             <div class="col-md-4 mb-3" v-for="property in properties" :key="property.id">
-                <a 
-                    href="javascript:void(0)" 
-                    style="text-decoration: none;"
-                    @click="navigateToProperty(property.id)">
+                <a href="javascript:void(0)" @click="navigateToProperty(property.id)" style="text-decoration: none;">
                     <div class="card h-100 shadow-sm">
-                        <img
-                            :src="getPhotoUrl(property.photo_1)"
-                            :alt="property.property_name"
-                            style="height: 200px; object-fit: cover"
-                            class="card-img-top">
+                        <img :src="getPhotoUrl(property.photo_1)" :alt="property.property_name"
+                            style="height: 200px; object-fit: cover" class="card-img-top" />
                         <div class="card-body">
                             <h5 class="card-title mb-0">{{ property.title }}</h5>
                             <p class="card-text text-muted mb-0">{{ property.address }}</p>
                             <p class="mb-1">
-                                <span v-if="property.is_featured !== 0" class="badge text-bg-success rounded-pill me-2">{{ formatFeature( property.is_featured ) }}</span>
-                                <span class="badge text-bg-secondary rounded-pill">{{ formatPropStats( property.propertyStats ) }}</span>
+                                <span v-if="property.is_featured !== 0" class="badge text-bg-success rounded-pill me-2">
+                                    {{ formatFeature(property.is_featured) }}
+                                </span>
+                                <span class="badge text-bg-secondary rounded-pill">{{ formatPropStats(property.propertyStats) }}</span>
                             </p>
                             <p class="mb-0">
-                                <span
-                                    v-for="(type, index) in property.property_type.split(',')"
-                                    :key="index"
-                                    class="badge text-bg-info rounded-pill me-1"
-                                >
+                                <span v-for="(type, index) in property.property_type.split(',')" :key="index"
+                                    class="badge text-bg-info rounded-pill me-1">
                                     {{ type.trim() }}
                                 </span>
                                 ( <i class='bx bx-ruler'></i> {{ property.size }} sqm )
@@ -43,7 +36,14 @@
                 </a>
             </div>
         </div>
+
+        <div v-else class="text-center my-5">
+            <i class='bx bx-file-find text-secondary' style="font-size:55px;opacity:.4;"></i>
+            <h5 class="mt-2 text-muted">No recommended properties available</h5>
+            <p class="text-secondary small">Check back soon for updates.</p>
+        </div>
     </div>
+
 </template>
 
 <script>
