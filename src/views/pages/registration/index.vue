@@ -221,7 +221,7 @@ export default
 
             try
             {
-                const response = await apiClient.post('/register', this.form);
+                const response = await apiClient.post('/admin/register', this.form);
                 console.log(response.data);
 
                 setTimeout(() =>

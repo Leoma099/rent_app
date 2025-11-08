@@ -111,7 +111,7 @@ export default
             this.map = new window.google.maps.Map(mapEl,
             {
                 center: centerPoint,
-                zoom: 12,
+                zoom: 16,
                 scrollwheel: true
             });
 

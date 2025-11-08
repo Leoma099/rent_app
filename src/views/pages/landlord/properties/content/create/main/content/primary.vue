@@ -1,5 +1,4 @@
 <template>
-
     <h3 class="fw-bold text-primary mb-0">Property Basic Info</h3>
 
     <div class="mt-3">
@@ -79,47 +78,142 @@
         </div>
     </div>
 
-    <div class="mt-3">
-        <div class="row">
-            <div class="col-md-3">
-                <label class="form-label">* Property First View:</label>
-                <input
-                    type="file"
-                    class="form-control rounded-0"
-                    @change="uploadFirstImage">
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">* Property Second View:</label>
-                <input
-                    type="file"
-                    class="form-control rounded-0"
-                    @change="uploadSecondImage">
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">* Property Third View:</label>
-                <input
-                    type="file"
-                    class="form-control rounded-0"
-                    @change="uploadThirdImage">
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">* Property Fourth View:</label>
-                <input
-                    type="file"
-                    class="form-control rounded-0"
-                    @change="uploadFourthImage">
+    <!-- Property Image Views -->
+     <div class="mt-3">
+
+        <!-- Property Image View 1 -->
+        <div class="mb-3">
+            <div class="d-flex gap-3">
+                <!-- Preview -->
+                <div class="image-preview rounded-3 border d-flex align-items-center justify-content-center">
+                    <img v-if="photo1Url" :src="photo1Url" class="img-fluid rounded" alt="First View">
+                    <span v-else class="text-muted small">No image</span>
+                </div>
+                <!-- Input -->
+                <div class="w-100">
+                    <div class="form-label">* Property 1st Image View:</div>
+                    <div class="position-relative">
+                        <input type="file" class="form-control rounded-3 shadow-sm" @change="uploadFirstImage">
+                        <span
+                            v-if="form.photo_1"
+                            class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold"
+                            style="cursor: pointer; font-size: 1.25rem; line-height: 1;"
+                            @click.prevent="
+                                form.photo_1 = null;
+                                $event.target.closest('.position-relative').querySelector('input[type=file]').value = null;
+                            ">
+                            <i class="text-danger bx bx-x"></i>
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="mt-3">
-        <label class="form-label">* Property Floor Plan:</label>
-        <input
-            type="file"
-            class="form-control rounded-0"
-            @change="handleFloorPlanUpload">
-    </div>
+        <!-- Property Image View 2 -->
+        <div class="mb-3">
+            <div class="d-flex gap-3">
+                <div class="image-preview rounded-3 border d-flex align-items-center justify-content-center">
+                    <img v-if="photo2Url" :src="photo2Url" class="img-fluid rounded" alt="Second View">
+                    <span v-else class="text-muted small">No image</span>
+                </div>
+                <div class="w-100">
+                    <div class="form-label">* Property 2nd Image View:</div>
+                    <div class="position-relative">
+                        <input type="file" class="form-control rounded-3 shadow-sm" @change="uploadSecondImage">
+                        <span
+                            v-if="form.photo_2"
+                            class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold"
+                            style="cursor: pointer; font-size: 1.25rem; line-height: 1;"
+                            @click.prevent="
+                                form.photo_2 = null;
+                                $event.target.closest('.position-relative').querySelector('input[type=file]').value = null;
+                            ">
+                            <i class="text-danger bx bx-x"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- Property Image View 3 -->
+        <div class="mb-3">
+            <div class="d-flex gap-3">
+                <div class="image-preview rounded-3 border d-flex align-items-center justify-content-center">
+                    <img v-if="photo3Url" :src="photo3Url" class="img-fluid rounded" alt="Third View">
+                    <span v-else class="text-muted small">No image</span>
+                </div>
+                <div class="w-100">
+                    <div class="form-label">* Property 3rd Image View:</div>
+                    <div class="position-relative">
+                        <input type="file" class="form-control rounded-3 shadow-sm" @change="uploadThirdImage">
+                        <span
+                            v-if="form.photo_3"
+                            class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold"
+                            style="cursor: pointer; font-size: 1.25rem; line-height: 1;"
+                            @click.prevent="
+                                form.photo_3 = null;
+                                $event.target.closest('.position-relative').querySelector('input[type=file]').value = null;
+                            ">
+                            <i class="text-danger bx bx-x"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Property Image View 4 -->
+        <div class="mb-3">
+            <div class="d-flex gap-3">
+                <div class="image-preview rounded-3 border d-flex align-items-center justify-content-center">
+                    <img v-if="photo4Url" :src="photo4Url" class="img-fluid rounded" alt="Fourth View">
+                    <span v-else class="text-muted small">No image</span>
+                </div>
+                <div class="w-100">
+                    <div class="form-label">* Property 4th Image View:</div>
+                    <div class="position-relative">
+                        <input type="file" class="form-control rounded-3 shadow-sm" @change="uploadFourthImage">
+                        <span
+                            v-if="form.photo_4"
+                            class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold"
+                            style="cursor: pointer; font-size: 1.25rem; line-height: 1;"
+                            @click.prevent="
+                                form.photo_4 = null;
+                                $event.target.closest('.position-relative').querySelector('input[type=file]').value = null;
+                            ">
+                            <i class="text-danger bx bx-x"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Property Floor Plan Image -->
+        <div class="mb-3">
+            <div class="d-flex gap-3">
+                <div class="image-preview rounded-3 border d-flex align-items-center justify-content-center">
+                    <img v-if="floorPlanUrl" :src="floorPlanUrl" class="img-fluid rounded" alt="Floor Plan">
+                    <span v-else class="text-muted small">No image</span>
+                </div>
+                <div class="w-100">
+                    <div class="form-label">* Property Floor Plan Image:</div>
+                    <div class="position-relative">
+                        <input type="file" class="form-control rounded-3 shadow-sm" @change="handleFloorPlanUpload">
+                        <span
+                            v-if="form.floor_plan"
+                            class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold"
+                            style="cursor: pointer; font-size: 1.25rem; line-height: 1;"
+                            @click.prevent="
+                                form.floor_plan = null;
+                                $event.target.closest('.position-relative').querySelector('input[type=file]').value = null;
+                            ">
+                            <i class="text-danger bx bx-x"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </template>
 
 <script>
@@ -130,6 +224,21 @@ export default
         form()
         {
             return this.$parent.$data.form;
+        },
+        photo1Url() {
+            return this.form.photo_1 instanceof File ? URL.createObjectURL(this.form.photo_1) : '';
+        },
+        photo2Url() {
+            return this.form.photo_2 instanceof File ? URL.createObjectURL(this.form.photo_2) : '';
+        },
+        photo3Url() {
+            return this.form.photo_3 instanceof File ? URL.createObjectURL(this.form.photo_3) : '';
+        },
+        photo4Url() {
+            return this.form.photo_4 instanceof File ? URL.createObjectURL(this.form.photo_4) : '';
+        },
+        floorPlanUrl() {
+            return this.form.floor_plan instanceof File ? URL.createObjectURL(this.form.floor_plan) : '';
         }
     },
 
@@ -205,6 +314,11 @@ export default
 }
 </script>
 
-<style>
-
+<style scoped>
+.image-preview {
+    width: 120px;
+    height: 80px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
 </style>

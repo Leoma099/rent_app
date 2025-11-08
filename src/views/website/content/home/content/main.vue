@@ -145,7 +145,7 @@
         <!-- END RECENT -->
 
 
-        <div class="mt-3">
+        <div class="mt-3" v-if="recents.length > 0">
             <div class="text-center">
                 <a href="javascript:void(0)" class="btn btn-secondary rounded-0" @click="navigateToAllProperties">
                     View all properties
