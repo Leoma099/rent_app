@@ -153,7 +153,7 @@ export default
             if (!this.form[key]) return '';
             return this.form[key] instanceof File
                 ? URL.createObjectURL(this.form[key])
-                : `${process.env.VUE_APP_API_URL}/storage/${this.form[key]}`;
+                : `${process.env.VUE_APP_API_URL}/uploads/${this.form[key]}`;
         },
 
         handleBusinessTypeSelect(event)
