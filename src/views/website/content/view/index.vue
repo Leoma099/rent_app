@@ -13,8 +13,8 @@
             <div>
                 <h1 class="mb-0">{{ property.title }}</h1>
                 <p class="my-2">
-                    <span v-if="property.is_featured !== 0" class="badge fs-6 text-bg-success rounded-pill me-2">{{ formatFeature(property.is_featured) }}</span>
-                    <span class="badge fs-6 text-bg-secondary rounded-pill">{{ formatPropStats( property.propertyStats ) }}</span>
+                    <span v-if="property.is_featured !== 0" class="badge fs-6 text-bg me-2">{{ formatFeature(property.is_featured) }}</span>
+                    <span class="badge fs-6 text-bg-secondary">{{ formatPropStats( property.propertyStats ) }}</span>
                 </p>
                 <p class="mb-0 text-secondary"><i class="bx bx-map"></i> {{ property.address }}</p>
             </div>
@@ -100,7 +100,7 @@
                             <span
                                 v-for="(type, index) in property.property_type.split(',')"
                                 :key="index"
-                                class="badge text-bg-info rounded-pill me-1"
+                                class="badge text-bg-info me-1"
                             >
                                 {{ type.trim() }}
                             </span>
@@ -310,7 +310,7 @@ export default {
     {
         isLoggedIn()
         {
-            return !!localStorage.getItem("access_token");
+            return !!sessionStorage.getItem("access_token");
         },
 
         propertyPhotos()
@@ -537,18 +537,32 @@ export default {
             }
         },
 
+        // getPhotoUrl(photoPath)
+        // {
+        //     if (!photoPath) return "/default-avatar.png";
+        //     if (photoPath.startsWith("http")) return photoPath;
+        //     return `https://floralwhite-butterfly-259901.hostingersite.com/${photoPath}`;
+        // },
+
+        // getFloorPlanUrl(floorPlanPath)
+        // {
+        //     if (!floorPlanPath) return "/default-avatar.png";
+        //     if (floorPlanPath.startsWith("http")) return floorPlanPath;
+        //     return `https://floralwhite-butterfly-259901.hostingersite.com/${floorPlanPath}`;
+        // },
+
         getPhotoUrl(photoPath)
         {
             if (!photoPath) return "/default-avatar.png";
             if (photoPath.startsWith("http")) return photoPath;
-            return `https://floralwhite-butterfly-259901.hostingersite.com/${photoPath}`;
+            return `${process.env.VUE_APP_API_URL}/storage/${photoPath}`;
         },
 
         getFloorPlanUrl(floorPlanPath)
         {
             if (!floorPlanPath) return "/default-avatar.png";
             if (floorPlanPath.startsWith("http")) return floorPlanPath;
-            return `https://floralwhite-butterfly-259901.hostingersite.com/${floorPlanPath.replace(/^\/+/, '')}`;
+            return `${process.env.VUE_APP_API_URL}/storage/${floorPlanPath}`;
         },
 
         clearAllBusinessMarkers()

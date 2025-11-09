@@ -9,8 +9,8 @@ export const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    const hasAccessToken = !!localStorage.getItem("access_token");
-    const role = parseInt(localStorage.getItem("role")); 
+    const hasAccessToken = !!sessionStorage.getItem("access_token");
+    const role = parseInt(sessionStorage.getItem("role")); 
 
     const publicPages = ["signin", "commercialhub", "registration", "forgot-password", "reset-password", "view"];
 

@@ -190,6 +190,7 @@ function initMap()
         streetViewControl: false,
         mapTypeControl: false,
         fullscreenControl: false,
+        scrollwheel: true,
         styles: [
             { featureType: "all", elementType: "labels.text.fill", stylers: [{ color: "#333" }] },
             { featureType: "all", elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },

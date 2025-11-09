@@ -1,46 +1,52 @@
 <template>
-    <div>
-        <div class="card card-body card-white rounded-0 p-4">
-            <h3 class="fw-bold text-primary mb-0">Location Info</h3>
+    <div class="card card-body card-white rounded-0 p-4">
+        <h3 class="fw-bold text-primary mb-0">Location Info</h3>
 
-            <div class="mt-3 d-flex gap-2">
+        <div class="mt-3">
+            <div class="position-relative">
                 <input
                     type="text"
-                    class="form-control rounded-0"
+                    class="form-control rounded-0 pe-5"
                     placeholder="Search Address"
                     v-model="searchAddress"
                     ref="inputRef"
                 />
-                <button type="button" class="btn btn-outline-secondary" @click="clearMap">
-                    Clear Map
-                </button>
-            </div>
 
-            <div class="mt-3">
-                <div id="googleMap" style="width: 100%; height: 400px;"></div>
+                <span
+                    class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold"
+                    style="cursor: pointer; font-size: 1.25rem; line-height: 1;"
+                    @click.prevent="clearMap()"
+                >
+                    <i class="bx bx-x"></i>
+                </span>
             </div>
         </div>
 
-        <div class="card card-body card-white rounded-0 p-4 mt-3">
-            <h3 class="fw-bold text-primary mb-0">Nearby Area Info</h3>
+        <div class="mt-3">
+            <div id="googleMap" style="width: 100%; height: 400px;"></div>
+        </div>
+    </div>
 
-            <div class="mt-3">
-                <ul class="list-group" style="max-height: 350px; overflow-y: auto;">
-                    <li
-                        class="list-group mb-3"
-                        v-for="(landmark, index) in nearbyLandmarks"
-                        :key="index"
-                    >
-                        <div class="card card-body bg-primary text-white border-0">
-                            <p class="mb-0"><strong>{{ landmark.name }}</strong></p>
-                            <small>{{ landmark.vicinity }} ({{ landmark.distance }} km)</small>
-                        </div>
-                    </li>
-                    <li v-if="!nearbyLandmarks.length">
-                        <p class="mb-0 text-center">No landmarks found</p>
-                    </li>
-                </ul>
-            </div>
+    <div class="card card-body card-white rounded-0 p-4 mt-3">
+        <h3 class="fw-bold text-primary mb-0">Nearby Area Info</h3>
+
+        <div class="mt-3">
+            <!-- scrollable list -->
+            <ul class="list-group" style="max-height: 350px; overflow-y: auto;">
+                <li
+                    class="list-group mb-3"
+                    v-for="(landmark, index) in nearbyLandmarks"
+                    :key="index"
+                >
+                    <div class="card card-body bg-primary text-white border-0">
+                        <p class="mb-0"><strong>{{ landmark.name }}</strong></p>
+                        <small>{{ landmark.vicinity }} ({{ landmark.distance }} km)</small>
+                    </div>
+                </li>
+                <li v-if="!nearbyLandmarks.length">
+                    <p class="mb-0 text-center">No landmarks found</p>
+                </li>
+            </ul>
         </div>
     </div>
 </template>
@@ -303,50 +309,84 @@ export default
 
         clearMap()
         {
-            if (!this.map) return;
-
-            // Keep flag true during entire reset
+            console.log("🧹 Clearing map and resetting state...");
             this.isClearing = true;
 
-            // Always remove marker and circles
+            // 1️⃣ Remove the main marker
             if (this.marker)
             {
+                console.log("❌ Removing main marker...");
                 this.marker.setMap(null);
                 this.marker = null;
             }
+
+            // 2️⃣ Remove the circles
             if (this.innerCircle)
             {
+                console.log("❌ Removing inner circle...");
                 this.innerCircle.setMap(null);
                 this.innerCircle = null;
             }
             if (this.outerCircle)
             {
+                console.log("❌ Removing outer circle...");
                 this.outerCircle.setMap(null);
                 this.outerCircle = null;
             }
 
-            // Clear all nearby markers and info
-            this.landmarkMarkers.forEach((m) => m.setMap(null));
+            // 3️⃣ Remove landmark markers
+            if (this.landmarkMarkers.length)
+            {
+                console.log(`❌ Removing ${this.landmarkMarkers.length} landmark markers...`);
+                this.landmarkMarkers.forEach(marker => marker.setMap(null));
+            }
             this.landmarkMarkers = [];
             this.nearbyLandmarks = [];
 
-            // Reset form data
-            this.form.lat = null;
-            this.form.lng = null;
-            this.form.address = "";
+            // 4️⃣ Reset parent form data (if exists)
+            if (this.$parent?.form)
+            {
+                console.log("🧾 Resetting parent form data...");
+                this.$parent.form.landmarks = [];
+                this.$parent.form.lat = "";
+                this.$parent.form.lng = "";
+                this.$parent.form.address = "";
+            }
+
+            // 5️⃣ Clear search input
             this.searchAddress = "";
-            this.$parent.form.landmarks = [];
 
-            // Reset map position
-            const centerPoint = { lat: 15.2871, lng: 120.5860 };
-            this.map.setCenter(centerPoint);
-            this.map.setZoom(12);
+            // 6️⃣ Reset map center and zoom
+            const defaultCenter = { lat: 15.3461466, lng: 120.5926823 };
+            if (this.map)
+            {
+                console.log("🔄 Resetting map center and zoom...");
+                this.map.panTo(defaultCenter);
+                this.map.setZoom(12);
+            }
 
-            // Keep clearing state slightly longer
+            // 7️⃣ Reinitialize map properly (to allow repinning)
+            console.log("🗺️ Reinitializing map...");
+            this.map = new window.google.maps.Map(document.getElementById("googleMap"), {
+                center: defaultCenter,
+                zoom: 12,
+                scrollwheel: true
+            });
+
+            // Reattach map click event
+            this.map.addListener("click", (e) =>
+            {
+                console.log("📍 Map clicked — placing new marker...");
+                this.isClearing = false; // allow new marker again
+                this.placeMarker(e.latLng);
+            });
+
+            // 8️⃣ Reset state flag
             setTimeout(() =>
             {
                 this.isClearing = false;
-            }, 600);
+                console.log("✅ Map cleared and ready for new pin.");
+            }, 300);
         }
     },
 

@@ -50,11 +50,12 @@
 <script>
 import apiClient from "@/services/index"
 import ItemComponent from "./content/item"
+
 export default
 {
     data()
     {
-        return{
+        return {
             items: [],
             searchQuery: "",
             isLoading: false,
@@ -82,9 +83,13 @@ export default
             try
             {
                 this.isLoading = true;
-                setTimeout(async () => {
-                    const response = await apiClient.get(`/properties`, {
-                        params: {
+
+                setTimeout(async () =>
+                {
+                    const response = await apiClient.get(`/properties`, 
+                    {
+                        params:
+                        {
                             search: this.searchQuery,
                             page: this.currentPage,
                             perPage: this.perPage
@@ -104,27 +109,31 @@ export default
                 this.isLoading = false;
                 this.isEmpty = true; // Assume empty on error
             }
-        },
+        }
     }
 }
 </script>
 
 <style scoped>
-.page-title {
+.page-title
+{
     color: #007bff;
 }
 
-.button-color {
+.button-color
+{
     background-color: #007bff;
     color: #ffffff;
 }
 
-.button-color:hover {
+.button-color:hover
+{
     background-color: #3798ff;
     color: #ffffff;
 }
 
-.table-header {
+.table-header
+{
     font-size: 0.85rem;
     font-weight: 600;
     padding: 10px;
@@ -132,7 +141,8 @@ export default
     color: #ffffff;
 }
 
-.pagination-container {
+.pagination-container
+{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -140,21 +150,55 @@ export default
     font-size: 14px;
 }
 
-.entries-info {
+.entries-info
+{
     color: #666;
 }
 
-.pagination-buttons {
+.pagination-buttons
+{
     display: flex;
     gap: 5px;
 }
+
 .table-scrollable
 {
     max-height: 500px;
     overflow: hidden; /* Hidden by default */
 }
+
 .table-scrollable:hover
 {
     overflow-y: auto; /* Show scrollbar when hovering */
+}
+
+/* Optional: subtle shimmer for table rows */
+tbody tr td
+{
+    transition: background-color 0.3s;
+}
+
+tbody tr td.loading
+{
+    background: linear-gradient(
+        90deg,
+        #f0f0f0 25%,
+        #e0e0e0 50%,
+        #f0f0f0 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.2s infinite linear;
+}
+
+@keyframes shimmer
+{
+    0%
+    {
+        background-position: -200% 0;
+    }
+    100%
+    {
+        background-position: 200% 0;
+    }
 }
 </style>

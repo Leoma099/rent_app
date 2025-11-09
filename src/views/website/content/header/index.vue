@@ -110,8 +110,8 @@ export default
     data()
     {
         return {
-            userName: localStorage.getItem("full_name") || "",
-            role: parseInt(localStorage.getItem("role")) || null,
+            userName: sessionStorage.getItem("full_name") || "",
+            role: parseInt(sessionStorage.getItem("role")) || null,
             notificationCount: 0,
             toast: null,
             notificationInterval: null
@@ -122,7 +122,7 @@ export default
     {
         isLoggedIn()
         {
-            return !!localStorage.getItem("access_token");
+            return !!sessionStorage.getItem("access_token");
         },
 
         dashboardLink()
@@ -157,7 +157,7 @@ export default
     {
         logout()
         {
-            localStorage.clear();
+            sessionStorage.clear();
             this.userName = "";
             this.role = null;
 

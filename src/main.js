@@ -35,7 +35,7 @@ const app = createApp(App)
 app.mount('#app');
 
 
-const authToken = localStorage.getItem("authToken");
+const authToken = sessionStorage.getItem("authToken");
 if (authToken) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${authToken}`;
 }

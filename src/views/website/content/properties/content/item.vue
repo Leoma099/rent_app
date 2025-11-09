@@ -24,24 +24,23 @@
                         style="height: 200px; object-fit: cover"
                         class="card-img-top">
                     <div class="card-body">
-                        <h5 class="card-title mb-0">{{ item.title }}</h5>
-                        <p class="card-text text-muted mb-0">{{ item.address }}</p>
-                        <p class="mb-1">
-                            <span v-if="item.is_featured !== 0" class="badge text-bg-success rounded-pill me-2">
-                                {{ formatFeature(item.is_featured) }}
-                            </span>
-                            <span class="badge text-bg-secondary rounded-pill">{{ formatPropStats(item.propertyStats) }}</span>
-                        </p>
-                        <p class="mb-0">
-                            <span
+                        <h5 class="card-title mb-0 fw-bold">{{ item.title }}</h5>
+                        <p class="text-muted small mb-1">{{ item.address }}</p>
+
+                        <div class="mb-1">
+                            <span v-if="item.is_featured !== 0" class="badge text-bg-success me-2">FEATURED</span>
+                            <span class="badge text-bg-secondary">{{ formatPropStats(item.propertyStats) }}</span>
+                        </div>
+
+                        <div class="mb-1">
+                            <span class="badge text-bg-info text-dark border me-1"
                                 v-for="(type, index) in item.property_type.split(',')"
-                                :key="index"
-                                class="badge text-bg-info rounded-pill me-1">
-                                {{ type.trim() }}
-                            </span>
-                            ( <i class='bx bx-ruler'></i> {{ item.size }} sqm )
-                        </p>
-                        <span class="fw-bold text-primary">{{ formatPrice(item.price) }} / Monthly</span>
+                                :key="index">{{ type.trim() }}</span>
+
+                            <small class="text-muted"><i class='bx bx-ruler'></i> {{ item.size }} sqm</small>
+                        </div>
+
+                        <div class="fw-bold text-primary">{{ formatPrice(item.price) }} / Monthly</div>
                     </div>
                 </div>
             </a>
@@ -60,6 +59,21 @@ export default
 
     methods:
     {
+        // getPhotoUrl(photoPath)
+        // {
+        //     if (!photoPath)
+        //     {
+        //         return "/default-avatar.png";
+        //     }
+
+        //     if (photoPath.startsWith("http"))
+        //     {
+        //         return photoPath;
+        //     }
+
+        //     return `https://floralwhite-butterfly-259901.hostingersite.com/${photoPath}`;
+        // },
+
         getPhotoUrl(photoPath)
         {
             if (!photoPath)
@@ -72,7 +86,7 @@ export default
                 return photoPath;
             }
 
-            return `https://floralwhite-butterfly-259901.hostingersite.com/${photoPath}`;
+            return `${process.env.VUE_APP_API_URL}/storage/${photoPath}`;
         },
 
         formatPrice(price)

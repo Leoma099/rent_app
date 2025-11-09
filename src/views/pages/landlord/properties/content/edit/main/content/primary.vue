@@ -8,7 +8,8 @@
             placeholder="ex. BUILDING 1"
             class="form-control rounded-0"
             v-model="form.title"
-        />
+            :class="{ 'is-invalid': errors.title }">
+            <div v-if="errors.title" class="invalid-feedback">{{ errors.title }}</div>
     </div>
 
     <div class="mt-3">
@@ -17,7 +18,9 @@
             rows="5"
             class="form-control rounded-0"
             v-model="form.description"
-        ></textarea>
+            :class="{ 'is-invalid': errors.description }">
+        </textarea>
+        <div v-if="errors.description" class="invalid-feedback">{{ errors.description }}</div>
     </div>
 
     <div class="row">
@@ -28,7 +31,8 @@
                 placeholder="ex. ADDRESS 1"
                 class="form-control rounded-0"
                 v-model="form.address"
-            />
+                :class="{ 'is-invalid': errors.address }">
+            <div v-if="errors.address" class="invalid-feedback">{{ errors.address }}</div>
         </div>
         <div class="col-md-4">
             <label class="form-label">* Property Status</label>
@@ -98,7 +102,7 @@
         </div>
     </div>
 
-    <div class="mt-3">
+    <!-- <div class="mt-3">
         <div class="row">
             <div class="col-md-3">
                 <label class="form-label">* Property First View:</label>
@@ -142,7 +146,37 @@
             class="form-control rounded-0"
             @change="handleFloorPlanUpload"
         />
+    </div> -->
+
+    <div class="mt-3" v-for="(photo, index) in photos" :key="index">
+
+        <div class="d-flex gap-3">
+
+            <div class="image-preview rounded-3 border d-flex align-items-center justify-content-center">
+                <img v-if="getPhotoUrl(photo.key)" :src="getPhotoUrl(photo.key)" class="img-fluid rounded" :alt="photo.label">
+                <span v-else class="text-muted small">No image</span>
+            </div>
+
+            <div class="w-100">
+                <div class="form-label">{{ photo.label }}:</div>
+                
+                <div class="position-relative">
+                    <input type="file" class="form-control rounded-3 shadow-sm" @change="handleFileUpload($event, photo.key)">
+                    <span
+                        v-if="form[photo.key]"
+                        class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold"
+                        style="cursor: pointer; font-size: 1.25rem; line-height: 1;"
+                        @click.prevent="clearFile(photo.key, $event)">
+                        <i class="text-danger bx bx-x"></i>
+                    </span>
+                </div>
+
+                <div v-if="errors[photo.key]" class="invalid-feedback d-block">{{ errors[photo.key] }}</div>
+            </div>
+
+        </div>
     </div>
+
 </template>
 
 <script>
@@ -153,11 +187,45 @@ export default
         form()
         {
             return this.$parent.form
-        }
+        },
+
+        errors()
+        {
+            return this.$parent.$data.errors || {};
+        },
+
+        photos()
+        {
+            return [
+                { key: 'photo_1', label: 'Property 1st Image View' },
+                { key: 'photo_2', label: 'Property 2nd Image View' },
+                { key: 'photo_3', label: 'Property 3rd Image View' },
+                { key: 'photo_4', label: 'Property 4th Image View' },
+                { key: 'floor_plan', label: 'Property Floor Plan' }
+            ];
+        },
     },
 
     methods:
     {
+        getPhotoUrl(key)
+        {
+            if (!this.form[key]) return '';
+
+            // Show preview if file is newly selected
+            if (this.form[key] instanceof File) {
+                return URL.createObjectURL(this.form[key]);
+            }
+
+            // If URL already starts with http, don't add API URL again
+            if (this.form[key].startsWith("http")) {
+                return this.form[key];
+            }
+
+            // Otherwise, append API base URL
+            return `${process.env.VUE_APP_API_URL}/storage/${this.form[key]}`;
+        },
+
         handleBusinessTypeSelect(event)
         {
             const value = event.target.value
@@ -186,43 +254,37 @@ export default
             event.target.value = ""
         },
 
-        uploadFirstImage(event)
+        handleFileUpload(event, key)
         {
-            const file = event.target.files[0]
-            this.form.photo_1 = file || null
+            const file = event.target.files[0];
+            this.form[key] = file || null;
         },
 
-        uploadSecondImage(event)
+        clearFile(key, event)
         {
-            const file = event.target.files[0]
-            this.form.photo_2 = file || null
-        },
-
-        uploadThirdImage(event)
-        {
-            const file = event.target.files[0]
-            this.form.photo_3 = file || null
-        },
-
-        uploadFourthImage(event)
-        {
-            const file = event.target.files[0]
-            this.form.photo_4 = file || null
-        },
-
-        handleFloorPlanUpload(event)
-        {
-            const file = event.target.files[0]
-            this.form.floor_plan = file || null
+            this.form[key] = null;
+            event.target.closest('.position-relative').querySelector('input[type=file]').value = null;
         }
     }
 }
 </script>
 
 <style scoped>
-img
+.image-preview
 {
-    border-radius: 6px;
-    object-fit: cover;
+    width: 120px;
+    height: 80px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+.is-invalid
+{
+    border-color: #dc3545;
+}
+.invalid-feedback
+{
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
 }
 </style>

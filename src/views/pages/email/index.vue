@@ -23,7 +23,7 @@
                     <input
                         type="email"
                         v-model="email"
-                        class="form-control"
+                        class="form-control form-control-lg"
                         placeholder="Enter your email address"
                         required
                     />
@@ -41,7 +41,7 @@
 
             <!-- Links -->
             <div class="text-center">
-                <a href="/signin">Back to sign in</a>
+                <a href="/signin" class="text-decoration-none">Back to sign in</a>
             </div>
 
             <!-- Feedback -->
@@ -83,9 +83,14 @@ export default
 
             try
             {
-                const response = await apiClient.post('/forgot-password', { email: this.email });
+                const response = await apiClient.post('/forgot-password', 
+                { 
+                    email: this.email 
+                });
+
                 this.message = response.data.message;
                 this.toast.success(this.message);
+                this.email = "";
             }
             catch (err)
             {
@@ -109,7 +114,7 @@ export default
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.8);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -121,8 +126,8 @@ export default
     border: 4px solid #f3f3f3;
     border-top: 4px solid #3498db;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     animation: spin 1s linear infinite;
 }
 
@@ -136,5 +141,11 @@ export default
     {
         transform: rotate(360deg);
     }
+}
+
+.login-page input:disabled
+{
+    background-color: #e9ecef;
+    cursor: not-allowed;
 }
 </style>

@@ -106,11 +106,18 @@ export default
             }
         },
 
+        // getPhotoUrl(photoPath)
+        // {
+        //     if (!photoPath) return "/default-avatar.png";
+        //     if (photoPath.startsWith("http")) return photoPath;
+        //     return `https://floralwhite-butterfly-259901.hostingersite.com/${photoPath}`;
+        // },
+
         getPhotoUrl(photoPath)
         {
             if (!photoPath) return "/default-avatar.png";
             if (photoPath.startsWith("http")) return photoPath;
-            return `https://floralwhite-butterfly-259901.hostingersite.com/${photoPath}`;
+            return `${process.env.VUE_APP_API_URL}/storage/${photoPath}`;
         },
 
         formatPrice(price)

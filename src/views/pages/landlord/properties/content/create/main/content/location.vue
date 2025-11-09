@@ -22,7 +22,6 @@
             </div>
         </div>
 
-
         <div class="mt-3">
             <div id="googleMap" style="width: 100%; height: 400px;"></div>
         </div>
@@ -195,7 +194,7 @@ export default
             {
                 if (status === "OK" && results[0])
                 {
-                    this.form.address = results[0].formatted_address;
+                    // this.form.address = results[0].formatted_address;
                     this.searchAddress = results[0].formatted_address;
                 }
             });

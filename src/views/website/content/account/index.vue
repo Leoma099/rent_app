@@ -146,10 +146,10 @@ export default
         {
             const user =
             {
-                full_name: localStorage.getItem("full_name"),
-                email: localStorage.getItem("email"),
-                mobile_number: localStorage.getItem("mobile_number"),
-                username: localStorage.getItem("username")
+                full_name: sessionStorage.getItem("full_name"),
+                email: sessionStorage.getItem("email"),
+                mobile_number: sessionStorage.getItem("mobile_number"),
+                username: sessionStorage.getItem("username")
             };
 
             if (user.full_name)
@@ -182,10 +182,10 @@ export default
 
                 console.log("Successfully updated:", response.data);
 
-                localStorage.setItem("full_name", this.form.full_name);
-                localStorage.setItem("email", this.form.email);
-                localStorage.setItem("mobile_number", this.form.mobile_number);
-                localStorage.setItem("username", this.form.username);
+                sessionStorage.setItem("full_name", this.form.full_name);
+                sessionStorage.setItem("email", this.form.email);
+                sessionStorage.setItem("mobile_number", this.form.mobile_number);
+                sessionStorage.setItem("username", this.form.username);
                 this.toast.success("Update successfully!");
                 this.$router.push("/commercialhub");
             }

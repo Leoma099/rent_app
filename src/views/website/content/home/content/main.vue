@@ -42,12 +42,12 @@
                                     <p class="text-muted small mb-1">{{ item.address }}</p>
 
                                     <div class="mb-1">
-                                        <span v-if="item.is_featured !== 0" class="badge bg-success me-2">FEATURED</span>
-                                        <span class="badge bg-secondary">{{ formatPropStats(item.propertyStats) }}</span>
+                                        <span v-if="item.is_featured !== 0" class="badge text-bg-success me-2">FEATURED</span>
+                                        <span class="badge text-bg-secondary">{{ formatPropStats(item.propertyStats) }}</span>
                                     </div>
 
                                     <div class="mb-1">
-                                        <span class="badge bg-light text-dark border me-1"
+                                        <span class="badge text-bg-info text-dark border me-1"
                                             v-for="(type, index) in item.property_type.split(',')"
                                             :key="index">{{ type.trim() }}</span>
 
@@ -114,12 +114,12 @@
                                     <p class="text-muted small mb-1">{{ item.address }}</p>
 
                                     <div class="mb-1">
-                                        <span v-if="item.is_featured !== 0" class="badge bg-success me-2">FEATURED</span>
-                                        <span class="badge bg-secondary">{{ formatPropStats(item.propertyStats) }}</span>
+                                        <span v-if="item.is_featured !== 0" class="badge text-bg-success me-2">FEATURED</span>
+                                        <span class="badge text-bg-secondary">{{ formatPropStats(item.propertyStats) }}</span>
                                     </div>
 
                                     <div class="mb-1">
-                                        <span class="badge bg-light text-dark border me-1"
+                                        <span class="badge text-bg-info text-dark border me-1"
                                             v-for="(type, index) in item.property_type.split(',')"
                                             :key="index">{{ type.trim() }}</span>
 
@@ -188,7 +188,7 @@ export default
             {
                 return photoPath;
             }
-            return `https://floralwhite-butterfly-259901.hostingersite.com/${photoPath}`;
+            return `${process.env.VUE_APP_API_URL}/storage/${photoPath}`;
         },
 
         async fetchFeatured()

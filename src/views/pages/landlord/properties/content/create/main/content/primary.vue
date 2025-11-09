@@ -7,7 +7,9 @@
             type="text"
             placeholder="ex. BUILDIN 1"
             class="form-control rounded-0"
-            v-model="form.title">
+            v-model="form.title"
+            :class="{ 'is-invalid': errors.title }">
+        <div v-if="errors.title" class="invalid-feedback">{{ errors.title }}</div>
     </div>
 
     <div class="mt-3">
@@ -15,7 +17,10 @@
         <textarea
             rows="10"
             class="form-control rounded-0"
-            v-model="form.description"></textarea>
+            v-model="form.description"
+            :class="{ 'is-invalid': errors.description }">
+        </textarea>
+        <div v-if="errors.description" class="invalid-feedback">{{ errors.description }}</div>
     </div>
 
     <div class="mt-3">
@@ -24,7 +29,9 @@
             type="text"
             placeholder="ex. ADDRESS 1"
             class="form-control rounded-0"
-            v-model="form.address">
+            v-model="form.address"
+            :class="{ 'is-invalid': errors.address }">
+        <div v-if="errors.address" class="invalid-feedback">{{ errors.address }}</div>
     </div>
 
     <div class="mt-3">
@@ -33,27 +40,15 @@
             type="text"
             class="form-control rounded-0"
             :value="Array.isArray(form.property_type) ? form.property_type.join(', ') : ''"
-            readonly>
+            readonly
+            :class="{ 'is-invalid': errors.property_type }">
+        <div v-if="errors.property_type" class="invalid-feedback">{{ errors.property_type }}</div>
 
         <select
             class="form-select rounded-0 mt-3"
             @change="handleBusinessTypeSelect">
             <option value="" disabled selected>-- select business type --</option>
-            <option value="Office Space">Office Space</option>
-            <option value="Retail Shop">Retail Shop</option>
-            <option value="Restaurant">Restaurant</option>
-            <option value="Warehouse">Warehouse</option>
-            <option value="Industrial">Industrial</option>
-            <option value="Co-working">Co-working</option>
-            <option value="Hotel">Hotel</option>
-            <option value="Clinic">Clinic</option>
-            <option value="House">House</option>
-            <option value="Apartment">Apartment</option>
-            <option value="Townhouse">Townhouse</option>
-            <option value="Studio">Studio</option>
-            <option value="Land">Land</option>
-            <option value="Commercial">Commercial</option>
-            <option value="Parking Space">Parking Space</option>
+            <option v-for="type in businessTypes" :key="type" :value="type">{{ type }}</option>
         </select>
     </div>
 
@@ -65,7 +60,9 @@
                     type="number"
                     placeholder="ex. 25000"
                     class="form-control rounded-0"
-                    v-model="form.price">
+                    v-model="form.price"
+                    :class="{ 'is-invalid': errors.price }">
+                <div v-if="errors.price" class="invalid-feedback">{{ errors.price }}</div>
             </div>
             <div class="col-md-6">
                 <label class="form-label">* Square Meter:</label>
@@ -73,147 +70,44 @@
                     type="number"
                     placeholder="ex. 25"
                     class="form-control rounded-0"
-                    v-model="form.size">
+                    v-model="form.size"
+                    :class="{ 'is-invalid': errors.size }">
+                <div v-if="errors.size" class="invalid-feedback">{{ errors.size }}</div>
             </div>
         </div>
     </div>
 
-    <!-- Property Image Views -->
-     <div class="mt-3">
+    <!-- Image Uploads -->
+    <div class="mt-3" v-for="(photo, index) in photos" :key="index">
 
-        <!-- Property Image View 1 -->
-        <div class="mb-3">
-            <div class="d-flex gap-3">
-                <!-- Preview -->
-                <div class="image-preview rounded-3 border d-flex align-items-center justify-content-center">
-                    <img v-if="photo1Url" :src="photo1Url" class="img-fluid rounded" alt="First View">
-                    <span v-else class="text-muted small">No image</span>
-                </div>
-                <!-- Input -->
-                <div class="w-100">
-                    <div class="form-label">* Property 1st Image View:</div>
-                    <div class="position-relative">
-                        <input type="file" class="form-control rounded-3 shadow-sm" @change="uploadFirstImage">
-                        <span
-                            v-if="form.photo_1"
-                            class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold"
-                            style="cursor: pointer; font-size: 1.25rem; line-height: 1;"
-                            @click.prevent="
-                                form.photo_1 = null;
-                                $event.target.closest('.position-relative').querySelector('input[type=file]').value = null;
-                            ">
-                            <i class="text-danger bx bx-x"></i>
-                        </span>
-                    </div>
-                </div>
+        <div class="d-flex gap-3">
+
+            <div class="image-preview rounded-3 border d-flex align-items-center justify-content-center">
+                <img v-if="getPhotoUrl(photo.key)" :src="getPhotoUrl(photo.key)" class="img-fluid rounded" :alt="photo.label">
+                <span v-else class="text-muted small">No image</span>
             </div>
-        </div>
 
-        <!-- Property Image View 2 -->
-        <div class="mb-3">
-            <div class="d-flex gap-3">
-                <div class="image-preview rounded-3 border d-flex align-items-center justify-content-center">
-                    <img v-if="photo2Url" :src="photo2Url" class="img-fluid rounded" alt="Second View">
-                    <span v-else class="text-muted small">No image</span>
+            <div class="w-100">
+                <div class="form-label">{{ photo.label }}:</div>
+                
+                <div class="position-relative">
+                    <input type="file" class="form-control rounded-3 shadow-sm" @change="handleFileUpload($event, photo.key)">
+                    <span
+                        v-if="form[photo.key]"
+                        class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold"
+                        style="cursor: pointer; font-size: 1.25rem; line-height: 1;"
+                        @click.prevent="clearFile(photo.key, $event)">
+                        <i class="text-danger bx bx-x"></i>
+                    </span>
                 </div>
-                <div class="w-100">
-                    <div class="form-label">* Property 2nd Image View:</div>
-                    <div class="position-relative">
-                        <input type="file" class="form-control rounded-3 shadow-sm" @change="uploadSecondImage">
-                        <span
-                            v-if="form.photo_2"
-                            class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold"
-                            style="cursor: pointer; font-size: 1.25rem; line-height: 1;"
-                            @click.prevent="
-                                form.photo_2 = null;
-                                $event.target.closest('.position-relative').querySelector('input[type=file]').value = null;
-                            ">
-                            <i class="text-danger bx bx-x"></i>
-                        </span>
-                    </div>
-                </div>
+
+                <div v-if="errors[photo.key]" class="invalid-feedback d-block">{{ errors[photo.key] }}</div>
             </div>
-        </div>
 
-        <!-- Property Image View 3 -->
-        <div class="mb-3">
-            <div class="d-flex gap-3">
-                <div class="image-preview rounded-3 border d-flex align-items-center justify-content-center">
-                    <img v-if="photo3Url" :src="photo3Url" class="img-fluid rounded" alt="Third View">
-                    <span v-else class="text-muted small">No image</span>
-                </div>
-                <div class="w-100">
-                    <div class="form-label">* Property 3rd Image View:</div>
-                    <div class="position-relative">
-                        <input type="file" class="form-control rounded-3 shadow-sm" @change="uploadThirdImage">
-                        <span
-                            v-if="form.photo_3"
-                            class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold"
-                            style="cursor: pointer; font-size: 1.25rem; line-height: 1;"
-                            @click.prevent="
-                                form.photo_3 = null;
-                                $event.target.closest('.position-relative').querySelector('input[type=file]').value = null;
-                            ">
-                            <i class="text-danger bx bx-x"></i>
-                        </span>
-                    </div>
-                </div>
-            </div>
         </div>
-
-        <!-- Property Image View 4 -->
-        <div class="mb-3">
-            <div class="d-flex gap-3">
-                <div class="image-preview rounded-3 border d-flex align-items-center justify-content-center">
-                    <img v-if="photo4Url" :src="photo4Url" class="img-fluid rounded" alt="Fourth View">
-                    <span v-else class="text-muted small">No image</span>
-                </div>
-                <div class="w-100">
-                    <div class="form-label">* Property 4th Image View:</div>
-                    <div class="position-relative">
-                        <input type="file" class="form-control rounded-3 shadow-sm" @change="uploadFourthImage">
-                        <span
-                            v-if="form.photo_4"
-                            class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold"
-                            style="cursor: pointer; font-size: 1.25rem; line-height: 1;"
-                            @click.prevent="
-                                form.photo_4 = null;
-                                $event.target.closest('.position-relative').querySelector('input[type=file]').value = null;
-                            ">
-                            <i class="text-danger bx bx-x"></i>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Property Floor Plan Image -->
-        <div class="mb-3">
-            <div class="d-flex gap-3">
-                <div class="image-preview rounded-3 border d-flex align-items-center justify-content-center">
-                    <img v-if="floorPlanUrl" :src="floorPlanUrl" class="img-fluid rounded" alt="Floor Plan">
-                    <span v-else class="text-muted small">No image</span>
-                </div>
-                <div class="w-100">
-                    <div class="form-label">* Property Floor Plan Image:</div>
-                    <div class="position-relative">
-                        <input type="file" class="form-control rounded-3 shadow-sm" @change="handleFloorPlanUpload">
-                        <span
-                            v-if="form.floor_plan"
-                            class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold"
-                            style="cursor: pointer; font-size: 1.25rem; line-height: 1;"
-                            @click.prevent="
-                                form.floor_plan = null;
-                                $event.target.closest('.position-relative').querySelector('input[type=file]').value = null;
-                            ">
-                            <i class="text-danger bx bx-x"></i>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
+
+
 </template>
 
 <script>
@@ -225,59 +119,50 @@ export default
         {
             return this.$parent.$data.form;
         },
-        photo1Url() {
-            if (!this.form.photo_1) return '';
-            return this.form.photo_1 instanceof File
-                ? URL.createObjectURL(this.form.photo_1)
-                : `https://floralwhite-butterfly-259901.hostingersite.com/${this.form.photo_1}`;
-        },
-        photo2Url() {
-            if (!this.form.photo_2) return '';
-            return this.form.photo_2 instanceof File
-                ? URL.createObjectURL(this.form.photo_2)
-                : `https://floralwhite-butterfly-259901.hostingersite.com/${this.form.photo_2}`;
-        },
-        photo3Url() {
-            if (!this.form.photo_3) return '';
-            return this.form.photo_3 instanceof File
-                ? URL.createObjectURL(this.form.photo_3)
-                : `https://floralwhite-butterfly-259901.hostingersite.com/${this.form.photo_3}`;
-        },
-        photo4Url() {
-            if (!this.form.photo_4) return '';
-            return this.form.photo_4 instanceof File
-                ? URL.createObjectURL(this.form.photo_4)
-                : `https://floralwhite-butterfly-259901.hostingersite.com/${this.form.photo_4}`;
-        },
-        floorPlanUrl() {
-            if (!this.form.floor_plan) return '';
-            return this.form.floor_plan instanceof File
-                ? URL.createObjectURL(this.form.floor_plan)
-                : `https://floralwhite-butterfly-259901.hostingersite.com/${this.form.floor_plan}`;
-        }
 
-    },
-
-    props:
-    {
-        selectedDisplay:
+        errors()
         {
-            type: String,
-            default: ''
+            return this.$parent.$data.errors || {};
+        },
+
+        photos()
+        {
+            return [
+                { key: 'photo_1', label: 'Property 1st Image View' },
+                { key: 'photo_2', label: 'Property 2nd Image View' },
+                { key: 'photo_3', label: 'Property 3rd Image View' },
+                { key: 'photo_4', label: 'Property 4th Image View' },
+                { key: 'floor_plan', label: 'Property Floor Plan' }
+            ];
+        },
+
+        businessTypes()
+        {
+            return [
+                "Office Space","Retail Shop","Restaurant","Warehouse","Industrial",
+                "Co-working","Hotel","Clinic","House","Apartment","Townhouse",
+                "Studio","Land","Commercial","Parking Space"
+            ];
         }
     },
 
     methods:
     {
+        getPhotoUrl(key)
+        {
+            if (!this.form[key]) return '';
+            return this.form[key] instanceof File
+                ? URL.createObjectURL(this.form[key])
+                : `${process.env.VUE_APP_API_URL}/storage/${this.form[key]}`;
+        },
+
         handleBusinessTypeSelect(event)
         {
             const value = event.target.value;
-
             if (!Array.isArray(this.form.property_type))
             {
                 this.form.property_type = [];
             }
-
             if (this.form.property_type.includes(value))
             {
                 this.form.property_type = this.form.property_type.filter(type => type !== value);
@@ -290,51 +175,42 @@ export default
                     event.target.value = "";
                     return;
                 }
-
                 this.form.property_type.push(value);
             }
-
             event.target.value = "";
         },
 
-        uploadFirstImage(event)
+        handleFileUpload(event, key)
         {
             const file = event.target.files[0];
-            this.form.photo_1 = file || null;
+            this.form[key] = file || null;
         },
 
-        uploadSecondImage(event)
+        clearFile(key, event)
         {
-            const file = event.target.files[0];
-            this.form.photo_2 = file || null;
-        },
-
-        uploadThirdImage(event)
-        {
-            const file = event.target.files[0];
-            this.form.photo_3 = file || null;
-        },
-
-        uploadFourthImage(event)
-        {
-            const file = event.target.files[0];
-            this.form.photo_4 = file || null;
-        },
-
-        handleFloorPlanUpload(event)
-        {
-            const file = event.target.files[0];
-            this.form.floor_plan = file || null;
+            this.form[key] = null;
+            event.target.closest('.position-relative').querySelector('input[type=file]').value = null;
         }
     }
 }
 </script>
 
 <style scoped>
-.image-preview {
+.image-preview
+{
     width: 120px;
     height: 80px;
     background-color: #f8f9fa;
     border: 1px solid #dee2e6;
+}
+.is-invalid
+{
+    border-color: #dc3545;
+}
+.invalid-feedback
+{
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
 }
 </style>

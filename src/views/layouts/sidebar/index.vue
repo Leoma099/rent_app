@@ -33,8 +33,8 @@ export default
     data()
     {
         return {
-            // Get role from localStorage as an integer (parse it)
-            role: parseInt(localStorage.getItem('role')) || 0, // Default to 0 (guest) if role not found
+            // Get role from sessionStorage as an integer (parse it)
+            role: parseInt(sessionStorage.getItem('role')) || 0, // Default to 0 (guest) if role not found
         };
     },
 
@@ -47,22 +47,22 @@ export default
     {
         logout()
         {
-            // Clear the localStorage
-            localStorage.removeItem('role');
-            localStorage.removeItem('access_token');  // If token is stored as well
-            localStorage.removeItem('user_id');  // If token is stored as well
+            // Clear the sessionStorage
+            sessionStorage.removeItem('role');
+            sessionStorage.removeItem('access_token');  // If token is stored as well
+            sessionStorage.removeItem('user_id');  // If token is stored as well
 
             // ACCOUNT INFO
-            localStorage.removeItem('account');
-            localStorage.removeItem('full_name');
-            localStorage.removeItem('id_number');
-            localStorage.removeItem('office_name');
-            localStorage.removeItem('office_address');
-            localStorage.removeItem('position');
-            localStorage.removeItem('mobile_number');
-            localStorage.removeItem('username');
-            localStorage.removeItem('email');
-            localStorage.removeItem('address');
+            sessionStorage.removeItem('account');
+            sessionStorage.removeItem('full_name');
+            sessionStorage.removeItem('id_number');
+            sessionStorage.removeItem('office_name');
+            sessionStorage.removeItem('office_address');
+            sessionStorage.removeItem('position');
+            sessionStorage.removeItem('mobile_number');
+            sessionStorage.removeItem('username');
+            sessionStorage.removeItem('email');
+            sessionStorage.removeItem('address');
 
             // Show the toast first
             this.toast.success("Logged out successfully!");

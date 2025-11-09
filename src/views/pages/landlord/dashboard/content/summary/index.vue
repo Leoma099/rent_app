@@ -25,66 +25,131 @@
 <script>
 import apiClient from "@/services/index";
 
-export default {
-    data() {
+export default
+{
+    data()
+    {
         return {
-            cards: [
-                { label: "TOTAL PROPERTY", value: 0, icon: "bx bx-laptop", loading: true, endpoint: "/totalProperties", key: "total_properties" },
-                { label: "TOTAL LEASE", value: 0, icon: "bx bx-user", loading: true, endpoint: "/leaseCount", key: "total_leases" },
-                { label: "TOTAL PENDING", value: 0, icon: "bx bx-hourglass-top", loading: true, endpoint: "/pendingCount", key: "total_pending" },
-                { label: "TOTAL BOOKED", value: 0, icon: "bx bx-book", loading: true, endpoint: "/bookedCount", key: "total_booked" },
-                { label: "TOTAL INQUIRED", value: 0, icon: "bx bx-message-detail", loading: true, endpoint: "/inquireCount", key: "total_inquire" },
-            ],
+            cards:
+            [
+                {
+                    label: "TOTAL PROPERTY",
+                    value: 0,
+                    icon: "bx bx-laptop",
+                    loading: true,
+                    endpoint: "/totalProperties",
+                    key: "total_properties"
+                },
+                {
+                    label: "TOTAL LEASE",
+                    value: 0,
+                    icon: "bx bx-user",
+                    loading: true,
+                    endpoint: "/leaseCount",
+                    key: "total_leases"
+                },
+                {
+                    label: "TOTAL PENDING",
+                    value: 0,
+                    icon: "bx bx-hourglass-top",
+                    loading: true,
+                    endpoint: "/pendingCount",
+                    key: "total_pending"
+                },
+                {
+                    label: "TOTAL BOOKED",
+                    value: 0,
+                    icon: "bx bx-book",
+                    loading: true,
+                    endpoint: "/bookedCount",
+                    key: "total_booked"
+                },
+                {
+                    label: "TOTAL INQUIRED",
+                    value: 0,
+                    icon: "bx bx-message-detail",
+                    loading: true,
+                    endpoint: "/inquireCount",
+                    key: "total_inquire"
+                }
+            ]
         };
     },
 
-    methods: {
-        async loadData() {
-            try {
-                for (const card of this.cards) {
+    methods:
+    {
+        async loadData()
+        {
+            try
+            {
+                for (const card of this.cards)
+                {
                     const response = await apiClient.get(card.endpoint);
-                    setTimeout(() => {
+                    setTimeout(() =>
+                    {
                         card.value = response.data[card.key] || 0;
                         card.loading = false;
                     }, 1000);
                 }
-            } catch (error) {
+            }
+            catch (error)
+            {
                 console.error("Error loading data:", error);
             }
-        },
+        }
     },
 
-    created() {
+    created()
+    {
         this.loadData();
-    },
+    }
 };
 </script>
 
 <style scoped>
-.indicator-title {
+.indicator-title
+{
     font-size: 0.8rem;
     font-weight: 600;
 }
-.total-number {
+
+.total-number
+{
     font-size: 3rem;
     font-weight: 600;
 }
-.dashboard-icon {
+
+.dashboard-icon
+{
     font-size: 4rem;
 }
 
 /* Shimmer Loader */
-.shimmer-loader {
-    height: 40px;
-    width: 80px;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+.shimmer-loader
+{
+    height: 3rem;
+    width: 5rem;
+    background: linear-gradient(
+        90deg,
+        #f0f0f0 25%,
+        #e0e0e0 50%,
+        #f0f0f0 75%
+    );
     background-size: 200% 100%;
-    animation: shimmer 1.5s infinite linear;
-    border-radius: 4px;
+    animation: shimmer 1.2s infinite linear;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
 }
 
-@keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+@keyframes shimmer
+{
+    0%
+    {
+        background-position: -200% 0;
+    }
+    100%
+    {
+        background-position: 200% 0;
+    }
 }
 </style>
