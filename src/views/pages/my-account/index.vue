@@ -74,15 +74,15 @@ export default
         fetchUserData()
         {
             const user = {
-                id_number: sessionStorage.getItem('id_number'),
-                full_name: sessionStorage.getItem('full_name'),
-                mobile_number: sessionStorage.getItem('mobile_number'),
-                office_name: sessionStorage.getItem('office_name'),
-                office_address: sessionStorage.getItem('office_address'),
-                position: sessionStorage.getItem('position'),
-                email: sessionStorage.getItem('email'),
-                username: sessionStorage.getItem('username'),
-                address: sessionStorage.getItem('address'),
+                id_number: localStorage.getItem('id_number'),
+                full_name: localStorage.getItem('full_name'),
+                mobile_number: localStorage.getItem('mobile_number'),
+                office_name: localStorage.getItem('office_name'),
+                office_address: localStorage.getItem('office_address'),
+                position: localStorage.getItem('position'),
+                email: localStorage.getItem('email'),
+                username: localStorage.getItem('username'),
+                address: localStorage.getItem('address'),
             };
 
             if(user.full_name)

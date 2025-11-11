@@ -20,7 +20,7 @@ export default
     data()
     {
         return {
-            accessToken: sessionStorage.getItem("access_token"),
+            accessToken: localStorage.getItem("access_token"),
         };
     },
 
@@ -34,9 +34,9 @@ export default
 
     mounted()
     {
-    // Optional: watch for sessionStorage changes
+    // Optional: watch for localStorage changes
         window.addEventListener("storage", () => {
-        this.accessToken = sessionStorage.getItem("access_token");
+        this.accessToken = localStorage.getItem("access_token");
         });
     },
 };

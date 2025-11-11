@@ -13,8 +13,8 @@ const routesData = [];
         path: '/',
         name: 'Root',
         redirect: () => {
-            const token = sessionStorage.getItem("access_token");
-            const role = parseInt(sessionStorage.getItem("role"));
+            const token = localStorage.getItem("access_token");
+            const role = parseInt(localStorage.getItem("role"));
 
             if (token) {
                 if (role === 1 || role === 2) return '/dashboard';

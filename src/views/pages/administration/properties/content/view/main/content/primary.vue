@@ -59,7 +59,8 @@
                 <select
                     class="form-select rounded-0 mt-3"
                     @change="handleBusinessTypeSelect"
-                    disabled>
+                    disabled
+                >
                     <option value="" disabled selected>-- select business type --</option>
                     <option value="Office Space">Office Space</option>
                     <option value="Retail Shop">Retail Shop</option>
@@ -103,50 +104,19 @@
         </div>
     </div>
 
-    <div class="mt-3">
-        <div class="row">
-            <div class="col-md-3">
-                <label class="form-label">* Property First View:</label>
-                <input
-                    type="file"
-                    class="form-control rounded-0"
-                    @change="uploadFirstImage"
-                    disabled/>
+    <div class="mt-3" v-for="(photo, index) in photos" :key="index">
+        <div class="d-flex gap-3">
+            <div class="image-preview rounded-3 border d-flex align-items-center justify-content-center">
+                <img v-if="getPhotoUrl(photo.key)" :src="getPhotoUrl(photo.key)" class="img-fluid rounded" :alt="photo.label">
+                <span v-else class="text-muted small">No image</span>
             </div>
-            <div class="col-md-3">
-                <label class="form-label">* Property Second View:</label>
-                <input
-                    type="file"
-                    class="form-control rounded-0"
-                    @change="uploadSecondImage"
-                    disabled/>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">* Property Third View:</label>
-                <input
-                    type="file"
-                    class="form-control rounded-0"
-                    @change="uploadThirdImage"
-                    disabled/>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">* Property Fourth View:</label>
-                <input
-                    type="file"
-                    class="form-control rounded-0"
-                    @change="uploadFourthImage"
-                    disabled/>
+            <div class="w-100">
+                <div class="form-label">{{ photo.label }}:</div>
+                <div class="position-relative">
+                    <input type="file" class="form-control rounded-3 shadow-sm" disabled />
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class="mt-3">
-        <label class="form-label">* Property Floor Plan:</label>
-        <input
-            type="file"
-            class="form-control rounded-0"
-            @change="handleFloorPlanUpload"
-            disabled/>
     </div>
 </template>
 
@@ -157,77 +127,48 @@ export default
     {
         form()
         {
-            return this.$parent.form
+            return this.$parent.form;
+        },
+        photos()
+        {
+            return [
+                { key: 'photo_1', label: 'Property 1st Image View' },
+                { key: 'photo_2', label: 'Property 2nd Image View' },
+                { key: 'photo_3', label: 'Property 3rd Image View' },
+                { key: 'photo_4', label: 'Property 4th Image View' },
+                { key: 'floor_plan', label: 'Property Floor Plan' }
+            ];
         }
     },
-
     methods:
     {
+        getPhotoUrl(key)
+        {
+            if (!this.form[key]) return '';
+            if (this.form[key] instanceof File) return URL.createObjectURL(this.form[key]);
+            if (this.form[key].startsWith("http")) return this.form[key];
+            return `${process.env.VUE_APP_API_URL}/storage/${this.form[key]}`;
+        },
         handleBusinessTypeSelect(event)
         {
-            const value = event.target.value
-
-            if (!Array.isArray(this.form.property_type))
+            const value = event.target.value;
+            if (!Array.isArray(this.form.property_type)) this.form.property_type = [];
+            if (!this.form.property_type.includes(value) && this.form.property_type.length < 3)
             {
-                this.form.property_type = []
+                this.form.property_type.push(value);
             }
-
-            if (this.form.property_type.includes(value))
-            {
-                this.form.property_type = this.form.property_type.filter(type => type !== value)
-            }
-            else
-            {
-                if (this.form.property_type.length >= 3)
-                {
-                    alert("You can only select up to 3 business types.")
-                    event.target.value = ""
-                    return
-                }
-
-                this.form.property_type.push(value)
-            }
-
-            event.target.value = ""
-        },
-
-        uploadFirstImage(event)
-        {
-            const file = event.target.files[0]
-            this.form.photo_1 = file || null
-        },
-
-        uploadSecondImage(event)
-        {
-            const file = event.target.files[0]
-            this.form.photo_2 = file || null
-        },
-
-        uploadThirdImage(event)
-        {
-            const file = event.target.files[0]
-            this.form.photo_3 = file || null
-        },
-
-        uploadFourthImage(event)
-        {
-            const file = event.target.files[0]
-            this.form.photo_4 = file || null
-        },
-
-        handleFloorPlanUpload(event)
-        {
-            const file = event.target.files[0]
-            this.form.floor_plan = file || null
+            event.target.value = "";
         }
     }
 }
 </script>
 
 <style scoped>
-img
+.image-preview
 {
-    border-radius: 6px;
-    object-fit: cover;
+    width: 120px;
+    height: 80px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
 }
 </style>

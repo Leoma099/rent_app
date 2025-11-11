@@ -119,7 +119,6 @@ export default
             try
             {
                 this.isLoading = true;
-                setTimeout(async () => {
                     const response = await apiClient.get(`/properties`, {
                         params: {
                             search: this.searchQuery,
@@ -133,7 +132,6 @@ export default
                     this.items = response.data;
                     this.isEmpty = this.items.length === 0; // Check if items array is empty
                     this.isLoading = false;
-                }, 1000);
             }
             catch (error)
             {

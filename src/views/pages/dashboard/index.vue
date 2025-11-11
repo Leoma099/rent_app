@@ -8,8 +8,8 @@
 export default {
     data() {
         return {
-            // Get role from sessionStorage as an integer (parse it)
-            role: parseInt(sessionStorage.getItem("role")) || 0, // Default to 0 (guest) if role not found
+            // Get role from localStorage as an integer (parse it)
+            role: parseInt(localStorage.getItem("role")) || 0, // Default to 0 (guest) if role not found
         };
     },
 

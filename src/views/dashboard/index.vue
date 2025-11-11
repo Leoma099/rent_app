@@ -1,6 +1,5 @@
 <template>
     <div class="animation animation-fade-in">
-        <h1 class="mb-0">DASHBOARD</h1>
     </div>
 </template>
 
@@ -10,7 +9,7 @@ export default
     data() 
     {
         return {
-            role: parseInt(sessionStorage.getItem("role")) || 0
+            role: parseInt(localStorage.getItem("role")) || 0
         };
     },
 

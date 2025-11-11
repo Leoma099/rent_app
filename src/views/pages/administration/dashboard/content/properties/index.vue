@@ -82,7 +82,6 @@ export default
             try
             {
                 this.isLoading = true;
-                setTimeout(async () => {
                     const response = await apiClient.get(`/admin/dashboard/properties/options`, {
                         params: {
                             search: this.searchQuery,
@@ -96,7 +95,6 @@ export default
                     this.items = response.data.properties || [];
                     this.isEmpty = this.items.length === 0; // Check if items array is empty
                     this.isLoading = false;
-                }, 3000);
             }
             catch (error)
             {

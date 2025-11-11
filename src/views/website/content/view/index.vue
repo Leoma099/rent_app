@@ -310,7 +310,7 @@ export default {
     {
         isLoggedIn()
         {
-            return !!sessionStorage.getItem("access_token");
+            return !!localStorage.getItem("access_token");
         },
 
         propertyPhotos()
@@ -541,6 +541,7 @@ export default {
         {
             if (!photoPath) return "/default-avatar.png";
             if (photoPath.startsWith("http")) return photoPath;
+            // return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`;
             return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`;
         },
 
@@ -548,6 +549,7 @@ export default {
         {
             if (!floorPlanPath) return "/default-avatar.png";
             if (floorPlanPath.startsWith("http")) return floorPlanPath;
+            // return `${process.env.VUE_APP_API_URL}/uploads/${floorPlanPath}`;
             return `${process.env.VUE_APP_API_URL}/uploads/${floorPlanPath}`;
         },
 

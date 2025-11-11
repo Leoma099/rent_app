@@ -7,11 +7,11 @@
         <div class="card card-body shadow-sm border-0 rounded-0">
 
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
+                <!-- <div>
                     <router-link :to="'/administration/accounts/create'" class="btn rounded-0 button-color me-3">
                         <i class="bx bx-plus me-2"></i> Add User
                     </router-link>
-                </div>
+                </div> -->
                 <div class="col-md-4">
                     <input type="text" v-model="searchQuery" @input="fetchAccount" placeholder="Type your search here"
                         class="form-control rounded-0">
@@ -143,8 +143,7 @@ export default
             try
             {
                 this.isLoading = true;
-                setTimeout(async () => {
-                    const response = await apiClient.get(`/admin/accounts`, {
+                const response = await apiClient.get(`/admin/accounts`, {
                         params: {
                             search: this.searchQuery,
                             page: this.currentPage,
@@ -157,7 +156,6 @@ export default
                     this.items = response.data.data;
                     this.isEmpty = this.items.length === 0; // Check if items array is empty
                     this.isLoading = false;
-                }, 3000);
             }
             catch (error)
             {

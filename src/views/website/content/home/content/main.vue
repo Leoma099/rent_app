@@ -188,6 +188,7 @@ export default
             {
                 return photoPath;
             }
+            // return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`;
             return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`;
         },
 

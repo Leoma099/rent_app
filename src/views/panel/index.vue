@@ -34,8 +34,8 @@ export default
     data() 
     {
         return {
-            accessToken: sessionStorage.getItem("access_token"),
-            role: parseInt(sessionStorage.getItem("role")) || null
+            accessToken: localStorage.getItem("access_token"),
+            role: parseInt(localStorage.getItem("role")) || null
         };
     }
 };

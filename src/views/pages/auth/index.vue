@@ -128,31 +128,24 @@ export default
             {
                 const response = await apiClient.post('/login', this.form, { withCredentials: true });
 
-                sessionStorage.setItem('access_token', response.data.token);
-                sessionStorage.setItem('role', response.data.role);
-                sessionStorage.setItem("user_id", response.data.id);
-                sessionStorage.setItem("account", response.data.account ? response.data.account.id : "");
-                sessionStorage.setItem('full_name', response.data.full_name);
-                sessionStorage.setItem('id_number', response.data.id_number);
-                sessionStorage.setItem('office_name', response.data.office_name);
-                sessionStorage.setItem('office_address', response.data.office_address);
-                sessionStorage.setItem('position', response.data.position);
-                sessionStorage.setItem('mobile_number', response.data.mobile_number);
-                sessionStorage.setItem('username', response.data.username);
-                sessionStorage.setItem('email', response.data.email);
-                sessionStorage.setItem('address', response.data.address);
+                localStorage.setItem('access_token', response.data.token);
+                localStorage.setItem('role', response.data.role);
+                localStorage.setItem("user_id", response.data.id);
+                localStorage.setItem("account", response.data.account ? response.data.account.id : "");
+                localStorage.setItem('full_name', response.data.full_name);
+                localStorage.setItem('mobile_number', response.data.mobile_number);
+                localStorage.setItem('username', response.data.username);
+                localStorage.setItem('email', response.data.email);
+                localStorage.setItem("expiresAt", Date.now() + 30 * 60 * 1000); // 30 mins
 
-                setTimeout(() =>
+                if (response.data.role === 1 || response.data.role === 2)
                 {
-                    if (response.data.role === 1 || response.data.role === 2)
-                    {
-                        this.$router.push('/dashboard');
-                    }
-                    else if (response.data.role === 3)
-                    {
-                        this.$router.push('/commercialhub');
-                    }
-                }, 1000);
+                    this.$router.push('/dashboard');
+                }
+                else if (response.data.role === 3)
+                {
+                    this.$router.push('/commercialhub');
+                }
 
                 this.toast.success("Login successfully!");
             }

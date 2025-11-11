@@ -224,10 +224,7 @@ export default
                 const response = await apiClient.post('/admin/register', this.form);
                 console.log(response.data);
 
-                setTimeout(() =>
-                {
-                    this.$router.push('/signin');
-                }, 1000);
+                this.$router.push('/signin');
 
                 this.toast.success("Registration successful!");
             }

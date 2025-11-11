@@ -140,7 +140,7 @@ export default
 
         fetchUserName()
         {
-            const fullName = sessionStorage.getItem("full_name");
+            const fullName = localStorage.getItem("full_name");
             if (fullName)
             {
                 this.userName = fullName;

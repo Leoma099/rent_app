@@ -31,18 +31,23 @@
         <h3 class="fw-bold text-primary mb-0">Nearby Area Info</h3>
 
         <div class="mt-3">
-            <!-- scrollable list -->
             <ul class="list-group" style="max-height: 350px; overflow-y: auto;">
                 <li
                     class="list-group mb-3"
                     v-for="(landmark, index) in nearbyLandmarks"
-                    :key="index"
-                >
-                    <div class="card card-body bg-primary text-white border-0">
-                        <p class="mb-0"><strong>{{ landmark.name }}</strong></p>
-                        <small>{{ landmark.vicinity }} ({{ landmark.distance }} km)</small>
+                    :key="index">
+                    <div class="card card-body">
+                        <p class="mb-0 fw-semibold d-flex align-items-center">
+                            <img v-if="landmark.icon" :src="landmark.icon" class="me-2" style="width:24px;height:24px;" />
+                            <small>{{ landmark.name }}</small>
+                        </p>
+                        <small>
+                            {{ landmark.vicinity }}
+                            <span v-if="landmark.distance"> ({{ landmark.distance }})</span>
+                        </small>
                     </div>
                 </li>
+
                 <li v-if="!nearbyLandmarks.length">
                     <p class="mb-0 text-center">No landmarks found</p>
                 </li>
@@ -137,6 +142,19 @@ export default
                     if (!place.geometry || !place.geometry.location) return;
                     this.placeMarker(place.geometry.location);
                 });
+            }
+        },
+
+        loadInitialMarker()
+        {
+            if (this.isClearing) return;
+
+            if (this.map && this.form.lat && this.form.lng)
+            {
+                const latLng = new window.google.maps.LatLng(this.form.lat, this.form.lng);
+                this.placeMarker(latLng);
+                this.searchAddress = this.form.address || "";
+                this.nearbyLandmarks = [...(this.form.landmarks || [])];
             }
         },
 
@@ -246,21 +264,31 @@ export default
         {
             if (!window.google || !this.map || this.isClearing)
             {
-                return;
+                return
             }
 
-            console.log("🗺️ Showing landmarks near:", location);
-
-            // Clear previous markers
             this.landmarkMarkers.forEach((m) =>
             {
-                m.setMap(null);
-            });
-            this.landmarkMarkers = [];
-            this.nearbyLandmarks = [];
+                m.setMap(null)
+            })
+            this.landmarkMarkers = []
+            this.nearbyLandmarks = []
 
-            const allowedTypes = ["restaurant", "convenience_store", "supermarket", "bank", "hospital", "school", "gym", "park", "hotel"];
-            const service = new window.google.maps.places.PlacesService(this.map);
+            const allowedTypes = ["restaurant", "convenience_store", "supermarket", "bank", "hospital", "school", "gym", "park", "hotel"]
+            const typeIcons = 
+            {
+                restaurant: "https://maps.google.com/mapfiles/kml/shapes/dining.png",
+                convenience_store: "https://maps.google.com/mapfiles/kml/shapes/shopping.png",
+                supermarket: "https://maps.google.com/mapfiles/kml/shapes/shopping.png",
+                bank: "https://maps.gstatic.com/mapfiles/place_api/icons/bank_dollar-71.png",
+                hospital: "https://maps.google.com/mapfiles/kml/shapes/hospitals.png",
+                school: "https://maps.google.com/mapfiles/kml/shapes/schools.png",
+                gym: "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+                park: "https://maps.google.com/mapfiles/kml/shapes/parks.png",
+                hotel: "https://maps.google.com/mapfiles/kml/shapes/lodging.png"
+            }
+
+            const service = new window.google.maps.places.PlacesService(this.map)
 
             allowedTypes.forEach((type) =>
             {
@@ -269,16 +297,14 @@ export default
                     location: location,
                     radius: 5000,
                     type: type
-                };
+                }
 
                 service.nearbySearch(request, (results, status) =>
                 {
                     if (this.isClearing)
                     {
-                        return;
+                        return
                     }
-
-                    console.log(`📌 Type "${type}" search status:`, status, "Results:", results?.length || 0);
 
                     if (status === window.google.maps.places.PlacesServiceStatus.OK && results.length)
                     {
@@ -286,23 +312,18 @@ export default
                         {
                             if (!place.geometry || !place.geometry.location)
                             {
-                                return;
+                                return
                             }
 
-                            // Check if place type is in allowedTypes
-                            const placeType = place.types?.find((t) => allowedTypes.includes(t));
+                            const placeType = place.types?.find((t) => allowedTypes.includes(t))
                             if (!placeType)
                             {
-                                return;
+                                return
                             }
 
-                            const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
-                                location,
-                                place.geometry.location
-                            );
-                            const distanceKm = (distance / 1000).toFixed(2);
+                            const distance = window.google.maps.geometry.spherical.computeDistanceBetween(location, place.geometry.location)
+                            const distanceKm = (distance / 1000).toFixed(2)
 
-                            // Create marker
                             const marker = new window.google.maps.Marker(
                             {
                                 position: place.geometry.location,
@@ -310,15 +331,12 @@ export default
                                 title: place.name,
                                 icon:
                                 {
-                                    path: window.google.maps.SymbolPath.CIRCLE,
-                                    scale: 8,
-                                    fillColor: "#4285F4",
-                                    fillOpacity: 1,
-                                    strokeWeight: 1
+                                    url: typeIcons[placeType] || null,
+                                    scaledSize: new window.google.maps.Size(24, 24)
                                 }
-                            });
+                            })
 
-                            this.landmarkMarkers.push(marker);
+                            this.landmarkMarkers.push(marker)
                             this.nearbyLandmarks.push(
                             {
                                 name: place.name,
@@ -326,16 +344,15 @@ export default
                                 distance: distanceKm,
                                 lat: place.geometry.location.lat(),
                                 lng: place.geometry.location.lng(),
-                                type: placeType
-                            });
+                                type: placeType,
+                                icon: typeIcons[placeType] || null
+                            })
 
-                            this.$parent.form.landmarks = [...this.nearbyLandmarks];
-                        });
-
-                        console.log(`✅ Updated landmarks: ${this.nearbyLandmarks.length} total`);
+                            this.$parent.form.landmarks = [...this.nearbyLandmarks]
+                        })
                     }
-                });
-            });
+                })
+            })
         },
 
         clearMap()
@@ -388,19 +405,24 @@ export default
             this.searchAddress = "";
 
             // 6️⃣ Reset map center and zoom
-            const defaultCenter = { lat: 15.3461466, lng: 120.5926823 };
+            
+            const defaultCenter =
+            {
+                lat: 15.3461466,
+                lng: 120.5926823
+            };
             if (this.map)
             {
                 console.log("🔄 Resetting map center and zoom...");
                 this.map.panTo(defaultCenter);
-                this.map.setZoom(12);
+                this.map.setZoom(16);
             }
 
             // 7️⃣ Reinitialize map properly (to allow repinning)
             console.log("🗺️ Reinitializing map...");
             this.map = new window.google.maps.Map(document.getElementById("googleMap"), {
                 center: defaultCenter,
-                zoom: 12,
+                zoom: 16,
                 scrollwheel: true
             });
 
@@ -419,6 +441,6 @@ export default
                 console.log("✅ Map cleared and ready for new pin.");
             }, 300);
         }
-    }
+    },
 };
 </script>

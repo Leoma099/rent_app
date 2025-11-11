@@ -54,7 +54,7 @@
             <h3 class="fw-bold text-primary mb-0">Schedule Visit Info</h3>
         </div>
 
-        <div>
+        <!-- <div>
             <button
                 type="button"
                 class="btn btn-sm rounded-0 btn-primary d-flex align-items-center"
@@ -64,7 +64,7 @@
                 <i class="bx bx-plus"></i>
                 <span>Add Schedule</span>
             </button>
-        </div>
+        </div> -->
     </div>
 
     <div class="mt-3">
@@ -73,7 +73,7 @@
                 <tr>
                     <th class="table-header">DAY</th>
                     <th class="table-header">TIME</th>
-                    <th class="table-header text-end">ACTION</th>
+                    <!-- <th class="table-header text-end">ACTION</th> -->
                 </tr>
             </thead>
             <tbody v-if="schedules.length > 0">

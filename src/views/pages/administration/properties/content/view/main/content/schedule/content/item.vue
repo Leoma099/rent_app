@@ -9,7 +9,7 @@
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else>{{ formatTime(schedule.start_time) }} - {{ formatTime(schedule.end_time) }}</span>
         </td>
-        <td class="table-data">
+        <!-- <td class="table-data">
             <div class="text-end">
                 <button
                     type="button"
@@ -19,7 +19,7 @@
                     <i class="bx bx-trash"></i>
                 </button>
             </div>
-        </td>
+        </td> -->
     </tr>
 
 </template>

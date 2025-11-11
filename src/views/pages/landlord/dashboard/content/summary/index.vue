@@ -85,11 +85,8 @@ export default
                 for (const card of this.cards)
                 {
                     const response = await apiClient.get(card.endpoint);
-                    setTimeout(() =>
-                    {
-                        card.value = response.data[card.key] || 0;
-                        card.loading = false;
-                    }, 1000);
+                    card.value = response.data[card.key] || 0;
+                    card.loading = false;
                 }
             }
             catch (error)

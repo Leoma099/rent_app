@@ -141,11 +141,9 @@ export default
             
             try
             {
-                const response = await apiClient.put(`/accounts/${this.$route.params.id}`, this.form);
+                const response = await apiClient.put(`/admin/account/${this.$route.params.id}`, this.form);
                 console.log(response.data);
-                setTimeout(() => {
-                    this.$router.push('/administration/accounts');
-                }, 1000);
+                this.$router.push('/administration/accounts');
 
                 this.toast.success("Update successfully!");
             }
