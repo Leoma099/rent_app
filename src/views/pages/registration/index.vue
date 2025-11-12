@@ -23,7 +23,7 @@
                             id="name"
                             v-model="form.full_name"
                             class="form-control"
-                            placeholder="Enter your full name"
+                            placeholder="ex. Juan Dela Cruz"
                         />
                         <small v-if="errors.full_name" class="text-danger">{{ errors.full_name }}</small>
                     </div>
@@ -47,7 +47,7 @@
                             id="email"
                             v-model="form.email"
                             class="form-control"
-                            placeholder="Enter your email address"
+                            placeholder="ex. juandelacruz@gmail.com"
                         />
                         <small v-if="errors.email" class="text-danger">{{ errors.email }}</small>
                     </div>
@@ -59,7 +59,7 @@
                             id="mobile_number"
                             v-model="form.mobile_number"
                             class="form-control"
-                            placeholder="Enter your mobile number"
+                            placeholder="ex. 09XXXXXXXXX"
                             maxlength="11"
                             @input="validateMobileNumber"
                         />
@@ -75,12 +75,12 @@
                             id="username"
                             v-model="form.username"
                             class="form-control"
-                            placeholder="Enter your username"
+                            placeholder="ex. juandelacruz"
                         />
                         <small v-if="errors.username" class="text-danger">{{ errors.username }}</small>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6 position-relative">
                         <label for="password" class="form-label">Password</label>
                         <div class="position-relative">
                             <input
@@ -88,7 +88,9 @@
                                 id="password"
                                 v-model="form.password"
                                 class="form-control pe-5"
-                                placeholder="Enter your password"
+                                placeholder="ex. Password123!"
+                                @focus="showPassGuide = true"
+                                @blur="showPassGuide = false"
                             />
                             <span
                                 class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold cursor-pointer"
@@ -98,25 +100,32 @@
                                 {{ showPassword ? 'Hide' : 'Show' }}
                             </span>
                         </div>
-                        <ul class="list-unstyled mt-2 mb-0 small">
-                            <li :class="{'text-success fw-bold': passwordChecks.minLength, 'text-danger': !passwordChecks.minLength}">
-                                {{ passwordChecks.minLength ? '✓' : '•' }} At least 8 characters
-                            </li>
-                            <li :class="{'text-success fw-bold': passwordChecks.uppercase, 'text-danger': !passwordChecks.uppercase}">
-                                {{ passwordChecks.uppercase ? '✓' : '•' }} 1 uppercase letter
-                            </li>
-                            <li :class="{'text-success fw-bold': passwordChecks.lowercase, 'text-danger': !passwordChecks.lowercase}">
-                                {{ passwordChecks.lowercase ? '✓' : '•' }} 1 lowercase letter
-                            </li>
-                            <li :class="{'text-success fw-bold': passwordChecks.number, 'text-danger': !passwordChecks.number}">
-                                {{ passwordChecks.number ? '✓' : '•' }} 1 number
-                            </li>
-                            <li :class="{'text-success fw-bold': passwordChecks.symbol, 'text-danger': !passwordChecks.symbol}">
-                                {{ passwordChecks.symbol ? '✓' : '•' }} 1 special character (@$!%*?&)
-                            </li>
-                        </ul>
+
+                        <transition name="fade-slide">
+                            <div v-if="showPassGuide" class="pass-tooltip">
+                                <ul class="list-unstyled mb-0 small">
+                                    <li :class="{'ok': passwordChecks.minLength}">
+                                        {{ passwordChecks.minLength ? '✓' : '•' }} At least 8 characters
+                                    </li>
+                                    <li :class="{'ok': passwordChecks.uppercase}">
+                                        {{ passwordChecks.uppercase ? '✓' : '•' }} 1 uppercase letter
+                                    </li>
+                                    <li :class="{'ok': passwordChecks.lowercase}">
+                                        {{ passwordChecks.lowercase ? '✓' : '•' }} 1 lowercase letter
+                                    </li>
+                                    <li :class="{'ok': passwordChecks.number}">
+                                        {{ passwordChecks.number ? '✓' : '•' }} 1 number
+                                    </li>
+                                    <li :class="{'ok': passwordChecks.symbol}">
+                                        {{ passwordChecks.symbol ? '✓' : '•' }} 1 special character (@$!%*?&)
+                                    </li>
+                                </ul>
+                            </div>
+                        </transition>
+
                         <small v-if="errors.password" class="text-danger">{{ errors.password }}</small>
                     </div>
+
                 </div>
 
                 <button
@@ -156,7 +165,7 @@ export default
                 status: "0"
             },
             isLoading: false,
-            showPassword: false,
+            showPassGuide: false,
             errors: {}
         };
     },
@@ -198,6 +207,10 @@ export default
             if (!this.form.mobile_number)
             {
                 this.errors.mobile_number = "Mobile number is required";
+            }
+            else if (!/^09\d{9}$/.test(this.form.mobile_number))
+            {
+                this.errors.mobile_number = "Invalid mobile number.";
             }
             if (!this.form.username)
             {
@@ -245,12 +258,20 @@ export default
 
         validateMobileNumber()
         {
+            // Remove non-numeric characters
             this.form.mobile_number = this.form.mobile_number.replace(/[^0-9]/g, '');
-            if (this.form.mobile_number.length > 11)
-            {
+
+            // Limit to 11 digits
+            if (this.form.mobile_number.length > 11) {
                 this.form.mobile_number = this.form.mobile_number.slice(0, 11);
-                this.toast.warning('Only 11 digits are allowed for the mobile number.');
             }
+
+            // Check Philippine mobile number format
+            // if (this.form.mobile_number && !/^09\d{9}$/.test(this.form.mobile_number)) {
+            //     this.errors.mobile_number = "Invalid mobile number. Must start with 09 and be 11 digits.";
+            // } else {
+            //     this.errors.mobile_number = null;
+            // }
         },
 
         togglePassword()
@@ -301,5 +322,43 @@ export default
 .text-danger
 {
     font-size: 0.8rem;
+}
+
+.pass-tooltip
+{
+    position: absolute;
+    max-width: 100%;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    z-index: 20;
+}
+
+.pass-tooltip li
+{
+    color: #dc3545;
+    font-weight: 500;
+}
+
+.pass-tooltip li.ok
+{
+    color: #198754;
+    font-weight: bold;
+}
+
+.fade-slide-enter-active,
+.fade-slide-leave-active
+{
+    transition: all 0.25s ease;
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to
+{
+    opacity: 0;
+    transform: translateY(-6px);
 }
 </style>

@@ -147,7 +147,7 @@ export default
             if (!this.form[key]) return '';
             if (this.form[key] instanceof File) return URL.createObjectURL(this.form[key]);
             if (this.form[key].startsWith("http")) return this.form[key];
-            return `${process.env.VUE_APP_API_URL}/storage/${this.form[key]}`;
+            return `${process.env.VUE_APP_API_URL}/uploads/${this.form[key]}`;
         },
         handleBusinessTypeSelect(event)
         {

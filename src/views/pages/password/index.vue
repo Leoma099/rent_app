@@ -15,43 +15,40 @@
             </div>
 
             <form @submit.prevent="submit()">
-                <label for="password" class="form-label">Password</label>
-                <div class="position-relative mb-3">
+
+                <!-- Password -->
+                <label for="password" class="form-label">New Password</label>
+                <div class="position-relative mb-2">
                     <input
                         :type="showPassword ? 'text' : 'password'"
                         id="password"
                         v-model="form.password"
                         class="form-control pe-5"
-                        placeholder="Enter your password"
+                        placeholder="Enter new password"
+                        @focus="showPassGuide = true"
+                        @blur="hideTooltip"
                         required
                     />
-                    <span
-                        class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold cursor-pointer"
-                        @click="togglePassword"
-                        style="user-select: none;"
-                    >
+
+                    <span class="toggle-pass" @click="togglePassword">
                         {{ showPassword ? 'Hide' : 'Show' }}
                     </span>
+
+                    <!-- Tooltip -->
+                    <transition name="fade-slide">
+                        <div v-if="showPassGuide" class="pass-tooltip">
+                            <ul class="list-unstyled mb-0 small">
+                                <li :class="{ ok: passwordChecks.minLength }"> {{ passwordChecks.minLength ? '✓' : '•' }} At least 8 characters</li>
+                                <li :class="{ ok: passwordChecks.uppercase }"> {{ passwordChecks.uppercase ? '✓' : '•' }} 1 uppercase letter</li>
+                                <li :class="{ ok: passwordChecks.lowercase }"> {{ passwordChecks.lowercase ? '✓' : '•' }} 1 lowercase letter</li>
+                                <li :class="{ ok: passwordChecks.number }"> {{ passwordChecks.number ? '✓' : '•' }} 1 number</li>
+                                <li :class="{ ok: passwordChecks.symbol }"> {{ passwordChecks.symbol ? '✓' : '•' }} 1 special character (@$!%*?&)</li>
+                            </ul>
+                        </div>
+                    </transition>
                 </div>
 
-                <ul class="list-unstyled mt-2 small">
-                    <li :class="{'text-success fw-bold': passwordChecks.minLength, 'text-danger': !passwordChecks.minLength}">
-                        {{ passwordChecks.minLength ? '✓' : '•' }} At least 8 characters
-                    </li>
-                    <li :class="{'text-success fw-bold': passwordChecks.uppercase, 'text-danger': !passwordChecks.uppercase}">
-                        {{ passwordChecks.uppercase ? '✓' : '•' }} 1 uppercase letter
-                    </li>
-                    <li :class="{'text-success fw-bold': passwordChecks.lowercase, 'text-danger': !passwordChecks.lowercase}">
-                        {{ passwordChecks.lowercase ? '✓' : '•' }} 1 lowercase letter
-                    </li>
-                    <li :class="{'text-success fw-bold': passwordChecks.number, 'text-danger': !passwordChecks.number}">
-                        {{ passwordChecks.number ? '✓' : '•' }} 1 number
-                    </li>
-                    <li :class="{'text-success fw-bold': passwordChecks.symbol, 'text-danger': !passwordChecks.symbol}">
-                        {{ passwordChecks.symbol ? '✓' : '•' }} 1 special character (@$!%*?&)
-                    </li>
-                </ul>
-
+                <!-- Confirm Password -->
                 <label for="confirm_password" class="form-label">Confirm Password</label>
                 <div class="position-relative mb-3">
                     <input
@@ -59,14 +56,11 @@
                         id="password_confirmation"
                         v-model="form.password_confirmation"
                         class="form-control pe-5"
-                        placeholder="Enter your confirm password"
+                        placeholder="Confirm password"
                         required
                     />
-                    <span
-                        class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold cursor-pointer"
-                        @click="toggleConfirmPassword"
-                        style="user-select: none;"
-                    >
+
+                    <span class="toggle-pass" @click="toggleConfirmPassword">
                         {{ showConfirmPassword ? 'Hide' : 'Show' }}
                     </span>
                 </div>
@@ -76,8 +70,8 @@
                     class="btn btn-primary w-100 mb-3"
                     :disabled="isLoading"
                 >
-                    <span v-if="!isLoading">Reset password</span>
-                    <span v-else>Reset password...</span>
+                    <span v-if="!isLoading">Reset Password</span>
+                    <span v-else>Resetting...</span>
                 </button>
             </form>
 
@@ -90,9 +84,9 @@
 </template>
 
 <script>
-import apiClient from "@/services/index"
-import { useToast } from "vue-toastification"
-import { useRoute } from "vue-router"
+import apiClient from "@/services/index";
+import { useToast } from "vue-toastification";
+import { useRoute } from "vue-router";
 
 export default
 {
@@ -109,6 +103,7 @@ export default
             isLoading: false,
             showPassword: false,
             showConfirmPassword: false,
+            showPassGuide: false,
         };
     },
 
@@ -124,23 +119,37 @@ export default
     {
         passwordChecks()
         {
-            const password = this.form.password;
+            const p = this.form.password;
             return {
-                minLength: password.length >= 8,
-                uppercase: /[A-Z]/.test(password),
-                lowercase: /[a-z]/.test(password),
-                number: /[0-9]/.test(password),
-                symbol: /[@$!%*?&]/.test(password)
+                minLength: p.length >= 8,
+                uppercase: /[A-Z]/.test(p),
+                lowercase: /[a-z]/.test(p),
+                number: /[0-9]/.test(p),
+                symbol: /[@$!%*?&]/.test(p)
             };
         }
     },
 
     methods:
     {
+        togglePassword()
+        {
+            this.showPassword = !this.showPassword;
+        },
+
+        toggleConfirmPassword()
+        {
+            this.showConfirmPassword = !this.showConfirmPassword;
+        },
+
+        hideTooltip()
+        {
+            setTimeout(() => this.showPassGuide = false, 120);
+        },
+
         async submit()
         {
             this.isLoading = true;
-            this.errors = {};
 
             try
             {
@@ -156,20 +165,11 @@ export default
             {
                 this.isLoading = false;
             }
-        },
-
-        togglePassword()
-        {
-            this.showPassword = !this.showPassword;
-        },
-
-        toggleConfirmPassword()
-        {
-            this.showConfirmPassword = !this.showConfirmPassword;
         }
     }
 };
 </script>
+
 
 <style scoped>
 .animation
@@ -279,5 +279,49 @@ export default
     {
         transform: rotate(360deg);
     }
+}
+
+.pass-tooltip {
+    position: absolute;
+    width: 100%;
+    max-width: 100%;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    z-index: 10;
+    margin-top: 6px;
+}
+
+.pass-tooltip li {
+    color: #dc3545;
+}
+
+.pass-tooltip li.ok {
+    color: #198754;
+    font-weight: bold;
+}
+
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+    transition: all 0.22s cubic-bezier(.45,.03,.5,.9);
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+    opacity: 0;
+    transform: translateY(-6px);
+}
+
+.toggle-pass {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-weight: 600;
+    color: #0d6efd;
+    cursor: pointer;
+    user-select: none;
 }
 </style>
