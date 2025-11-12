@@ -97,13 +97,14 @@
                                 @click="togglePassword"
                                 style="user-select: none;"
                             >
-                                {{ showPassword ? 'Hide' : 'Show' }}
+                                <i class="text-secondary" :class="showPassword ? 'bx bx-hide' : 'bx bx-show'"></i>
                             </span>
                         </div>
 
                         <transition name="fade-slide">
                             <div v-if="showPassGuide" class="pass-tooltip">
-                                <ul class="list-unstyled mb-0 small">
+                                <ul class="list-unstyled mb-2 small">
+                                    <p class="mb-2">Password must contain the following:</p>
                                     <li :class="{'ok': passwordChecks.minLength}">
                                         {{ passwordChecks.minLength ? '✓' : '•' }} At least 8 characters
                                     </li>
@@ -113,11 +114,8 @@
                                     <li :class="{'ok': passwordChecks.lowercase}">
                                         {{ passwordChecks.lowercase ? '✓' : '•' }} 1 lowercase letter
                                     </li>
-                                    <li :class="{'ok': passwordChecks.number}">
-                                        {{ passwordChecks.number ? '✓' : '•' }} 1 number
-                                    </li>
-                                    <li :class="{'ok': passwordChecks.symbol}">
-                                        {{ passwordChecks.symbol ? '✓' : '•' }} 1 special character (@$!%*?&)
+                                    <li :class="{'ok': passwordChecks.number || passwordChecks.symbol}">
+                                        {{ (passwordChecks.number || passwordChecks.symbol) ? '✓' : '•' }} 1 number or symbol
                                     </li>
                                 </ul>
                             </div>
@@ -166,6 +164,7 @@ export default
             },
             isLoading: false,
             showPassGuide: false,
+            showPassword: false,
             errors: {}
         };
     },
@@ -182,6 +181,56 @@ export default
                 number: /[0-9]/.test(password),
                 symbol: /[@$!%*?&]/.test(password)
             };
+        },
+
+        strengthPercent()
+        {
+            let strength = 0;
+            if(this.passwordChecks.minLength) strength += 25;
+            if(this.passwordChecks.uppercase) strength += 25;
+            if(this.passwordChecks.lowercase) strength += 25;
+            if(this.passwordChecks.number || this.passwordChecks.symbol) strength += 25;
+            return strength;
+        },
+
+        passwordStrengthClass()
+        {
+            if(this.strengthPercent <= 25)
+            {
+                return 'bg-danger';
+            }
+            else if(this.strengthPercent <= 50)
+            {
+                return 'bg-warning';
+            }
+            else if(this.strengthPercent <= 75)
+            {
+                return 'bg-primary';
+            }
+            else
+            {
+                return 'bg-success';
+            }
+        },
+
+        passwordStrengthText()
+        {
+            if(this.strengthPercent <= 25)
+            {
+                return 'Weak';
+            }
+            else if(this.strengthPercent <= 50)
+            {
+                return 'Fair';
+            }
+            else if(this.strengthPercent <= 75)
+            {
+                return 'Good';
+            }
+            else
+            {
+                return 'Strong';
+            }
         }
     },
 
@@ -361,4 +410,15 @@ export default
     opacity: 0;
     transform: translateY(-6px);
 }
+.progress
+{
+    height: 6px;
+    border-radius: 4px;
+}
+
+.progress-bar
+{
+    transition: width 0.3s ease;
+}
+
 </style>

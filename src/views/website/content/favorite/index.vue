@@ -142,7 +142,7 @@ export default
                 return photoPath;
             }
 
-            return `http://api.rent-app.loc/storage/${photoPath}`;
+            return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`;
         }
     }
 };

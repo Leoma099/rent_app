@@ -1,5 +1,4 @@
 <template>
-
     <div v-if="isLoading" class="loading-overlay">
         <div class="spinner"></div>
     </div>
@@ -16,7 +15,7 @@
 
             <form @submit.prevent="submit()">
 
-                <!-- Password -->
+                <!-- Password input with strength meter -->
                 <label for="password" class="form-label">New Password</label>
                 <div class="position-relative mb-2">
                     <input
@@ -31,22 +30,30 @@
                     />
 
                     <span class="toggle-pass" @click="togglePassword">
-                        {{ showPassword ? 'Hide' : 'Show' }}
+                        <i class="text-secondary" :class="showPassword ? 'bx bx-hide' : 'bx bx-show'"></i>
                     </span>
 
-                    <!-- Tooltip -->
                     <transition name="fade-slide">
                         <div v-if="showPassGuide" class="pass-tooltip">
-                            <ul class="list-unstyled mb-0 small">
-                                <li :class="{ ok: passwordChecks.minLength }"> {{ passwordChecks.minLength ? '✓' : '•' }} At least 8 characters</li>
-                                <li :class="{ ok: passwordChecks.uppercase }"> {{ passwordChecks.uppercase ? '✓' : '•' }} 1 uppercase letter</li>
-                                <li :class="{ ok: passwordChecks.lowercase }"> {{ passwordChecks.lowercase ? '✓' : '•' }} 1 lowercase letter</li>
-                                <li :class="{ ok: passwordChecks.number }"> {{ passwordChecks.number ? '✓' : '•' }} 1 number</li>
-                                <li :class="{ ok: passwordChecks.symbol }"> {{ passwordChecks.symbol ? '✓' : '•' }} 1 special character (@$!%*?&)</li>
+                            <ul class="list-unstyled mb-2 small">
+                                <p class="mb-2">Password must contain the following:</p>
+                                <li :class="{'ok': passwordChecks.minLength}">
+                                    {{ passwordChecks.minLength ? '✓' : '•' }} At least 8 characters
+                                </li>
+                                <li :class="{'ok': passwordChecks.uppercase}">
+                                    {{ passwordChecks.uppercase ? '✓' : '•' }} 1 uppercase letter
+                                </li>
+                                <li :class="{'ok': passwordChecks.lowercase}">
+                                    {{ passwordChecks.lowercase ? '✓' : '•' }} 1 lowercase letter
+                                </li>
+                                <li :class="{'ok': passwordChecks.number || passwordChecks.symbol}">
+                                    {{ (passwordChecks.number || passwordChecks.symbol) ? '✓' : '•' }} 1 number or symbol
+                                </li>
                             </ul>
                         </div>
                     </transition>
                 </div>
+
 
                 <!-- Confirm Password -->
                 <label for="confirm_password" class="form-label">Confirm Password</label>
@@ -59,17 +66,12 @@
                         placeholder="Confirm password"
                         required
                     />
-
                     <span class="toggle-pass" @click="toggleConfirmPassword">
                         {{ showConfirmPassword ? 'Hide' : 'Show' }}
                     </span>
                 </div>
 
-                <button
-                    type="submit"
-                    class="btn btn-primary w-100 mb-3"
-                    :disabled="isLoading"
-                >
+                <button type="submit" class="btn btn-primary w-100 mb-3" :disabled="isLoading">
                     <span v-if="!isLoading">Reset Password</span>
                     <span v-else>Resetting...</span>
                 </button>
@@ -80,7 +82,6 @@
             </div>
         </div>
     </div>
-
 </template>
 
 <script>
@@ -88,8 +89,7 @@ import apiClient from "@/services/index";
 import { useToast } from "vue-toastification";
 import { useRoute } from "vue-router";
 
-export default
-{
+export default {
     data()
     {
         return {
@@ -98,12 +98,12 @@ export default
                 email: "",
                 token: "",
                 password: "",
-                password_confirmation: "",
+                password_confirmation: ""
             },
             isLoading: false,
             showPassword: false,
             showConfirmPassword: false,
-            showPassGuide: false,
+            showPassGuide: false
         };
     },
 
@@ -119,14 +119,64 @@ export default
     {
         passwordChecks()
         {
-            const p = this.form.password;
+            const password = this.form.password;
             return {
-                minLength: p.length >= 8,
-                uppercase: /[A-Z]/.test(p),
-                lowercase: /[a-z]/.test(p),
-                number: /[0-9]/.test(p),
-                symbol: /[@$!%*?&]/.test(p)
+                minLength: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /[0-9]/.test(password),
+                symbol: /[@$!%*?&]/.test(password)
             };
+        },
+
+        strengthPercent()
+        {
+            let strength = 0;
+            if(this.passwordChecks.minLength) strength += 25;
+            if(this.passwordChecks.uppercase) strength += 25;
+            if(this.passwordChecks.lowercase) strength += 25;
+            if(this.passwordChecks.number || this.passwordChecks.symbol) strength += 25;
+            return strength;
+        },
+
+        passwordStrengthClass()
+        {
+            if(this.strengthPercent <= 25)
+            {
+                return 'bg-danger';
+            }
+            else if(this.strengthPercent <= 50)
+            {
+                return 'bg-warning';
+            }
+            else if(this.strengthPercent <= 75)
+            {
+                return 'bg-primary';
+            }
+            else
+            {
+                return 'bg-success';
+            }
+        },
+
+        passwordStrengthText()
+        {
+            if(this.strengthPercent <= 25)
+            {
+                return 'Weak';
+            }
+            else if(this.strengthPercent <= 50)
+            {
+                return 'Fair';
+            }
+            else if(this.strengthPercent <= 75)
+            {
+                return 'Good';
+            }
+            else
+            {
+                return 'Strong';
+            }
         }
     },
 
@@ -144,13 +194,15 @@ export default
 
         hideTooltip()
         {
-            setTimeout(() => this.showPassGuide = false, 120);
+            setTimeout(() =>
+            {
+                this.showPassGuide = false;
+            }, 120);
         },
 
         async submit()
         {
             this.isLoading = true;
-
             try
             {
                 const response = await apiClient.post("/reset-password", this.form);
@@ -170,81 +222,7 @@ export default
 };
 </script>
 
-
 <style scoped>
-.animation
-{
-    animation-duration: 1s;
-    animation-fill-mode: none;
-}
-
-.animation-fade-in
-{
-    animation-name: fadeIn;
-}
-
-@keyframes fadeIn
-{
-    from
-    {
-        opacity: 0;
-    }
-    to
-    {
-        opacity: 1;
-    }
-}
-
-.container
-{
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-.box-area
-{
-    width: 930px;
-}
-
-.right-box
-{
-    padding: 40px;
-}
-
-.button-signin
-{
-    border: 2px solid #ffffff;
-    color: #ffffff;
-    transition: all 0.2s ease-in-out;
-}
-
-.button-signin:hover
-{
-    background: #ffffff;
-    color: #007bff;
-    font-weight: 600;
-}
-
-.login-image
-{
-    width: 400px;
-    overflow: hidden;
-    text-align: center;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.login-image img
-{
-    width: 100%;
-    object-fit: cover;
-}
-
 .loading-overlay
 {
     position: fixed;
@@ -281,7 +259,8 @@ export default
     }
 }
 
-.pass-tooltip {
+.pass-tooltip
+{
     position: absolute;
     width: 100%;
     max-width: 100%;
@@ -294,27 +273,51 @@ export default
     margin-top: 6px;
 }
 
-.pass-tooltip li {
+.pass-tooltip li
+{
     color: #dc3545;
 }
 
-.pass-tooltip li.ok {
+.pass-tooltip li.ok
+{
     color: #198754;
     font-weight: bold;
 }
 
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-    transition: all 0.22s cubic-bezier(.45,.03,.5,.9);
+.strength-bar
+{
+    height: 5px;
+    border-radius: 4px;
+    background-color: #e0e0e0;
+    margin-bottom: 2px;
 }
 
-.fade-slide-enter-from,
-.fade-slide-leave-to {
-    opacity: 0;
-    transform: translateY(-6px);
+.strength-bar.weak
+{
+    background-color: #dc3545;
+    width: 25%;
 }
 
-.toggle-pass {
+.strength-bar.fair
+{
+    background-color: #ffc107;
+    width: 50%;
+}
+
+.strength-bar.good
+{
+    background-color: #0d6efd;
+    width: 75%;
+}
+
+.strength-bar.strong
+{
+    background-color: #198754;
+    width: 100%;
+}
+
+.toggle-pass
+{
     position: absolute;
     top: 50%;
     right: 10px;
@@ -324,4 +327,16 @@ export default
     cursor: pointer;
     user-select: none;
 }
+
+.progress
+{
+    height: 6px;
+    border-radius: 4px;
+}
+
+.progress-bar
+{
+    transition: width 0.3s ease;
+}
+
 </style>

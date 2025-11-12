@@ -42,7 +42,7 @@
                             @click="togglePassword"
                             style="user-select: none;"
                         >
-                            {{ showPassword ? 'Hide' : 'Show' }}
+                            <i class="text-secondary" :class="showPassword ? 'bx bx-hide' : 'bx bx-show'"></i>
                         </span>
                     </div>
                     <small v-if="errors.password" class="text-danger">{{ errors.password }}</small>

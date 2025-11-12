@@ -102,31 +102,44 @@
                                     <div class="position-relative">
                                         <input
                                             :type="showPassword ? 'text' : 'password'"
-                                            class="form-control rounded-0 pe-5"
-                                            placeholder="Enter new password"
+                                            id="password"
                                             v-model="form.password"
-                                            @input="validatePassword"
+                                            class="form-control pe-5"
+                                            placeholder="ex. Password123!"
+                                            @focus="showPassGuide = true"
+                                            @blur="showPassGuide = false"
                                         />
-
-                                        <!-- ✅ Show/Hide stays inside input -->
                                         <span
                                             class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold cursor-pointer"
                                             @click="togglePassword"
                                             style="user-select: none;">
-                                            {{ showPassword ? 'Hide' : 'Show' }}
+                                            <i class="text-secondary" :class="showPassword ? 'bx bx-hide' : 'bx bx-show'"></i>
                                         </span>
+
+                                        <transition name="fade-slide">
+                                            <div v-if="showPassGuide" class="pass-tooltip">
+                                                <ul class="list-unstyled mb-1 small">
+                                                    <p class="mb-2">Password must contain the following:</p>
+                                                    <li :class="{'ok': passwordChecks.minLength}">
+                                                        {{ passwordChecks.minLength ? '✓' : '•' }} At least 8 characters
+                                                    </li>
+                                                    <li :class="{'ok': passwordChecks.uppercase}">
+                                                        {{ passwordChecks.uppercase ? '✓' : '•' }} 1 uppercase letter
+                                                    </li>
+                                                    <li :class="{'ok': passwordChecks.lowercase}">
+                                                        {{ passwordChecks.lowercase ? '✓' : '•' }} 1 lowercase letter
+                                                    </li>
+                                                    <li :class="{'ok': passwordChecks.number || passwordChecks.symbol}">
+                                                        {{ (passwordChecks.number || passwordChecks.symbol) ? '✓' : '•' }} 1 number or symbol
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </transition>
                                     </div>
 
-                                    <!-- ⚠ Password warning (below input) -->
-                                    <small
-                                        v-if="passwordWarning"
-                                        class="text-danger d-block mt-1">
-                                        ⚠ Password must contain at least 8 characters,
-                                        one uppercase letter, one number,
-                                        and one special character.
-                                    </small>
                                 </div>
                             </div>
+
 
                         </div>
 
@@ -176,7 +189,73 @@ export default
             },
             passwordWarning: false,
             showPassword: false,
+            showPassGuide: false,
         };
+    },
+
+    computed:
+    {
+        passwordChecks()
+        {
+            const password = this.form.password;
+            return {
+                minLength: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /[0-9]/.test(password),
+                symbol: /[@$!%*?&]/.test(password)
+            };
+        },
+
+        strengthPercent()
+        {
+            let strength = 0;
+            if(this.passwordChecks.minLength) strength += 25;
+            if(this.passwordChecks.uppercase) strength += 25;
+            if(this.passwordChecks.lowercase) strength += 25;
+            if(this.passwordChecks.number || this.passwordChecks.symbol) strength += 25;
+            return strength;
+        },
+
+        passwordStrengthClass()
+        {
+            if(this.strengthPercent <= 25)
+            {
+                return 'bg-danger';
+            }
+            else if(this.strengthPercent <= 50)
+            {
+                return 'bg-warning';
+            }
+            else if(this.strengthPercent <= 75)
+            {
+                return 'bg-primary';
+            }
+            else
+            {
+                return 'bg-success';
+            }
+        },
+
+        passwordStrengthText()
+        {
+            if(this.strengthPercent <= 25)
+            {
+                return 'Weak';
+            }
+            else if(this.strengthPercent <= 50)
+            {
+                return 'Fair';
+            }
+            else if(this.strengthPercent <= 75)
+            {
+                return 'Good';
+            }
+            else
+            {
+                return 'Strong';
+            }
+        }
     },
 
     created()
@@ -267,5 +346,84 @@ export default
 .cursor-pointer
 {
     cursor: pointer;
+}
+.pass-tooltip
+{
+    position: absolute;
+    width: 100%;
+    max-width: 100%;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    z-index: 10;
+    margin-top: 6px;
+}
+
+.pass-tooltip li
+{
+    color: #dc3545;
+}
+
+.pass-tooltip li.ok
+{
+    color: #198754;
+    font-weight: bold;
+}
+
+.strength-bar
+{
+    height: 5px;
+    border-radius: 4px;
+    background-color: #e0e0e0;
+    margin-bottom: 2px;
+}
+
+.strength-bar.weak
+{
+    background-color: #dc3545;
+    width: 25%;
+}
+
+.strength-bar.fair
+{
+    background-color: #ffc107;
+    width: 50%;
+}
+
+.strength-bar.good
+{
+    background-color: #0d6efd;
+    width: 75%;
+}
+
+.strength-bar.strong
+{
+    background-color: #198754;
+    width: 100%;
+}
+
+.toggle-pass
+{
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-weight: 600;
+    color: #0d6efd;
+    cursor: pointer;
+    user-select: none;
+}
+
+.progress
+{
+    height: 6px;
+    border-radius: 4px;
+}
+
+.progress-bar
+{
+    transition: width 0.3s ease;
 }
 </style>
