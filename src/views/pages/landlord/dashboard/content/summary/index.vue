@@ -1,16 +1,16 @@
 <template>
-    <div class="row mb-3">
+    <div class="row">
         <div
             v-for="(card, index) in cards"
             :key="index"
             class="col-md-2"
             :class="{ 'col-md-4': index === 0 }"
         >
-            <div class="card card-body shadow-sm rounded-0">
+            <div class="card card-body shadow-sm rounded-0 mb-3">
                 <div class="d-flex justify-content-between align-items-center text-primary">
                     <div>
                         <span class="total-number mb-0">
-                            <div v-if="card.loading" class="shimmer-loader"></div>
+                            <div v-if="card.loading" class="loader"></div>
                             <span v-else>{{ card.value }}</span>
                         </span>
                         <p class="indicator-title mb-0">{{ card.label }}</p>
@@ -32,46 +32,11 @@ export default
         return {
             cards:
             [
-                {
-                    label: "TOTAL PROPERTY",
-                    value: 0,
-                    icon: "bx bx-laptop",
-                    loading: true,
-                    endpoint: "/totalProperties",
-                    key: "total_properties"
-                },
-                {
-                    label: "TOTAL LEASE",
-                    value: 0,
-                    icon: "bx bx-user",
-                    loading: true,
-                    endpoint: "/leaseCount",
-                    key: "total_leases"
-                },
-                {
-                    label: "TOTAL PENDING",
-                    value: 0,
-                    icon: "bx bx-hourglass-top",
-                    loading: true,
-                    endpoint: "/pendingCount",
-                    key: "total_pending"
-                },
-                {
-                    label: "TOTAL BOOKED",
-                    value: 0,
-                    icon: "bx bx-book",
-                    loading: true,
-                    endpoint: "/bookedCount",
-                    key: "total_booked"
-                },
-                {
-                    label: "TOTAL INQUIRED",
-                    value: 0,
-                    icon: "bx bx-message-detail",
-                    loading: true,
-                    endpoint: "/inquireCount",
-                    key: "total_inquire"
-                }
+                { label: "TOTAL PROPERTY", value: 0, icon: "bx bx-laptop", loading: true, endpoint: "/totalProperties", key: "total_properties" },
+                { label: "TOTAL LEASE", value: 0, icon: "bx bx-user", loading: true, endpoint: "/leaseCount", key: "total_leases" },
+                { label: "TOTAL PENDING", value: 0, icon: "bx bx-hourglass-top", loading: true, endpoint: "/pendingCount", key: "total_pending" },
+                { label: "TOTAL BOOKED", value: 0, icon: "bx bx-book", loading: true, endpoint: "/bookedCount", key: "total_booked" },
+                { label: "TOTAL INQUIRED", value: 0, icon: "bx bx-message-detail", loading: true, endpoint: "/inquireCount", key: "total_inquire" }
             ]
         };
     },
@@ -82,12 +47,15 @@ export default
         {
             try
             {
-                for (const card of this.cards)
-                {
-                    const response = await apiClient.get(card.endpoint);
-                    card.value = response.data[card.key] || 0;
-                    card.loading = false;
-                }
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                // Load all data simultaneously
+                const promises = this.cards.map(card => apiClient.get(card.endpoint));
+                const responses = await Promise.all(promises);
+
+                responses.forEach((res, i) => {
+                    this.cards[i].value = res.data[this.cards[i].key] || 0;
+                    this.cards[i].loading = false;
+                });
             }
             catch (error)
             {
@@ -121,32 +89,22 @@ export default
     font-size: 4rem;
 }
 
-/* Shimmer Loader */
-.shimmer-loader
+/* Circular Loader */
+.loader
 {
-    height: 3rem;
-    width: 5rem;
-    background: linear-gradient(
-        90deg,
-        #f0f0f0 25%,
-        #e0e0e0 50%,
-        #f0f0f0 75%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 1.2s infinite linear;
-    border-radius: 6px;
+    width: 50px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+        radial-gradient(farthest-side,#0d6efd 94%,#0000) top/8px 8px no-repeat,
+        conic-gradient(#0000 30%,#0d6efd);
+    -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 8px),#000 0);
+    animation: rotateLoader 1s infinite linear;
     margin-bottom: 0.5rem;
 }
 
-@keyframes shimmer
+@keyframes rotateLoader
 {
-    0%
-    {
-        background-position: -200% 0;
-    }
-    100%
-    {
-        background-position: 200% 0;
-    }
+    100% { transform: rotate(1turn); }
 }
 </style>

@@ -44,6 +44,7 @@ export default
             filters:
             {
                 property_type: "",
+                barangay: "",
                 search: ""
             },
             items: [],

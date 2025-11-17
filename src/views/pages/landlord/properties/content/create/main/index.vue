@@ -65,6 +65,7 @@ export default
                 title: "",
                 description: "",
                 address: "",
+                barangay: "",
                 lat: "",
                 lng: "",
                 price: "",

@@ -48,8 +48,9 @@ export default
         {
             const statuses =
             {
-                0: { label: "Inactive", badgeClass: "btn btn-sm btn-warning rounded-0" },
-                1: { label: "Active", badgeClass: "btn btn-sm btn-success rounded-0" },
+                0: { label: "Pending", badgeClass: "btn btn-sm btn-secondary rounded-0" },
+                1: { label: "Inactive", badgeClass: "btn btn-sm btn-warning rounded-0" },
+                2: { label: "Active", badgeClass: "btn btn-sm btn-success rounded-0" },
             };
             return statuses[status] || { label: "n/a", badgeClass: "btn btn-sm btn-secondary rounded-0" };
         },

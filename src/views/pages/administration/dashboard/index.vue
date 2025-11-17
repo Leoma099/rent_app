@@ -6,7 +6,7 @@
 
         <div class="mt-3">
 
-            <key-perfomance-indicator class="mb-4" />
+            <key-perfomance-indicator />
 
             <property-component />
             

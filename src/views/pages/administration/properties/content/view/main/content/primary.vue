@@ -8,8 +8,9 @@
             placeholder="ex. BUILDING 1"
             class="form-control rounded-0"
             v-model="form.title"
-            disabled
-        />
+            :class="{ 'is-invalid': errors.title }"
+            disabled>
+            <div v-if="errors.title" class="invalid-feedback">{{ errors.title }}</div>
     </div>
 
     <div class="mt-3">
@@ -18,30 +19,42 @@
             rows="5"
             class="form-control rounded-0"
             v-model="form.description"
-            disabled
-        ></textarea>
+            :class="{ 'is-invalid': errors.description }"
+            disabled>
+        </textarea>
+        <div v-if="errors.description" class="invalid-feedback">{{ errors.description }}</div>
     </div>
 
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <label class="form-label">* Property Address:</label>
             <input
                 type="text"
                 placeholder="ex. ADDRESS 1"
                 class="form-control rounded-0"
                 v-model="form.address"
-                disabled
-            />
+                :class="{ 'is-invalid': errors.address }"
+                disabled>
+            <div v-if="errors.address" class="invalid-feedback">{{ errors.address }}</div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <label class="form-label">* Select Barangay:</label>
+            <select class="form-select rounded-0" v-model="form.barangay" :class="{ 'is-invalid': errors.barangay }"
+            disabled>
+                <option value="" disabled selected>-- select barangay --</option>
+                <option v-for="b in barangays" :key="b" :value="b">{{ b }}</option>
+            </select>
+            <div v-if="errors.barangay" class="invalid-feedback">{{ errors.barangay }}</div>
+        </div>
+        <div class="col-md-3">
             <label class="form-label">* Property Status</label>
             <select class="form-select rounded-0" v-model="form.propertyStats" disabled>
-                <option value="" disabled>-- select property status --</option>
-                <option value="0">UNDER REVIEW</option>
-                <option value="1">FOR RENT</option>
-                <option value="2">RENTED</option>
-                <option value="3">UNDER MAINTENANCE</option>
-                <option value="4">RESERVED</option>
+                <option value="" disabled selected>-- select property status --</option>
+                <option value="0">Under Review</option>
+                <option value="1">For Rent</option>
+                <option value="2">Rented</option>
+                <option value="3">Under Maintenance</option>
+                <option value="4">Reserved</option>
             </select>
         </div>
     </div>
@@ -62,21 +75,7 @@
                     disabled
                 >
                     <option value="" disabled selected>-- select business type --</option>
-                    <option value="Office Space">Office Space</option>
-                    <option value="Retail Shop">Retail Shop</option>
-                    <option value="Restaurant">Restaurant</option>
-                    <option value="Warehouse">Warehouse</option>
-                    <option value="Industrial">Industrial</option>
-                    <option value="Co-working">Co-working</option>
-                    <option value="Hotel">Hotel</option>
-                    <option value="Clinic">Clinic</option>
-                    <option value="House">House</option>
-                    <option value="Apartment">Apartment</option>
-                    <option value="Townhouse">Townhouse</option>
-                    <option value="Studio">Studio</option>
-                    <option value="Land">Land</option>
-                    <option value="Commercial">Commercial</option>
-                    <option value="Parking Space">Parking Space</option>
+                    <option v-for="type in businessTypes" :key="type" :value="type">{{ type }}</option>
                 </select>
             </div>
 
@@ -105,19 +104,57 @@
     </div>
 
     <div class="mt-3" v-for="(photo, index) in photos" :key="index">
+
         <div class="d-flex gap-3">
-            <div class="image-preview rounded-3 border d-flex align-items-center justify-content-center">
-                <img v-if="getPhotoUrl(photo.key)" :src="getPhotoUrl(photo.key)" class="img-fluid rounded" :alt="photo.label">
-                <span v-else class="text-muted small">No image</span>
+
+            <div
+                class="image-preview rounded-3 border d-flex align-items-center justify-content-center"
+                v-if="getPhotoUrl(photo.key)"
+                data-bs-toggle="modal"
+                :data-bs-target="'#modal-' + photo.key"
+                style="cursor: pointer;"
+                
+            >
+                <img :src="getPhotoUrl(photo.key)" class="img-fluid rounded" :alt="photo.label">
             </div>
+
+            <div
+                class="image-preview rounded-3 border d-flex align-items-center justify-content-center"
+                v-else
+            >
+                <span class="text-muted small">No image</span>
+            </div>
+
             <div class="w-100">
                 <div class="form-label">{{ photo.label }}:</div>
                 <div class="position-relative">
-                    <input type="file" class="form-control rounded-3 shadow-sm" disabled />
+                    <input
+                        type="file"
+                        class="form-control rounded-3 shadow-sm"
+                        @change="handleFileUpload($event, photo.key)"
+                        disabled
+                    >
+                </div>
+                <div v-if="errors[photo.key]" class="invalid-feedback d-block">{{ errors[photo.key] }}</div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" :id="'modal-' + photo.key" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body p-0 text-center">
+                            <img :src="getPhotoUrl(photo.key)" class="img-fluid" :alt="photo.label">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
                 </div>
             </div>
+
         </div>
     </div>
+
 </template>
 
 <script>
@@ -127,8 +164,14 @@ export default
     {
         form()
         {
-            return this.$parent.form;
+            return this.$parent.form
         },
+
+        errors()
+        {
+            return this.$parent.$data.errors || {};
+        },
+
         photos()
         {
             return [
@@ -138,26 +181,86 @@ export default
                 { key: 'photo_4', label: 'Property 4th Image View' },
                 { key: 'floor_plan', label: 'Property Floor Plan' }
             ];
+        },
+
+        businessTypes()
+        {
+            return [
+                "Office Space","Retail Shop","Restaurant","Warehouse","Industrial",
+                "Co-working","Hotel","Clinic","House","Apartment","Townhouse",
+                "Studio","Land","Commercial","Parking Space"
+            ];
+        },
+
+        barangays()
+        {
+            return [
+                "Aranguren","Bueno","Cristo Rey","Cubcub","Cutcut I","Cutcut II",
+                "Dolores","Estrada","Lawy","Manga","Manlapig","Maruglu",
+                "O'Donnell","Sta. Juliana","Sta. Lucia","Sta. Rita",
+                "Sto. Domingo I","Sto. Domingo II","Sto. Rosario","Talaga"
+            ];
         }
     },
+
     methods:
     {
         getPhotoUrl(key)
         {
             if (!this.form[key]) return '';
-            if (this.form[key] instanceof File) return URL.createObjectURL(this.form[key]);
-            if (this.form[key].startsWith("http")) return this.form[key];
-            return `${process.env.VUE_APP_API_URL}/uploads/${this.form[key]}`;
+
+            // Show preview if file is newly selected
+            if (this.form[key] instanceof File) {
+                return URL.createObjectURL(this.form[key]);
+            }
+
+            // If URL already starts with http, don't add API URL again
+            if (this.form[key].startsWith("http")) {
+                return this.form[key];
+            }
+
+            // Otherwise, append API base URL
+            return `${process.env.VUE_APP_API_URL}/storage/${this.form[key]}`;
         },
+
         handleBusinessTypeSelect(event)
         {
-            const value = event.target.value;
-            if (!Array.isArray(this.form.property_type)) this.form.property_type = [];
-            if (!this.form.property_type.includes(value) && this.form.property_type.length < 3)
+            const value = event.target.value
+
+            if (!Array.isArray(this.form.property_type))
             {
-                this.form.property_type.push(value);
+                this.form.property_type = []
             }
-            event.target.value = "";
+
+            if (this.form.property_type.includes(value))
+            {
+                this.form.property_type = this.form.property_type.filter(type => type !== value)
+            }
+            else
+            {
+                if (this.form.property_type.length >= 3)
+                {
+                    alert("You can only select up to 3 business types.")
+                    event.target.value = ""
+                    return
+                }
+
+                this.form.property_type.push(value)
+            }
+
+            event.target.value = ""
+        },
+
+        handleFileUpload(event, key)
+        {
+            const file = event.target.files[0];
+            this.form[key] = file || null;
+        },
+
+        clearFile(key, event)
+        {
+            this.form[key] = null;
+            event.target.closest('.position-relative').querySelector('input[type=file]').value = null;
         }
     }
 }
@@ -170,5 +273,16 @@ export default
     height: 80px;
     background-color: #f8f9fa;
     border: 1px solid #dee2e6;
+    overflow: hidden;
+}
+.is-invalid
+{
+    border-color: #dc3545;
+}
+.invalid-feedback
+{
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
 }
 </style>

@@ -24,7 +24,7 @@
             <div class="container my-5">
                 <div>
                     <div class="row g-3 align-items-center">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <select v-model="filters.property_type" class="form-select" @change="fetchProperties">
                                 <option value="">All Property</option>
                                 <option value="Office Space">Office Space</option>
@@ -45,7 +45,33 @@
                             </select>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-2">
+                            <select v-model="filters.barangay" class="form-select" @change="fetchProperties">
+                                <option value="">All Barangay</option>
+                                <option value="ARANGUREN">ARANGUREN</option>
+                                <option value="BUENO">BUENO</option>
+                                <option value="CRISTO REY">CRISTO REY</option>
+                                <option value="CUBCUB">CUBCUB</option>
+                                <option value="CUTCUT I">CUTCUT I</option>
+                                <option value="CUTCUT II">CUTCUT II</option>
+                                <option value="DOLORES">DOLORES</option>
+                                <option value="ESTRADA">ESTRADA</option>
+                                <option value="LAWY">LAWY</option>
+                                <option value="MANGA">MANGA</option>
+                                <option value="MANLAPIG">MANLAPIG</option>
+                                <option value="MARUGLU">MARUGLU</option>
+                                <option value="O’DONNELL">O’DONNELL</option>
+                                <option value="STA. JULIANA">STA. JULIANA</option>
+                                <option value="STA. LUCIA">STA. LUCIA</option>
+                                <option value="STA. RITA">STA. RITA</option>
+                                <option value="STO. DOMINGO I">STO. DOMINGO I</option>
+                                <option value="STO. DOMINGO II">STO. DOMINGO II</option>
+                                <option value="STO. ROSARIO">STO. ROSARIO</option>
+                                <option value="TALAGA">TALAGA</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-5">
                             <div class="position-relative">
                                 <input
                                     v-model="filters.search"
@@ -128,6 +154,7 @@ export default
             filters:
             {
                 property_type: "",
+                barangay: "",
                 search: ""
             },
             items: [],
@@ -148,6 +175,7 @@ export default
     {
         const query = this.$route.query;
         this.filters.property_type = query.property_type || "";
+        this.filters.barangay = query.barangay || "";
         this.filters.search = query.search || "";
 
         await this.fetchProperties();

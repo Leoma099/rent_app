@@ -2,9 +2,16 @@
 
     <header>
 
-        <div class="left">
-            <div class="date">{{ date }} ( {{ day }} )</div>
-            <div class="time">{{ time }}</div>
+        <div class="left d-flex align-items-center">
+            <div class="me-3">
+                <a href="javascript:void(0);" @click="toggleSidebar()">
+                    <i class="bx bx-menu" style="font-size: 1.5rem; color: #000;"></i>
+                </a>
+            </div>
+            <div>
+                <div class="date">{{ date }} ( {{ day }} )</div>
+                <div class="time">{{ time }}</div>
+            </div>
         </div>
 
         <div class="right">
@@ -26,39 +33,25 @@
                                 <div>
                                     <h3 class="mb-0">Notifications</h3>
                                 </div>
-                                <div>
-                                    <button
-                                        type="button"
-                                        class="btn btn-sm btn-outline-danger"
-                                        @click="deleteNotificationAll()">
-                                        <i class="bx bx-trash me-2"></i>Delete All
-                                    </button>
-                                </div>
                             </div>
 
                             <ul
                                 v-if="items.length > 0"
                                 class="notification-list mt-3">
-                                <li
-                                    v-for="item in items"
-                                    :key="item.id"
-                                    class="mb-3">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <h6 class="mb-0"><strong>{{ item.data.title }}</strong></h6>
-                                            <p class="mb-0">{{ item.data.message }}</p>
-                                            <small class="text-secondary">{{ formatRelativeTime(item.created_at) }}</small>
+                                    <li
+                                        v-for="item in items"
+                                        :key="item.id"
+                                        class="mb-3"
+                                        @click="notificationClick(item)"
+                                    >
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h6 class="mb-0"><strong>{{ item.data.title }}</strong></h6>
+                                                <p class="mb-0">{{ item.data.message }}</p>
+                                                <small class="text-secondary">{{ formatRelativeTime(item.created_at) }}</small>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <button
-                                                type="button"
-                                                class="btn btn-sm"
-                                                @click="deleteNotification(item.id)">
-                                                <i class="bx bx-trash text-danger"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </li>
+                                    </li>
                             </ul>
 
                             <p v-else class="mb-0 text-center empty">No notifications</p>
@@ -70,9 +63,6 @@
                 </div>
 
                 <router-link :to="'/my-account'">
-                    <!-- <div class="profile-img me-3">
-                        <img :src="userPhoto" alt="User Photo" />
-                    </div> -->
                     <div>
                         <p class="mb-0">{{ userName }}</p>
                     </div>
@@ -104,6 +94,7 @@ export default
             day: "",
             date: "",
             time: "",
+            isSidebar: true,
         };
     },
 
@@ -118,16 +109,22 @@ export default
         this.notificationInterval = setInterval(() => 
         {
             this.notificationLoad();
-        }, 10000);
+        }, 3000);
 
         // ✅ click outside listener
         document.addEventListener("click", this.handleClickOutside);
+
+        // ✅ Responsive sidebar default
+        this.setSidebarDefault();
+        window.addEventListener('resize', this.setSidebarDefault);
     },
 
     beforeUnmount()
     {
         clearInterval(this.notificationInterval);
         document.removeEventListener("click", this.handleClickOutside);
+
+        window.removeEventListener('resize', this.setSidebarByScreenSize);
     },
 
     methods:
@@ -236,7 +233,52 @@ export default
                 console.error("Error deleting all notifications:", error);
                 this.toast.error("Failed to delete all notifications.");
             }
+        },
+
+        toggleSidebar()
+        {
+            const sidebar = document.querySelector('.sidebar');
+            const contentArea = document.querySelector('.content-area');
+
+            if (!sidebar || !contentArea) return;
+
+            sidebar.classList.toggle('closed');
+            contentArea.style.marginLeft = sidebar.classList.contains('closed') ? '0' : '240px';
+        },
+
+        setSidebarDefault()
+        {
+            const sidebar = document.querySelector('.sidebar');
+            const contentArea = document.querySelector('.content-area');
+
+            if (!sidebar || !contentArea) return;
+
+            if (window.innerWidth < 768) {
+                // Mobile: default closed
+                sidebar.classList.add('closed');
+                contentArea.style.marginLeft = '0';
+            } else {
+                // Desktop: default open
+                sidebar.classList.remove('closed');
+                contentArea.style.marginLeft = '240px';
+            }
+        },
+
+        notificationClick(item)
+        {
+            console.log("Notification clicked:", item);
+
+            if (item.data.inquiry_id)  // only inquiries
+            {
+                console.log("Redirect to /message for inquiry id:", item.data.inquiry_id);
+                this.$router.push('/landlord/inquiries'); // redirect
+            }
+            else
+            {
+                console.log("Not an inquiry notification, no redirect.");
+            }
         }
+
     }
 };
 </script>
@@ -266,8 +308,7 @@ export default
     position: relative;
 }
 
-.dropdown 
-{
+.dropdown {
     position: absolute;
     right: -5px;
     top: 80px;
@@ -282,6 +323,20 @@ export default
     padding: 10px;
     animation-duration: 0.3s;
     animation-fill-mode: none;
+}
+
+@media (max-width: 767px) {
+    .dropdown {
+        right: -100px;   /* adjust offset for small screens */
+        top: 80px;       /* same or adjust as needed */
+        width: 300px;    /* smaller width for mobile */
+        min-height: 600px;
+        padding: 10px;
+    }
+    .left > div:nth-child(2)    
+    {
+        display: none;
+    }
 }
 
 .animation-fade-in
@@ -304,8 +359,7 @@ export default
 .dropdown li 
 {
     padding: 10px;
-    border-bottom: 1px solid #ddd;
-    cursor: pointer;
+    border-bottom: 1px solid #7e1e1e;
 }
 
 .dropdown li:hover 

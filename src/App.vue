@@ -41,3 +41,28 @@ export default
     },
 };
 </script>
+<style scoped>
+
+/* Default (desktop/tablet) */
+.Vue-Toastification__toast {
+  max-width: 320px !important;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+
+.Vue-Toastification__toast-body {
+  word-break: break-word;
+}
+
+/* Mobile view */
+@media (max-width: 480px) {
+  .Vue-Toastification__toast {
+    max-width: 240px !important;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+}
+
+</style>

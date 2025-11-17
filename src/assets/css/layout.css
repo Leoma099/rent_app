@@ -18,17 +18,34 @@ body {
     --default: #88bdf2;
 }
 
+.sidebar.closed {
+
+    transform: translateX(-100%);
+
+}
+
 .sidebar {
     position: fixed;
     background-color: #ffffff;
     width: 240px;
-    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* ensure full viewport height */
     overflow: hidden;
     border-right: 1px solid var(--primary);
     padding: 20px;
     z-index: 1000;
     display: flex;
     flex-direction: column;
+
+    /* Add this line for smooth sliding */
+    transition: transform 0.3s ease;
+}
+
+.sidebar .sidebar-inner
+{
+    flex: 1;            /* grows to fill space between header and footer */
+    overflow-y: auto;   /* scroll if content is taller than viewport */
 }
 
 .sidebar .sidebar-logo {
@@ -112,7 +129,12 @@ body {
 .main-wrapper {
     position: relative;
     margin-left: 240px;
+    transition: margin-left 0.3s ease; /* smooth shifting */
 
+}
+
+.main-wrapper.shifted {
+    margin-left: 0; /* when sidebar is closed */
 }
 
 .main-wrapper header {
@@ -146,4 +168,21 @@ body {
 
 .main-wrapper .main {
     padding: 20px;
+}
+
+/* Mobile view adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        min-height: auto;     /* let height adjust */
+        position: fixed;      /* remain on top */
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 1000;
+        overflow-y: auto;     /* scroll if content is taller than viewport */
+    }
+
+    .main-wrapper {
+        margin-left: 0;       /* no margin on mobile */
+    }
 }

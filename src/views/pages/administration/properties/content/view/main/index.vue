@@ -5,7 +5,7 @@
                 <div class="card card-body card-white rounded-0 p-4">
                     <primary-component />
                 </div>
-                <div class="card card-body card-white rounded-0 p-4 mt-3">
+                <div class="card card-body card-white rounded-0 p-4 mt-3 mb-3">
                     <schedule-component />
                 </div>
             </div>
@@ -13,19 +13,6 @@
                 <location-component />
             </div>
         </div>
-
-        <!-- <div class="text-end mt-3">
-            <router-link
-                :to="'/landlord/properties'"
-                class="btn rounded-0 btn-secondary me-3"
-            >
-                Cancel
-            </router-link>
-            <button type="submit" class="btn rounded-0 button-color" :disabled="isLoading">
-                <span v-if="isLoading">Submitting...</span>
-                <span v-else>Submit</span>
-            </button>
-        </div> -->
     </form>
 </template>
 

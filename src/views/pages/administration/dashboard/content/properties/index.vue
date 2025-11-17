@@ -146,13 +146,24 @@ export default
     display: flex;
     gap: 5px;
 }
-.table-scrollable
-{
+.table-scrollable {
     max-height: 400px;
-    overflow: hidden; /* Hidden by default */
+    overflow-x: auto; /* horizontal scroll for small screens */
+    overflow-y: auto; /* vertical scroll if content exceeds height */
+    -webkit-overflow-scrolling: touch; /* smooth scrolling for mobile */
 }
-.table-scrollable:hover
-{
-    overflow-y: auto; /* Show scrollbar when hovering */
+
+/* Optional: make table scroll nicely on mobile */
+@media (max-width: 767px) {
+    .table-scrollable {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+    }
+
+    .table-scrollable table {
+        min-width: 600px; /* ensure table is wider than container to trigger scroll */
+    }
 }
+
 </style>

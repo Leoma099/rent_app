@@ -274,8 +274,10 @@ export default
                 this.errors.role = "Please select a role";
             }
 
+            // 🔥 ADD THIS
             if (Object.keys(this.errors).length)
             {
+                this.toast.error("Please fill out all required fields.");
                 return;
             }
 
@@ -285,16 +287,15 @@ export default
             {
                 const response = await apiClient.post('/admin/register', this.form);
                 console.log(response.data);
-
                 this.$router.push('/signin');
-
                 this.toast.success("Registration successful!");
             }
             catch (error)
             {
                 this.isLoading = false;
                 this.errors.password = "Registration failed, please check your input";
-                this.form.password = ""; // Clear password
+                this.form.password = "";
+                
                 const message = error.response?.data?.error || "Registration failed";
                 this.toast.error(message);
                 console.error('Registration failed:', message);
@@ -420,5 +421,27 @@ export default
 {
     transition: width 0.3s ease;
 }
+/* Default (desktop/tablet) */
+.Vue-Toastification__toast {
+  max-width: 320px !important;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+
+.Vue-Toastification__toast-body {
+  word-break: break-word;
+}
+
+/* Mobile view */
+@media (max-width: 480px) {
+  .Vue-Toastification__toast {
+    max-width: 240px !important;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+}
+
 
 </style>

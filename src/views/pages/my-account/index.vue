@@ -6,7 +6,7 @@
 
     <div class="mt-3">
 
-        <div class="col-4 mx-auto">
+        <div class="col-md-4 mx-md-auto">
 
             <div class="card card-body shadow-sm border-0">
                 <h3 class="page-title">Account Info</h3>

@@ -62,11 +62,13 @@ const app = createApp(App)
     .use(router)
     .use(Toast, {
         position: POSITION.BOTTOM_RIGHT,
-        timeout: 3000,
+        duration: 3000,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
-      })
+        newestOnTop: true,
+    })
+
 
 app.mount('#app');
 
@@ -77,4 +79,5 @@ if (authToken)
 {
     axios.defaults.headers.common["Authorization"] = `Bearer ${authToken}`;
 }
+
 

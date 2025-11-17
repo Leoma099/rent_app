@@ -8,7 +8,7 @@
 
             <summary-component />
 
-            <div class="mt-3">
+            <div>
 
                 <property-component />
 

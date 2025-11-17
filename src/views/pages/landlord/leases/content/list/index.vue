@@ -142,25 +142,21 @@ export default
 </script>
 
 <style scoped>
-.page-title
-{
+.page-title {
     color: #007bff;
 }
 
-.button-color
-{
+.button-color {
     background-color: #007bff;
     color: #ffffff;
 }
 
-.button-color:hover
-{
+.button-color:hover {
     background-color: #3798ff;
     color: #ffffff;
 }
 
-.table-header
-{
+.table-header {
     font-size: 0.85rem;
     font-weight: 600;
     padding: 10px;
@@ -168,13 +164,39 @@ export default
     color: #ffffff;
 }
 
-.table-scrollable
-{
-    max-height: 650px;
-    overflow: hidden;
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    font-size: 14px;
 }
-.table-scrollable:hover
-{
-    overflow-y: auto;
+
+.entries-info {
+    color: #666;
+}
+
+.pagination-buttons {
+    display: flex;
+    gap: 5px;
+}
+.table-scrollable {
+    max-height: 400px;
+    overflow-x: auto; /* horizontal scroll for small screens */
+    overflow-y: auto; /* vertical scroll if content exceeds height */
+    -webkit-overflow-scrolling: touch; /* smooth scrolling for mobile */
+}
+
+/* Optional: make table scroll nicely on mobile */
+@media (max-width: 767px) {
+    .table-scrollable {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+    }
+
+    .table-scrollable table {
+        min-width: 600px; /* ensure table is wider than container to trigger scroll */
+    }
 }
 </style>

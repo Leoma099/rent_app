@@ -18,9 +18,9 @@
                             <h5 class="card-title mb-0">{{ property.title }}</h5>
                             <p class="card-text text-muted mb-0">{{ property.address }}</p>
                             <p class="mb-1">
-                                <span v-if="property.is_featured !== 0" class="badge text-bg-success rounded-pill me-2">
+                                <!-- <span v-if="property.is_featured !== 0" class="badge text-bg-success rounded-pill me-2">
                                     {{ formatFeature(property.is_featured) }}
-                                </span>
+                                </span> -->
                                 <span class="badge text-bg-secondary rounded-pill">{{ formatPropStats(property.propertyStats) }}</span>
                             </p>
                             <p class="mb-0">
@@ -111,7 +111,7 @@ export default
             if (!photoPath) return "/default-avatar.png";
             if (photoPath.startsWith("http")) return photoPath;
             // return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`;
-            return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`;
+            return `${process.env.VUE_APP_API_URL}/storage/${photoPath}`;
         },
 
         formatPrice(price)

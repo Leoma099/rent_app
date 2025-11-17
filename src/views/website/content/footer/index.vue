@@ -1,27 +1,32 @@
 <template>
+
     <footer class="footer text-center text-white py-3">
+
         <div class="container">
             <h5 class="mb-1 fw-bold">Commercial Hub</h5>
             <small>© {{ currentYear }} Commercial Hub. All rights reserved.</small>
         </div>
+
     </footer>
+
 </template>
 
 <script>
-export default 
+export default
 {
-    data() 
+    data()
     {
         return {
-            currentYear: new Date().getFullYear()
+            currentYear: new Date().getFullYear(),
         };
-    }
+    },
 };
 </script>
 
 <style scoped>
-.footer 
+.footer
 {
-    background-color: #000080; /* Bootstrap gray */
+    background-color: #000080; /* Your brand color */
+    width: 100%;
 }
 </style>

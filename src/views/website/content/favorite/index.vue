@@ -3,51 +3,48 @@
 
         <div class="col-md-8 mx-auto">
 
-            <h1 class="mb-3">Favorites</h1>
+            <h1 class="mb-4">Favorites</h1>
 
-            <div v-if="items.length > 0">
-                <div
-                    v-for="n in items"
-                    :key="n.id"
-                    class="card card-body card-white shadow-sm mb-3"
-                >
-                    <div class="d-flex">
-                        <!-- property image -->
-                        <div style="width: 120px; flex-shrink: 0; margin-right: 12px;">
-                            <img
-                                :src="getPhotoUrl(n.property?.photo_1)"
-                                :alt="n.property?.title || 'Property'"
-                                class="img-fluid rounded"
-                                style="height: 80px; width: 120px; object-fit: cover;"
-                            />
-                        </div>
+            <div class="favorite-card ">
 
-                        <!-- property info -->
-                        <div style="flex: 1;">
-                            <h5 class="mb-1">{{ n.property?.title }}</h5>
-                            <p class="mb-1 text-muted">{{ n.property?.address }}</p>
-                            <p class="mb-0"><strong>PHP {{ n.property?.price }}</strong> /month</p>
-                        </div>
+                <div v-if="items.length > 0">
+                    <div
+                        v-for="n in items"
+                        :key="n.id"
+                        class="mb-3">
+                        
+                        <div class="favorite-card-inner">
 
-                        <!-- actions -->
-                        <div style="width: 150px; text-align: right;">
-                            <small class="text-muted">{{ new Date(n.created_at).toLocaleString() }}</small>
-                            <div class="mt-2">
-                                <button
-                                    type="button"
-                                    class="btn btn-sm btn-outline-danger"
-                                    @click="unsaveProperty(n.property_id)"
-                                >
-                                    <i class="bx bx-trash me-1"></i>
-                                    Remove
-                                </button>
-                            </div>
+                            <a
+                                href="javascript:void(0)"
+                                @click="navigateToProperty(n.property.id)"
+                                class="d-flex text-decoration-none">
+
+                                <!-- property image -->
+                                <div class="property-image me-3 mb-2 mb-md-0">
+                                    <img
+                                        :src="getPhotoUrl(n.property?.photo_1)"
+                                        :alt="n.property?.title || 'Property'"
+                                        class="img-fluid rounded"
+                                    />
+                                </div>
+
+                                <!-- property info -->
+                                <div class="flex-grow-1">
+                                    <p class="mb-0 text-black"><strong>{{ n.property?.title }}</strong></p>
+                                    <div><small class="mb-0 text-muted">{{ n.property?.address }}</small></div>
+                                    <div><small class="mb-0 text-muted">PHP {{ n.property?.price }} /month</small></div>
+                                </div>
+
+                            </a>
+
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <p v-else class="mb-0 text-center empty">You have no favorites yet.</p>
+                <p v-else class="mb-0 text-center empty my-5">You have no favorites yet.</p>
+
+            </div>
 
         </div>
 
@@ -142,8 +139,25 @@ export default
                 return photoPath;
             }
 
-            return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`;
-        }
+            return `${process.env.VUE_APP_API_URL}/storage/${photoPath}`;
+        },
+
+        // NEW METHOD: Navigate to property with scroll to top
+        navigateToProperty(id)
+        {
+            this.scrollToTop();
+            this.$router.push({ name: 'CommercialHubView', params: { id: id } });
+        },
+
+        // NEW METHOD: Scroll to top
+        scrollToTop()
+        {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'instant'
+            });
+        },
     }
 };
 </script>
@@ -152,5 +166,42 @@ export default
 .empty
 {
     color: #666;
+    font-size: 1rem;
+}
+
+.favorite-card
+{
+    min-height: 800px;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.favorite-card-inner
+{
+    border-radius: 5px;
+    transition: all 0.2s ease-in;
+    padding: 10px;
+}
+
+.favorite-card-inner:hover
+{
+    background: #f0f0f0;
+}
+
+.property-image img
+{
+    width: 120px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.actions button
+{
+    min-width: 80px;
 }
 </style>

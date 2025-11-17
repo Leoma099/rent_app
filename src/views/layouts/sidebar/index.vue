@@ -1,20 +1,22 @@
 <template>
     <div class="sidebar">
-        <div class="sidebar-logo">
-            <img src="@/assets/images/capas_logo.png" alt="">
+        <div class="sidebar-inner">
+            <div class="sidebar-logo">
+                <img src="@/assets/images/capas_logo.png" alt="">
+            </div>
+
+            <ul class="sidebar-nav ps-0">
+                <!-- Show AdminAccount component if role is 1 (admin) -->
+                <admin-account v-if="role === 1" />
+
+                <!-- Show UserAccount component if role is 2 (user) -->
+                <landlord-account v-if="role === 2" />
+
+                <li>
+                    <a @click="logout"><i class="bx bx-log-out me-2"></i>Logout</a>
+                </li>
+            </ul>
         </div>
-
-        <ul class="sidebar-nav ps-0">
-            <!-- Show AdminAccount component if role is 1 (admin) -->
-            <admin-account v-if="role === 1" />
-
-            <!-- Show UserAccount component if role is 2 (user) -->
-            <landlord-account v-if="role === 2" />
-
-            <li>
-                <a @click="logout"><i class="bx bx-log-out me-2"></i>Logout</a>
-            </li>
-        </ul>
     </div>
 </template>
 
@@ -71,5 +73,6 @@ export default
 };
 </script>
 
-<style>
+<style scoped>
+
 </style>

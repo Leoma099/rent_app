@@ -7,12 +7,6 @@
         <div class="card card-body shadow-sm border-0 rounded-0">
 
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <!-- <div>
-                    <router-link :to="'/administration/accounts/create'" class="btn rounded-0 button-color me-3 d-flex align-items-center">
-                        <i class="bx bx-plus me-2"></i>
-                        <span>Add New Lease</span>
-                    </router-link>
-                </div> -->
                 <div class="col-md-4">
                     <input type="text" v-model="searchQuery" @input="loadList" placeholder="Type your search here"
                         class="form-control rounded-0">
@@ -212,13 +206,23 @@ export default
     display: flex;
     gap: 5px;
 }
-.table-scrollable
-{
-    max-height: 500px;
-    overflow: hidden; /* Hidden by default */
+.table-scrollable {
+    max-height: 400px;
+    overflow-x: auto; /* horizontal scroll for small screens */
+    overflow-y: auto; /* vertical scroll if content exceeds height */
+    -webkit-overflow-scrolling: touch; /* smooth scrolling for mobile */
 }
-.table-scrollable:hover
-{
-    overflow-y: auto; /* Show scrollbar when hovering */
+
+/* Optional: make table scroll nicely on mobile */
+@media (max-width: 767px) {
+    .table-scrollable {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+    }
+
+    .table-scrollable table {
+        min-width: 600px; /* ensure table is wider than container to trigger scroll */
+    }
 }
 </style>

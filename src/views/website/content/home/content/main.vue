@@ -1,17 +1,14 @@
 <template>
     <div class="container my-5">
 
-        <!-- FEATURED PROPERTIES -->
-        <div class="mt-5">
+        <!-- <div class="mt-5">
             <div>
                 <h2 class="mb-0"><strong>FEATURED PROPERTIES</strong></h2>
                 <p class="mb-0 text-muted">Top Locations Curated for Your Success.</p>
             </div>
 
-            <!-- Loading OR Has Data -->
             <div class="row g-4 mt-2" v-if="isLoadingFeatured || featured.length > 0">
 
-                <!-- LOADING STATE -->
                 <template v-if="isLoadingFeatured">
                     <div class="col-md-4 fade-in" v-for="n in 3" :key="'shimmer-featured-' + n">
                         <div class="card h-100 shadow-sm shimmer-card border-0 rounded-3 overflow-hidden">
@@ -27,7 +24,6 @@
                     </div>
                 </template>
 
-                <!-- DATA STATE -->
                 <template v-else>
                     <div class="col-md-4 fade-in" v-for="item in featured" :key="item.id">
                         <a href="javascript:void(0)" class="text-decoration-none" @click="navigateToProperty(item.id)">
@@ -63,16 +59,12 @@
 
             </div>
 
-            <!-- EMPTY STATE -->
             <div v-else class="text-center py-5 fade-in">
                 <i class='bx bx-buildings text-secondary' style="font-size: 55px; opacity: .4;"></i>
                 <h5 class="mt-2 text-muted">No featured properties yet</h5>
                 <p class="text-secondary small">Check back soon for fresh listings in Capas.</p>
             </div>
-        </div>
-        <!-- END FEATURED -->
-
-
+        </div> -->
 
         <!-- RECENT PROPERTIES -->
         <div class="mt-5">
@@ -102,8 +94,13 @@
                 <!-- DATA -->
                 <template v-else>
                     <div class="col-md-4 fade-in" v-for="item in recents" :key="item.id">
-                        <a href="javascript:void(0)" class="text-decoration-none" @click="navigateToProperty(item.id)">
-                            <div class="card h-100 shadow-sm hover-card border-0 rounded-3 overflow-hidden">
+                        <a
+                            href="#"
+                            class="text-decoration-none"
+                            @click="navigateToProperty(item)"
+                            :class="{ 'blurred': item.propertyStats === 2 }">
+                            <div
+                                class="card h-100 shadow-sm hover-card border-0 rounded-3 overflow-hidden">
                                 <img
                                     :src="getPhotoUrl(item.photo_1)"
                                     :alt="item.property_name"
@@ -114,8 +111,11 @@
                                     <p class="text-muted small mb-1">{{ item.address }}</p>
 
                                     <div class="mb-1">
-                                        <span v-if="item.is_featured !== 0" class="badge text-bg-success me-2">FEATURED</span>
-                                        <span class="badge text-bg-secondary">{{ formatPropStats(item.propertyStats) }}</span>
+                                        <span 
+                                            class="badge me-2" 
+                                            :class="getStatusBadgeClass(item.propertyStats)">
+                                            {{ formatPropStats(item.propertyStats) }}
+                                        </span>
                                     </div>
 
                                     <div class="mb-1">
@@ -189,7 +189,7 @@ export default
                 return photoPath;
             }
             // return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`;
-            return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`;
+            return `${process.env.VUE_APP_API_URL}/storage/${photoPath}`;
         },
 
         async fetchFeatured()
@@ -259,6 +259,19 @@ export default
             return statuses[status] || "N/A";
         },
 
+        getStatusBadgeClass(status)
+        {
+            const classes =
+            {
+                0: 'text-bg-warning',   // Under Review
+                1: 'text-bg-success',   // For Rent
+                2: 'text-bg-danger',    // Rented
+                3: 'text-bg-info',      // Under Maintenance
+                4: 'text-bg-primary'    // Reserved
+            };
+            return classes[status] || 'text-bg-secondary';
+        },
+
         formatFeature(feature)
         {
             const featured =
@@ -268,16 +281,17 @@ export default
             return featured[feature] || "N/A";
         },
 
-        navigateToProperty(id)
+        navigateToProperty(item)
         {
-            this.scrollToTop();
-            this.$router.push({ name: 'CommercialHubView', params: { id: id } });
-        },
+            // Block rented property
+            if (item.propertyStats === 2)
+            {
+                alert("This property is already rented. Please look a new one.");
+                return;
+            }
 
-        navigateToAllProperties()
-        {
             this.scrollToTop();
-            this.$router.push('/commercialhub/properties');
+            this.$router.push({ name: 'CommercialHubView', params: { id: item.id } });
         },
 
         scrollToTop()
@@ -373,5 +387,11 @@ export default
 {
     width: 40%;
     height: 18px;
+}
+.blurred
+{
+    filter: blur(3px);
+    pointer-events: none; /* disables click */
+    opacity: 0.6;         /* faded look */
 }
 </style>

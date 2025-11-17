@@ -1,7 +1,12 @@
 <template>
     <div class="container my-5">
-        <div class="col-md-6 mx-auto">
-            <div class="card card-body rounded-0 shadow-sm">
+        <div class="col-md-8 mx-auto">
+            <h1 class="mb-0">Profile Information</h1>
+            <router-link :to="'/'">
+                Go back
+            </router-link>
+
+            <div class="card card-body rounded-0 shadow-sm mt-4">
                 <p><strong>Profile Information</strong></p>
 
                 <div class="row">
@@ -41,44 +46,46 @@
                             class="form-control rounded-0"
                             v-model="form.username">
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-2">
-                            <label class="form-label">* Password:</label>
-
-                            <div class="position-relative">
-                                <input
-                                    :type="showPassword ? 'text' : 'password'"
-                                    class="form-control rounded-0 pe-5"
-                                    placeholder="Enter new password"
-                                    v-model="form.password"
-                                    @input="validatePassword"
-                                />
-                                <span
-                                    class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold cursor-pointer"
-                                    @click="togglePassword"
-                                    style="user-select: none;">
-                                    {{ showPassword ? 'Hide' : 'Show' }}
-                                </span>
-                            </div>
-
-                            <ul class="list-unstyled mt-2 mb-0 small">
-                                <li :class="{'text-success fw-bold': passwordChecks.minLength, 'text-danger': !passwordChecks.minLength}">
-                                    {{ passwordChecks.minLength ? '✓' : '•' }} At least 8 characters
-                                </li>
-                                <li :class="{'text-success fw-bold': passwordChecks.uppercase, 'text-danger': !passwordChecks.uppercase}">
-                                    {{ passwordChecks.uppercase ? '✓' : '•' }} 1 uppercase letter
-                                </li>
-                                <li :class="{'text-success fw-bold': passwordChecks.lowercase, 'text-danger': !passwordChecks.lowercase}">
-                                    {{ passwordChecks.lowercase ? '✓' : '•' }} 1 lowercase letter
-                                </li>
-                                <li :class="{'text-success fw-bold': passwordChecks.number, 'text-danger': !passwordChecks.number}">
-                                    {{ passwordChecks.number ? '✓' : '•' }} 1 number
-                                </li>
-                                <li :class="{'text-success fw-bold': passwordChecks.symbol, 'text-danger': !passwordChecks.symbol}">
-                                    {{ passwordChecks.symbol ? '✓' : '•' }} 1 special character (@$!%*?&)
-                                </li>
-                            </ul>
+                    <div class="col-md-6 position-relative">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="position-relative">
+                            <input
+                                :type="showPassword ? 'text' : 'password'"
+                                id="password"
+                                v-model="form.password"
+                                class="form-control rounded-0 pe-5"
+                                placeholder="ex. Password123!"
+                                @focus="showPassGuide = true"
+                                @blur="showPassGuide = false"
+                            />
+                            <span
+                                class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold cursor-pointer"
+                                @click="togglePassword"
+                                style="user-select: none;"
+                            >
+                                <i class="text-secondary" :class="showPassword ? 'bx bx-hide' : 'bx bx-show'"></i>
+                            </span>
                         </div>
+
+                        <transition name="fade-slide">
+                            <div v-if="showPassGuide" class="pass-tooltip">
+                                <ul class="list-unstyled mb-2 small">
+                                    <p class="mb-2">Password must contain the following:</p>
+                                    <li :class="{'ok': passwordChecks.minLength}">
+                                        {{ passwordChecks.minLength ? '✓' : '•' }} At least 8 characters
+                                    </li>
+                                    <li :class="{'ok': passwordChecks.uppercase}">
+                                        {{ passwordChecks.uppercase ? '✓' : '•' }} 1 uppercase letter
+                                    </li>
+                                    <li :class="{'ok': passwordChecks.lowercase}">
+                                        {{ passwordChecks.lowercase ? '✓' : '•' }} 1 lowercase letter
+                                    </li>
+                                    <li :class="{'ok': passwordChecks.number || passwordChecks.symbol}">
+                                        {{ (passwordChecks.number || passwordChecks.symbol) ? '✓' : '•' }} 1 number or symbol
+                                    </li>
+                                </ul>
+                            </div>
+                        </transition>
                     </div>
                 </div>
 
@@ -114,6 +121,7 @@ export default
                 password: ""
             },
             passwordWarning: false,
+            showPassGuide: false,
             showPassword: false,
             isLoading: false,
         }
@@ -137,6 +145,46 @@ export default
                 number: /[0-9]/.test(password),
                 symbol: /[@$!%*?&]/.test(password)
             };
+        },
+
+        passwordStrengthClass()
+        {
+            if(this.strengthPercent <= 25)
+            {
+                return 'bg-danger';
+            }
+            else if(this.strengthPercent <= 50)
+            {
+                return 'bg-warning';
+            }
+            else if(this.strengthPercent <= 75)
+            {
+                return 'bg-primary';
+            }
+            else
+            {
+                return 'bg-success';
+            }
+        },
+
+        passwordStrengthText()
+        {
+            if(this.strengthPercent <= 25)
+            {
+                return 'Weak';
+            }
+            else if(this.strengthPercent <= 50)
+            {
+                return 'Fair';
+            }
+            else if(this.strengthPercent <= 75)
+            {
+                return 'Good';
+            }
+            else
+            {
+                return 'Strong';
+            }
         }
     },
 
@@ -156,14 +204,6 @@ export default
             {
                 this.form = { ...this.form, ...user };
             }
-        },
-
-        validatePassword()
-        {
-            const password = this.form.password;
-            const passwordRegex =
-                /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-            this.passwordWarning = password && !passwordRegex.test(password);
         },
 
         async submit()
@@ -196,11 +236,26 @@ export default
             }
             finally
             {
-                setTimeout(() =>
-                {
-                    this.isLoading = false;
-                }, 1000);
+                this.isLoading = false;
             }
+        },
+
+        validateMobileNumber()
+        {
+            // Remove non-numeric characters
+            this.form.mobile_number = this.form.mobile_number.replace(/[^0-9]/g, '');
+
+            // Limit to 11 digits
+            if (this.form.mobile_number.length > 11) {
+                this.form.mobile_number = this.form.mobile_number.slice(0, 11);
+            }
+
+            // Check Philippine mobile number format
+            // if (this.form.mobile_number && !/^09\d{9}$/.test(this.form.mobile_number)) {
+            //     this.errors.mobile_number = "Invalid mobile number. Must start with 09 and be 11 digits.";
+            // } else {
+            //     this.errors.mobile_number = null;
+            // }
         },
 
         togglePassword()
@@ -212,5 +267,28 @@ export default
 </script>
 
 <style scoped>
+.pass-tooltip
+{
+    position: absolute;
+    max-width: 100%;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    z-index: 20;
+}
 
+.pass-tooltip li
+{
+    color: #dc3545;
+    font-weight: 500;
+}
+
+.pass-tooltip li.ok
+{
+    color: #198754;
+    font-weight: bold;
+}
 </style>

@@ -217,10 +217,19 @@ export default
 .table-scrollable
 {
     max-height: 500px;
-    overflow: hidden; /* Hidden by default */
+
 }
 .table-scrollable:hover
 {
     overflow-y: auto; /* Show scrollbar when hovering */
+}
+@media (max-width: 767px) {
+    .table-scrollable {
+        overflow-x: auto;  /* horizontal scroll for small screens */
+    }
+
+    table {
+        min-width: 600px; /* ensure table is wider than container to allow scrolling */
+    }
 }
 </style>

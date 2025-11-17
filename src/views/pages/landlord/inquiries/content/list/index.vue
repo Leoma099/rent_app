@@ -1,163 +1,442 @@
 <template>
+    <div>
+        <h1 class="mb-4">Inquiries</h1>
+        <div class="row g-3">
+            <div 
+                class="col-md-4"
+                v-show="!isMobileView || showSidebar"
+            >
+                <div class="chat-sidebar bg-white rounded shadow-sm p-2">
+                    <div
+                        v-for="item in sortedItems"
+                        :key="item.id"
+                        @click="selectInquiry(item)"
+                        class="card border-0 mb-2 chat-item p-2"
+                        :class="{ active: selectedInquiry && selectedInquiry.id === item.id }"
+                    >
+                        <p class="mb-0"><strong>{{ item.property?.title }}</strong></p>
+                        <span class="text-muted"><small>Inquired by</small> <strong>{{ item.tenant?.account?.full_name }}</strong></span>
+                        <small class="text-secondary text-truncate">
+                            {{ item.unread ? 'New messages' : 'No new messages' }}
+                        </small>
 
-    <h1 class="page-title mb-0">INQUIRIES</h1>
-
-    <div class="mt-3">
-
-        <div class="card card-body shadow-sm border-0 rounded-0">
-
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="col-md-3 ">
-                    <input type="text" v-model="searchQuery" @input="loadList" placeholder="Search here"
-                        class="form-control rounded-0">
+                    </div>
                 </div>
             </div>
 
-            <div class="table-responsive table-scrollable">
-                <table class="table table-bordered mb-0">
-                    <thead>
-                        <tr>
-                            <th class="table-header">TENANT NAME</th>
-                            <th class="table-header">EMAIL</th>
-                            <th class="table-header">PHONE NUMBER</th>
-                            <th class="table-header">PROPERTY NAME</th>
-                            <!-- <th class="table-header">MESSAGE</th> -->
-                            <th class="table-header">DATE SENT</th>
-                            <th class="table-header">ACTION</th>
-                        </tr>
-                    </thead>
-                   <tbody v-if="!isEmpty">
-                        <item-component
-                            v-for="(item, index) in isLoading ? new Array(items.length || perPage).fill(null) : items"
-                            :key="item?.id || index" :item="item" :isLoading="isLoading" />
-                    </tbody>
-                    <tbody v-else>
-                        <tr>
-                            <td colspan="8" class="text-center">No Data Record</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <!-- Pagination is here -->
-            <div class="pagination-container">
-                <div class="entries-info">
-                    Showing {{ (currentPage - 1) * perPage + 1 }} to {{ currentPage * perPage }} of {{ items.length }} records
+            <div 
+                class="col-md-8 d-flex flex-column"
+                v-show="!isMobileView || !showSidebar"
+            >
+                <button 
+                    v-if="isMobileView"
+                    @click="showSidebar = true"
+                    class="btn btn-light mb-2 shadow-sm"
+                >
+                    ← Back to Chats
+                </button>
+
+                <div
+                    v-if="selectedInquiry"
+                    class="card flex-grow-1 border-0 rounded shadow-sm message p-3 d-flex flex-column"
+                    ref="messageContainer"
+                >
+                    <div v-if="loadingMessages" class="shimmer-container flex-grow-1">
+                        <div class="shimmer-line" v-for="n in 5" :key="n"></div>
+                    </div>
+
+                    <div v-else>
+                        <div
+                            v-for="message in messages"
+                            :key="message.id"
+                            class="d-flex w-100 mb-3"
+                            :class="isSentByUser(message) ? 'justify-content-end' : 'justify-content-start'"
+                        >
+                            <div
+                                class="message-bubble"
+                                :class="isSentByUser(message) ? 'sent' : 'received'"
+                            >
+                                <p class="mb-1 fw-bold small">
+                                    <span v-if="isSentByUser(message)">You</span>
+                                    <span v-else>{{ message.sender?.account?.full_name || 'Unknown' }}</span>
+                                </p>
+                                <p class="mb-0">{{ message.message }}</p>
+                                <small class="text-muted">{{ formatTime(message.created_at) }}</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="pagination-buttons">
-                    <!-- Pagination buttons here -->
+
+                <div v-else class="card flex-grow-1 border-0 rounded shadow-sm d-flex justify-content-center align-items-center text-muted p-3">
+                    Select a chat to view messages
                 </div>
+
+                <div class="mt-3 d-flex gap-2">
+                    <input type="text" v-model="newMessage" class="form-control rounded-pill px-3" placeholder="Type your message..." @keyup.enter="sendMessage">
+                    <button class="btn btn-primary rounded-pill px-4" @click="sendMessage">Send</button>
+                </div>
+
             </div>
         </div>
-
     </div>
-
 </template>
 
 <script>
-import apiClient from "@/services/index"
-import ItemComponent from "./content/item"
+import apiClient from '@/services'
+
 export default
 {
     data()
     {
-        return{
+        return {
             items: [],
-            searchQuery: "",
-            isLoading: false,
-            isEmpty: false,
-            perPage: 10,
-            currentPage: 1
+            messages: [],
+            newMessage: "",
+            selectedInquiry: null,
+            userId: null,
+            loggedInUserFullName: '',
+            loadingMessages: false,
+            isMobileView: false,
+            showSidebar: true
         }
     },
 
-    components:
+    async created()
     {
-        ItemComponent
+        this.checkScreen()
+        window.addEventListener('resize', this.checkScreen)
+        await this.getAuthUser()
+        await this.loadSender()
     },
 
-    mounted()
+    beforeUnmount()
     {
-        this.loadList();
+        window.removeEventListener('resize', this.checkScreen)
+    },
+
+    computed:
+    {
+        sortedItems()
+        {
+            return [...this.items].sort((a, b) =>
+            {
+                const aTime = a.messages?.length ? new Date(a.messages[a.messages.length - 1].created_at) : 0
+                const bTime = b.messages?.length ? new Date(b.messages[b.messages.length - 1].created_at) : 0
+                return bTime - aTime
+            })
+        }
     },
 
     methods:
     {
-        async loadList()
+        checkScreen()
+        {
+            this.isMobileView = window.innerWidth <= 768
+        },
+
+        isSentByUser(message)
+        {
+            const senderId = message.sender?.id || message.sender?.account?.id
+            return senderId === this.userId
+        },
+
+        async getAuthUser()
         {
             try
             {
-                this.isLoading = true;
-                    const response = await apiClient.get(`/inquiries`, {
-                        params: {
-                            search: this.searchQuery,
-                            page: this.currentPage,
-                            perPage: this.perPage
-                        }
-                    });
-
-                    console.log("Fetched Properties Data:", response.data); // Debugging
-
-                    this.items = response.data;
-                    this.isEmpty = this.items.length === 0; // Check if items array is empty
-                    this.isLoading = false;
+                const response = await apiClient.get('/user')
+                this.userId = response.data.id
+                this.loggedInUserFullName = response.data.full_name
             }
             catch (error)
             {
-                console.error("Error fetching properties:", error);
-                this.isLoading = false;
-                this.isEmpty = true; // Assume empty on error
+                console.error('Failed to fetch user:', error)
             }
+        },
+
+        async loadSender()
+        {
+            try
+            {
+                const response = await apiClient.get('/inquiries');
+                this.items = response.data.map(item =>
+                {
+                    const hasUnread = item.messages?.some(msg =>
+                    {
+                        const senderId = msg.sender?.id || msg.sender?.account?.id;
+                        return !msg.read_at && senderId !== this.userId;
+                    }) || false;
+
+                    return { ...item, unread: hasUnread };
+                });
+
+                this.items.sort((a, b) =>
+                {
+                    const aTime = a.messages?.length ? new Date(a.messages[a.messages.length - 1].created_at) : 0;
+                    const bTime = b.messages?.length ? new Date(b.messages[b.messages.length - 1].created_at) : 0;
+                    return bTime - aTime;
+                });
+
+                if (this.items.length > 0)
+                {
+                    this.selectInquiry(this.items[0]);
+                }
+            }
+            catch (error)
+            {
+                console.error("Failed to load senders:", error);
+            }
+        },
+
+        async selectInquiry(inquiry)
+        {
+            this.selectedInquiry = inquiry;
+            this.loadingMessages = true;
+
+            if (this.isMobileView)
+            {
+                this.showSidebar = false;
+            }
+
+            setTimeout(async () =>
+            {
+                await this.loadMessages();
+                this.loadingMessages = false;
+
+                // mark as read locally
+                inquiry.unread = false;
+
+                // mark as read on backend
+                await this.markMessagesAsRead(inquiry.id);
+            }, 1000);
+        },
+
+        async markMessagesAsRead(inquiryId)
+        {
+            try
+            {
+                await apiClient.post(`/inquiry/${inquiryId}/messages/read`)
+
+                const inquiry = this.items.find(i => i.id === inquiryId)
+                if (inquiry && inquiry.messages)
+                {
+                    inquiry.messages = inquiry.messages.map(m =>
+                    {
+                        const senderId = m.sender?.id || m.sender?.account?.id
+                        if (senderId !== this.userId)
+                        {
+                            return { ...m, read_at: new Date().toISOString() }
+                        }
+                        return m
+                    })
+                }
+            }
+            catch (error)
+            {
+                console.error("Failed to mark messages as read:", error)
+            }
+        },
+
+        async loadMessages()
+        {
+            if (!this.selectedInquiry) return
+            try
+            {
+                const response = await apiClient.get(`/inquiries/${this.selectedInquiry.id}/messages`)
+                this.messages = response.data.map(msg =>
+                {
+                    const senderId = msg.sender?.id || msg.sender?.account?.id
+                    if (senderId === this.userId)
+                    {
+                        return {
+                            ...msg,
+                            sender: {
+                                ...msg.sender,
+                                account: {
+                                    ...msg.sender.account,
+                                    full_name: 'You'
+                                }
+                            }
+                        }
+                    }
+                    return msg
+                })
+                this.scrollToBottom()
+            }
+            catch (error)
+            {
+                console.error("Failed to load messages:", error)
+            }
+        },
+
+        async sendMessage()
+        {
+            if (!this.newMessage.trim() || !this.selectedInquiry) return
+            try
+            {
+                const response = await apiClient.post(`/inquiries/${this.selectedInquiry.id}/messages`,
+                    { message: this.newMessage })
+                let newMsg = response.data
+                if (!newMsg.sender.account)
+                {
+                    newMsg.sender.account = { full_name: 'You', id: this.userId }
+                }
+                this.messages.push(newMsg)
+                this.newMessage = ""
+                this.selectedInquiry.messages = this.messages
+                this.items = this.items.filter(i => i.id !== this.selectedInquiry.id)
+                this.items.unshift(this.selectedInquiry)
+                this.$nextTick(() => this.scrollToBottom())
+            }
+            catch (error)
+            {
+                console.error("Failed to send message:", error)
+            }
+        },
+
+        hasUnreadMessages(item)
+        {
+            if (!item.messages) return false
+            return item.messages.some(msg =>
+            {
+                const senderId = msg.sender?.id || msg.sender?.account?.id
+                return senderId !== this.userId && !msg.read_at
+            })
+        },
+
+        formatTime(datetime)
+        {
+            if (!datetime) return ''
+            const date = new Date(datetime)
+            let hours = date.getHours()
+            const minutes = date.getMinutes().toString().padStart(2, '0')
+            const ampm = hours >= 12 ? 'PM' : 'AM'
+            hours = hours % 12
+            hours = hours ? hours : 12
+            return `${hours}:${minutes} ${ampm}`
+        },
+
+        scrollToBottom()
+        {
+            this.$nextTick(() =>
+            {
+                const el = this.$refs.messageContainer
+                if (el) el.scrollTop = el.scrollHeight
+            })
         }
     }
 }
 </script>
 
 <style scoped>
-.page-title {
-    color: #007bff;
+.message
+{
+    height: 600px;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
 }
 
-.button-color {
-    background-color: #007bff;
-    color: #ffffff;
+.chat-sidebar
+{
+    height: 600px;
+    overflow-y: auto;
+    padding-right: 5px;
+    background-color: #ffffff;
+    border-radius: 10px;
 }
 
-.button-color:hover {
-    background-color: #3798ff;
-    color: #ffffff;
+.message-bubble
+{
+    max-width: 70%;
+    word-wrap: break-word;
+    padding: 12px 18px;
+    font-size: 0.9rem;
+    display: inline-block;
 }
 
-.table-header {
-    font-size: 0.85rem;
-    font-weight: 600;
+.sent
+{
+    background: linear-gradient(135deg,#0d6efd,#0a58ca);
+    color: white;
+    border-radius: 18px 18px 0 18px;
+    text-align: right;
+}
+
+.received
+{
+    background-color: #e9ecef;
+    color: black;
+    border-radius: 18px 18px 18px 0;
+    text-align: left;
+}
+
+.chat-item
+{
+    transition: 0.2s;
+    cursor: pointer;
     padding: 10px;
-    background-color: #007bff;
-    color: #ffffff;
 }
 
-.pagination-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 16px;
-    font-size: 14px;
-}
-
-.entries-info {
-    color: #666;
-}
-
-.pagination-buttons {
-    display: flex;
-    gap: 5px;
-}
-.table-scrollable
+.chat-item:hover
 {
-    max-height: 500px;
-    overflow: hidden; /* Hidden by default */
+    background-color: #f1f1f1;
 }
-.table-scrollable:hover
+
+.chat-item.active
 {
-    overflow-y: auto; /* Show scrollbar when hovering */
+    background-color: #dceeff;
+}
+
+.text-truncate
+{
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.shimmer-container
+{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-grow: 1;
+}
+
+.shimmer-line
+{
+    height: 50px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.unread-dot
+{
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+    margin-left: 5px;
+}
+
+@keyframes shimmer
+{
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@media (min-height: 768px)
+{
+    .message
+    {
+        height: 400px;
+    }    
 }
 </style>

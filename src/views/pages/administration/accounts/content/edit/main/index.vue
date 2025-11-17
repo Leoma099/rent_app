@@ -6,7 +6,7 @@
 
     <form @submit.prevent="submit()" class="mt-4">
 
-        <div class="card card-body shadow-sm border-0 rounded-0 col-6 mx-auto">
+        <div class="card card-body shadow-sm border-0 rounded-0 col-md-6 mx-md-auto">
 
             <h3 class="mb-3 text-title">ACCOUNT DETAILS</h3>
 

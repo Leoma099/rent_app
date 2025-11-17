@@ -44,6 +44,14 @@
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else>
+                <small>
+                    <small class="text-muted">{{ formatViewActivity(item.last_viewed_at) }}</small>
+                </small>
+            </span>
+        </td>
+        <td class="table-data">
+            <div v-if="isLoading" class="shimmer-loader"></div>
+            <span v-else>
                 <button
                     :disabled="item.status === 0"
                     type="button"
@@ -55,7 +63,7 @@
                 </button>
             </span>
         </td>
-        <td class="table-data">
+        <!-- <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else>
                 <button
@@ -68,7 +76,7 @@
                     <small>{{ formatFeature(item.is_featured).label }}</small>
                 </button>
             </span>
-        </td>
+        </td> -->
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else class="d-flex align-items-center">
@@ -110,8 +118,9 @@ export default
         {
             const statuses =
             {
-                0: { label: "Inactive", badgeClass: "btn btn-sm btn-warning rounded-0" },
-                1: { label: "Active", badgeClass: "btn btn-sm btn-success rounded-0" },
+                0: { label: "Pending", badgeClass: "btn btn-sm btn-secondary rounded-0" },
+                1: { label: "Inactive", badgeClass: "btn btn-sm btn-warning rounded-0" },
+                2: { label: "Active", badgeClass: "btn btn-sm btn-success rounded-0" },
             };
             return statuses[status] || { label: "n/a", badgeClass: "btn btn-sm btn-secondary rounded-0" };
         },
@@ -149,6 +158,30 @@ export default
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             }).format(price);
+        },
+
+        formatViewActivity(lastViewed)
+        {
+            if (!lastViewed)
+            {
+                return "Never Viewed";
+            }
+
+            const last = new Date(lastViewed);
+            const now = new Date();
+
+            const diffMs = now - last;
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+            // viewed today
+            const isToday = last.toDateString() === now.toDateString();
+            if (isToday) return "Viewed today";
+
+            // viewed within 48 hours
+            if (diffDays < 2) return "Viewed recently";
+
+            // viewed X days ago
+            return `Last viewed: ${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
         },
 
         openUpdateStatusModal()

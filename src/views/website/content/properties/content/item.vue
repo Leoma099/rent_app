@@ -16,7 +16,8 @@
             <a
                 href="javascript:void(0)"
                 style="text-decoration: none;"
-                @click="navigateToProperty(item.id)">
+                @click="navigateToProperty(item)"
+                :class="{ 'blurred': item.propertyStats === 2 }">
                 <div class="card h-100 shadow-sm">
                     <img
                         :src="getPhotoUrl(item.photo_1)"
@@ -28,8 +29,11 @@
                         <p class="text-muted small mb-1">{{ item.address }}</p>
 
                         <div class="mb-1">
-                            <span v-if="item.is_featured !== 0" class="badge text-bg-success me-2">FEATURED</span>
-                            <span class="badge text-bg-secondary">{{ formatPropStats(item.propertyStats) }}</span>
+                            <span 
+                                class="badge me-2" 
+                                :class="getStatusBadgeClass(item.propertyStats)">
+                                {{ formatPropStats(item.propertyStats) }}
+                            </span>
                         </div>
 
                         <div class="mb-1">
@@ -73,7 +77,7 @@ export default
             }
 
             // return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`;
-            return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`;
+            return `${process.env.VUE_APP_API_URL}/storage/${photoPath}`;
         },
 
         formatPrice(price)
@@ -102,19 +106,37 @@ export default
         {
             const statuses =
             {
-                0: "Under Review",
                 1: "For Rent",
                 2: "Rented",
-                3: "Under Maintenance",
-                4: "Reserved"
+                3: "Under Review",
+                4: "Reserved",
             };
             return statuses[status] || "N/A";
         },
 
-        navigateToProperty(id)
+        getStatusBadgeClass(status)
         {
+            const classes =
+            {
+                1: 'text-bg-success',   // For Rent
+                2: 'text-bg-danger',    // Rented
+                3: 'text-bg-warning',   // Under Review
+                4: 'text-bg-primary'    // Reserved
+            };
+            return classes[status] || 'text-bg-secondary';
+        },
+
+        navigateToProperty(item)
+        {
+            // Block rented property
+            if (item.propertyStats === 2)
+            {
+                alert("This property is already rented. Please look a new one.");
+                return;
+            }
+
             this.scrollToTop();
-            this.$router.push({ name: 'CommercialHubView', params: { id: id } });
+            this.$router.push({ name: 'CommercialHubView', params: { id: item.id } });
         },
 
         scrollToTop()
@@ -197,5 +219,11 @@ export default
 {
     width: 40%;
     height: 18px;
+}
+
+.blurred
+{
+    filter: blur(3px);
+    opacity: 0.6;         /* faded look */
 }
 </style>

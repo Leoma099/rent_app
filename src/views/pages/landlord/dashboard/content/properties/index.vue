@@ -112,25 +112,21 @@ export default
 </script>
 
 <style scoped>
-.page-title
-{
+.page-title {
     color: #007bff;
 }
 
-.button-color
-{
+.button-color {
     background-color: #007bff;
     color: #ffffff;
 }
 
-.button-color:hover
-{
+.button-color:hover {
     background-color: #3798ff;
     color: #ffffff;
 }
 
-.table-header
-{
+.table-header {
     font-size: 0.85rem;
     font-weight: 600;
     padding: 10px;
@@ -138,8 +134,7 @@ export default
     color: #ffffff;
 }
 
-.pagination-container
-{
+.pagination-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -147,55 +142,32 @@ export default
     font-size: 14px;
 }
 
-.entries-info
-{
+.entries-info {
     color: #666;
 }
 
-.pagination-buttons
-{
+.pagination-buttons {
     display: flex;
     gap: 5px;
 }
-
-.table-scrollable
-{
-    max-height: 500px;
-    overflow: hidden; /* Hidden by default */
+.table-scrollable {
+    max-height: 400px;
+    overflow-x: auto; /* horizontal scroll for small screens */
+    overflow-y: auto; /* vertical scroll if content exceeds height */
+    -webkit-overflow-scrolling: touch; /* smooth scrolling for mobile */
 }
 
-.table-scrollable:hover
-{
-    overflow-y: auto; /* Show scrollbar when hovering */
-}
-
-/* Optional: subtle shimmer for table rows */
-tbody tr td
-{
-    transition: background-color 0.3s;
-}
-
-tbody tr td.loading
-{
-    background: linear-gradient(
-        90deg,
-        #f0f0f0 25%,
-        #e0e0e0 50%,
-        #f0f0f0 75%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 1.2s infinite linear;
-}
-
-@keyframes shimmer
-{
-    0%
-    {
-        background-position: -200% 0;
+/* Optional: make table scroll nicely on mobile */
+@media (max-width: 767px) {
+    .table-scrollable {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
     }
-    100%
-    {
-        background-position: 200% 0;
+
+    .table-scrollable table {
+        min-width: 600px; /* ensure table is wider than container to trigger scroll */
     }
 }
+
 </style>

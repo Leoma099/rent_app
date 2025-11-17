@@ -6,14 +6,15 @@
 
         <div class="card card-body shadow-sm border-0 rounded-0">
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
+                <div class="mb-2 mb-md-0">
                     <router-link
                         :to="'/landlord/properties/create'"
-                        class="btn rounded-0 button-color">ADD NEW PROPERTY
+                        class="btn rounded-0 button-color w-100 w-md-auto">
+                        ADD NEW PROPERTY
                     </router-link>
                 </div>
-                <div class="col-md-3 ">
+                <div class="col-md-3">
                     <input type="text" v-model="searchQuery" @input="loadList" placeholder="Search here"
                         class="form-control rounded-0">
                 </div>
@@ -28,8 +29,8 @@
                             <th class="table-header"><small>PROPERTY STATUS</small></th>
                             <th class="table-header"><small>TYPE</small></th>
                             <th class="table-header"><small>PRICE</small></th>
+                            <th class="table-header"><small>VIEW ACTIVITY</small></th>
                             <th class="table-header"><small>STATUS</small></th>
-                            <th class="table-header"><small>FEATURED</small></th>
                             <th class="table-header"><small>ACTION</small></th>
                         </tr>
                     </thead>
@@ -188,13 +189,23 @@ export default
     display: flex;
     gap: 5px;
 }
-.table-scrollable
-{
-    max-height: 500px;
-    overflow: hidden; /* Hidden by default */
+.table-scrollable {
+    max-height: 400px;
+    overflow-x: auto; /* horizontal scroll for small screens */
+    overflow-y: auto; /* vertical scroll if content exceeds height */
+    -webkit-overflow-scrolling: touch; /* smooth scrolling for mobile */
 }
-.table-scrollable:hover
-{
-    overflow-y: auto; /* Show scrollbar when hovering */
+
+/* Optional: make table scroll nicely on mobile */
+@media (max-width: 767px) {
+    .table-scrollable {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+    }
+
+    .table-scrollable table {
+        min-width: 600px; /* ensure table is wider than container to trigger scroll */
+    }
 }
 </style>

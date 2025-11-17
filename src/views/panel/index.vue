@@ -5,7 +5,7 @@
 
     <div v-else-if="role === 1 || role === 2">
         <sidebar-component />
-        <div class="main-wrapper">
+        <div class="main-wrapper content-area">
             <header-component />
             <div class="main">
                 <router-view />

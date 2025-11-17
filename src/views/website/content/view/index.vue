@@ -52,6 +52,7 @@
         </div>
 
         <div class="row mt-3">
+
             <div class="col-md-9">
                 <div class="card card-body rounded-0 card-white shadow-sm">
                     <div id="propertyCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -181,8 +182,10 @@
                         <div class="mt-3" v-else>
                             <button
                                 type="submit"
-                                class="btn btn-primary w-100 rounded-0">
-                                Send Message
+                                class="btn btn-primary w-100 rounded-0"
+                                :disabled="isLoading">
+                                <span v-if="isLoading">Sending Message...</span>
+                                <span v-else>Send Message</span>
                             </button>
                         </div>
                     </form>
@@ -283,7 +286,8 @@ export default {
                 sched: "",
             },
             isSaved: false,
-            showSplash: true // added splashscreen state
+            showSplash: true,
+            isLoading: false,
         };
     },
 
@@ -542,7 +546,7 @@ export default {
             if (!photoPath) return "/default-avatar.png";
             if (photoPath.startsWith("http")) return photoPath;
             // return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`;
-            return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`;
+            return `${process.env.VUE_APP_API_URL}/storage/${photoPath}`;
         },
 
         getFloorPlanUrl(floorPlanPath)
@@ -550,7 +554,7 @@ export default {
             if (!floorPlanPath) return "/default-avatar.png";
             if (floorPlanPath.startsWith("http")) return floorPlanPath;
             // return `${process.env.VUE_APP_API_URL}/uploads/${floorPlanPath}`;
-            return `${process.env.VUE_APP_API_URL}/uploads/${floorPlanPath}`;
+            return `${process.env.VUE_APP_API_URL}/storage/${floorPlanPath}`;
         },
 
         clearAllBusinessMarkers()
@@ -573,8 +577,11 @@ export default {
 
         async submit()
         {
+            this.isLoading = true;
             try
             {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
                 const payload =
                 {
                     property_id: this.property.id,
@@ -584,10 +591,16 @@ export default {
                 const response = await apiClient.post(`/inquiries`, payload);
                 console.log("Send message:", response.data);
                 this.form.message = "";
+                this.toast.success("Inquiry message send successfully.");
             }
             catch(error)
             {
                 console.log(error);
+                this.toast.error("Inquiry message send unsuccessfully.");
+            }
+            finally
+            {
+                this.isLoading = false;
             }
         },
     },

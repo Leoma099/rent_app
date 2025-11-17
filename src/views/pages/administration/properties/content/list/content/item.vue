@@ -17,15 +17,17 @@
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else>{{ item.price }}</span>
         </td>
-       <td class="table-data">
+        <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
+
             <span v-else>
                 <button
                     type="button"
                     :class="formatStatus(item.status).badgeClass"
-                    @click="openUpdateStatusModal"
+                    :disabled="item.status === 2"
+                    @click="item.status !== 2 && openUpdateStatusModal(item)"
                     data-bs-toggle="modal"
-                    data-bs-target="#updateStatusModal">
+                    :data-bs-target="item.status === 2 ? null : '#updateStatusModal'">
                     <small>{{ formatStatus(item.status).label }}</small>
                 </button>
             </span>
@@ -37,7 +39,7 @@
                     :to="`/administration/properties/${item.id}`"
                     class="btn btn-sm btn-warning rounded-0 me-3"
                     :class="{ 'disabled-link': item.status === 0 }"
-                    :tabindex="item.status === 0 ? -1 : 0"
+                    :tabindex="item.status === 0 ? -2 : 0"
                     :aria-disabled="item.status === 0">
                     <i class="bx bx-show"></i>
                 </router-link>
@@ -70,8 +72,9 @@ export default
         {
             const statuses =
             {
-                0: { label: "Inactive", badgeClass: "btn btn-sm btn-warning rounded-0" },
-                1: { label: "Active", badgeClass: "btn btn-sm btn-success rounded-0" },
+                0: { label: "Pending", badgeClass: "btn btn-sm btn-secondary rounded-0" },
+                1: { label: "Inactive", badgeClass: "btn btn-sm btn-warning rounded-0" },
+                2: { label: "Active", badgeClass: "btn btn-sm btn-success rounded-0" },
             };
             return statuses[status] || { label: "n/a", badgeClass: "btn btn-sm btn-secondary rounded-0" };
         },

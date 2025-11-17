@@ -7,12 +7,6 @@
         <div class="card card-body shadow-sm border-0 rounded-0">
 
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <!-- <div>
-                    <router-link
-                        :to="'/landlord/properties/create'"
-                        class="btn rounded-0 button-color">ADD NEW PROPERTY
-                    </router-link>
-                </div> -->
                 <div class="col-md-3 ">
                     <input type="text" v-model="searchQuery" @input="loadList" placeholder="Search here"
                         class="form-control rounded-0">
@@ -182,10 +176,20 @@ export default
 .table-scrollable
 {
     max-height: 500px;
-    overflow: hidden; /* Hidden by default */
+
 }
 .table-scrollable:hover
 {
     overflow-y: auto; /* Show scrollbar when hovering */
 }
+@media (max-width: 767px) {
+    .table-scrollable {
+        overflow-x: auto;  /* horizontal scroll for small screens */
+    }
+
+    table {
+        min-width: 600px; /* ensure table is wider than container to allow scrolling */
+    }
+}
+
 </style>
