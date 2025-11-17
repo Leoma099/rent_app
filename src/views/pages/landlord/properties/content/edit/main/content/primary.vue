@@ -46,10 +46,9 @@
             <label class="form-label">* Property Status</label>
             <select class="form-select rounded-0" v-model="form.propertyStats">
                 <option value="" disabled selected>-- select property status --</option>
-                <option value="0">Under Review</option>
                 <option value="1">For Rent</option>
                 <option value="2">Rented</option>
-                <option value="3">Under Maintenance</option>
+                <option value="3">Under Review</option>
                 <option value="4">Reserved</option>
             </select>
         </div>
