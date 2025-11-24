@@ -176,8 +176,7 @@ export default
                 { key: 'photo_1', label: 'Property 1st Image View' },
                 { key: 'photo_2', label: 'Property 2nd Image View' },
                 { key: 'photo_3', label: 'Property 3rd Image View' },
-                { key: 'photo_4', label: 'Property 4th Image View' },
-                { key: 'floor_plan', label: 'Property Floor Plan' }
+                { key: 'photo_4', label: 'Property Floor Plan' },
             ];
         },
 

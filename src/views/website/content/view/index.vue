@@ -137,7 +137,7 @@
                         <div class="mt-3">
                             <h3 class="mb-0">Floor Plan</h3>
                             <img
-                                :src="getFloorPlanUrl(property.floor_plan)"
+                                :src="getPhotoUrl(property.photo_4)"
                                 :alt="property.title"
                                 class="img-fluid card-img-top rounded-0"
                                 style="height: 100%; object-fit: cover;"
@@ -233,7 +233,7 @@
                 </form>
             </div>
         </div>
-        <recommended-component :propertyId="property.id"/>
+        <recommended-component :propertyId="property.id" :key="property.id" />
     </div>
 </template>
 
@@ -326,7 +326,6 @@ export default {
             if (this.property.photo_1) photos.push(this.getPhotoUrl(this.property.photo_1));
             if (this.property.photo_2) photos.push(this.getPhotoUrl(this.property.photo_2));
             if (this.property.photo_3) photos.push(this.getPhotoUrl(this.property.photo_3));
-            if (this.property.photo_4) photos.push(this.getPhotoUrl(this.property.photo_4));
             
             return photos;
         }
@@ -336,10 +335,14 @@ export default {
     {
         '$route.params.id':
         {
-            immediate: false,
-            handler(newId)
-            {
-                this.loadProperty(newId);
+            immediate: true,
+            handler(newId) {
+                this.showSplash = true;
+                this.property = null;
+                this.loadProperty(newId).then(() => {
+                    this.showSplash = false;
+                    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+                });
             }
         },
 
@@ -545,16 +548,7 @@ export default {
         {
             if (!photoPath) return "/default-avatar.png";
             if (photoPath.startsWith("http")) return photoPath;
-            // return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`;
             return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`;
-        },
-
-        getFloorPlanUrl(floorPlanPath)
-        {
-            if (!floorPlanPath) return "/default-avatar.png";
-            if (floorPlanPath.startsWith("http")) return floorPlanPath;
-            // return `${process.env.VUE_APP_API_URL}/uploads/${floorPlanPath}`;
-            return `${process.env.VUE_APP_API_URL}/uploads/${floorPlanPath}`;
         },
 
         clearAllBusinessMarkers()

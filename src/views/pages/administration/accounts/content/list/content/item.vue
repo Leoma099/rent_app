@@ -2,22 +2,22 @@
     <tr>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.id }}</span>
+            <span v-else style="font-size: 18px;">{{ item.id }}</span>
         </td>
 
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.full_name }}</span>
+            <span v-else style="font-size: 18px;">{{ item.full_name }}</span>
         </td>
 
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.email }}</span>
+            <span v-else style="font-size: 18px;">{{ item.email }}</span>
         </td>
 
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.mobile_number }}</span>
+            <span v-else style="font-size: 18px;">{{ item.mobile_number }}</span>
         </td>
 
         <td class="table-data">

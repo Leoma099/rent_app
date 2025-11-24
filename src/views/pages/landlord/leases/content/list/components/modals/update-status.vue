@@ -28,8 +28,8 @@
                     </div>
 
                     <p class="mb-3">
-                        You're about to update the lease contract for <strong>{{ selectedLease?.property?.title }}</strong>,
-                        rented by <strong>{{ selectedLease?.tenant?.account?.full_name }}</strong>
+                        You're about to {{ selectedProperty?.status === 1 ? 'PENDINNG' : 'ACTIVE' }} the lease contract for <strong>{{ selectedLease?.property?.title.toUpperCase() }}</strong>,
+                        rented by <strong>{{ selectedLease?.tenant?.account?.full_name.toUpperCase() }}</strong>
                     </p>
 
                     <p>Do you want to continue?</p>

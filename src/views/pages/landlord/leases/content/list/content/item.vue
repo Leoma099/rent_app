@@ -3,23 +3,23 @@
     <tr>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.tenant.account.full_name }}</span>
+            <span v-else style="font-size: 18px;">{{ item.tenant.account.full_name }}</span>
         </td>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.property.title }}</span>
+            <span v-else style="font-size: 18px;">{{ textShortener(item.property.title, 30) }}</span>
         </td>
                 <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.start_date }}</span>
+            <span v-else style="font-size: 18px;">{{ item.start_date }}</span>
         </td>
                 <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.end_date }}</span>
+            <span v-else style="font-size: 18px;">{{ item.end_date }}</span>
         </td>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.property.price }}</span>
+            <span v-else style="font-size: 18px;">{{ item.property.price }}</span>
         </td>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
@@ -60,16 +60,17 @@ export default
         isLoading: Boolean,
     },
 
-    // computed:
-    // {
-    //     openStatusModal()
-    //     {
-    //         return this.$parent.$data.openStatusModal();
-    //     }
-    // },
-
     methods:
     {
+        textShortener(text, max)
+        {
+            if (!text) return '';
+
+            return text.length > max
+                ? text.slice(0, max) + '.....'
+                : text;
+        },
+
         formatStatus(status)
         {
             const statuses =

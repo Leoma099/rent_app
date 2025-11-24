@@ -15,7 +15,7 @@
 
                 <span
                     class="position-absolute top-50 end-0 translate-middle-y me-3 text-primary fw-bold"
-                    style="cursor: not-allowed; font-size: 1.25rem; line-height: 1;"
+                    style="cursor: pointer; font-size: 1.25rem; line-height: 1;"
                     @click.prevent="clearMap()"
                 >
                     <i class="bx bx-x"></i>
@@ -117,11 +117,7 @@ export default
             {
                 center: centerPoint,
                 zoom: 12,
-                scrollwheel: true,
-                mapTypeControl: false,
-                zoomControl: false,
-                streetViewControl: false,
-                fullscreenControl: false
+                scrollwheel: true
             });
 
             this.map.addListener("click", (e) =>

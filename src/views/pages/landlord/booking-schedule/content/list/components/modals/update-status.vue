@@ -28,8 +28,8 @@
                     </div>
 
                     <p class="mb-3">
-                        You're about to update the booking schedule for <strong>{{ selectedBookingSchedule?.property?.title }}</strong>,
-                        booked by <strong>{{ selectedBookingSchedule?.tenant?.account?.full_name }}</strong>
+                        You're about to {{ (selectedProperty?.status === 1 ? 'Pending' : 'Confirmed').toUpperCase() }} the booking schedule for <strong>{{ selectedBookingSchedule?.property?.title.toUpperCase() }}</strong>,
+                        which was booked by <strong>{{ selectedBookingSchedule?.tenant?.account?.full_name.toUpperCase() }}</strong>
                     </p>
 
                     <p>Do you want to continue?</p>

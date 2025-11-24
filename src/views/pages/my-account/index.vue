@@ -2,8 +2,6 @@
 
     <h1>My Account</h1>
 
-    <router-link :to="'/administration/dashboard'">Go back to page</router-link>
-
     <div class="mt-3">
 
         <div class="col-md-4 mx-md-auto">

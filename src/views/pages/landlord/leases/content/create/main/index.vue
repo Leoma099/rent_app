@@ -115,7 +115,7 @@ export default
         async loadProperty()
         {
             const response = await apiClient.get(`/properties`);
-            this.properties = response.data;
+            this.properties = response.data.filter(property => property.propertyStats !== 2);
         },
 
         async submit()

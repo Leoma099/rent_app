@@ -1,9 +1,11 @@
 <template>
-    <div class="container my-5">
+    <div>
         <h1 class="mb-4">Inquiries</h1>
         <div class="row g-3">
+
+            <!-- Sidebar -->
             <div 
-                class="col-md-3"
+                class="col-md-4"
                 v-show="!isMobileView || showSidebar"
             >
                 <div class="chat-sidebar bg-white rounded shadow-sm p-2">
@@ -15,10 +17,7 @@
                         :class="{ active: selectedInquiry && selectedInquiry.id === item.id }"
                     >
                         <p class="mb-0"><strong>{{ item.property?.title }}</strong></p>
-                        <span class="text-muted">
-                            <small>Inquired by</small> 
-                            <strong>{{ item.tenant?.account?.full_name }}</strong>
-                        </span>
+                        <span class="text-muted"><small>Inquired by</small> <strong>{{ item.tenant?.account?.full_name }}</strong></span>
                         <small class="text-secondary text-truncate">
                             {{ item.unread ? 'New messages' : 'No new messages' }}
                         </small>
@@ -26,8 +25,9 @@
                 </div>
             </div>
 
+            <!-- Messages and Property Details -->
             <div 
-                class="col-md-6 d-flex flex-column"
+                class="col-md-8 d-flex flex-column"
                 v-show="!isMobileView || !showSidebar"
             >
                 <button 
@@ -38,98 +38,72 @@
                     ← Back to Chats
                 </button>
 
-                <div
-                    v-if="selectedInquiry && selectedInquiry.property && isMobileView"
-                    class="card mb-2 property-view-top bg-white rounded shadow-sm p-3"
-                >
-                    <div class="d-flex">
-                        <div class="property-image">
-                            <img 
-                                :src="getPhotoUrl(selectedInquiry.property.photo_1)" 
-                                class="img-fluid rounded mb-2" 
-                                alt="Property Image"
-                            />
-                        </div>
-                        <div class="ms-2">
-                            <h4 class="mb-0">{{ selectedInquiry.property.title }}</h4>
-                            <p class="mb-0">{{ selectedInquiry.property.address }}</p>
-                        </div>
-                    </div>
-                    <p class="mb-0"><strong>Price:</strong> {{ selectedInquiry.property.price }}</p>
-                    <p class="mb-0"><strong>Size:</strong> {{ selectedInquiry.property.size }} sqm</p>
-                    <p class="mb-0"><strong>Description:</strong> {{ selectedInquiry.property.description }}</p>
-                </div>
+                <div class="d-flex gap-3 flex-grow-1">
 
-                <div
-                    v-if="selectedInquiry"
-                    class="card flex-grow-1 border-0 rounded shadow-sm message p-3 d-flex flex-column"
-                    ref="messageContainer"
-                >
-                    <div v-if="loadingMessages" class="shimmer-container flex-grow-1">
-                        <div class="shimmer-line" v-for="n in 5" :key="n"></div>
-                    </div>
+                    <!-- Messages -->
+                    <div
+                        v-if="selectedInquiry"
+                        class="card flex-grow-1 border-0 rounded message shadow-sm p-3 d-flex flex-column"
+                        ref="messageContainer"
+                    >
+                        <div v-if="loadingMessages" class="shimmer-container flex-grow-1">
+                            <div class="shimmer-line" v-for="n in 5" :key="n"></div>
+                        </div>
 
-                    <div v-else>
-                        <div
-                            v-for="message in messages"
-                            :key="message.id"
-                            class="d-flex w-100 mb-3"
-                            :class="isSentByUser(message) ? 'justify-content-end' : 'justify-content-start'"
-                        >
+                        <div v-else>
                             <div
-                                class="message-bubble"
-                                :class="isSentByUser(message) ? 'sent' : 'received'"
+                                v-for="message in messages"
+                                :key="message.id"
+                                class="d-flex w-100 mb-3"
+                                :class="isSentByUser(message) ? 'justify-content-end' : 'justify-content-start'"
                             >
-                                <p class="mb-1 fw-bold small">
-                                    <span v-if="isSentByUser(message)">You</span>
-                                    <span v-else>{{ message.sender?.account?.full_name || 'Unknown' }}</span>
-                                </p>
-                                <p class="mb-0">{{ message.message }}</p>
-                                <small class="text-muted">{{ formatTime(message.created_at) }}</small>
+                                <div
+                                    class="message-bubble"
+                                    :class="isSentByUser(message) ? 'sent' : 'received'"
+                                >
+                                    <p class="mb-1 fw-bold small">
+                                        <span v-if="isSentByUser(message)">You</span>
+                                        <span v-else>{{ message.sender?.account?.full_name || 'Unknown' }}</span>
+                                    </p>
+                                    <p class="mb-0">{{ message.message }}</p>
+                                    <small class="text-muted">{{ formatTime(message.created_at) }}</small>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div 
-                    v-else 
-                    class="card flex-grow-1 border-0 rounded shadow-sm d-flex justify-content-center align-items-center text-muted p-3"
-                >
-                    Select a chat to view messages
-                </div>
+                    <div v-else class="card flex-grow-1 border-0 rounded shadow-sm d-flex justify-content-center align-items-center text-muted p-3 mt-3">
+                        Select a chat to view messages
+                    </div>
 
-                <div class="mt-3 d-flex gap-2">
-                    <input 
-                        type="text" 
-                        v-model="newMessage" 
-                        class="form-control rounded-pill px-3" 
-                        placeholder="Type your message..." 
-                        @keyup.enter="sendMessage"
-                    />
-                    <button 
-                        class="btn btn-primary rounded-pill px-4" 
-                        @click="sendMessage"
+                    <!-- Property Details Panel -->
+                    <div 
+                        v-if="selectedInquiry && selectedInquiry.property"
+                        class="card border-0 rounded shadow-sm p-3 property-details"
+                        style="width: 300px;"
                     >
-                        Send
-                    </button>
+                        <img 
+                            :src="getPhotoUrl(selectedInquiry.property.photo_1)" 
+                            class="img-fluid rounded mb-2" 
+                            alt="Property Image"
+                        />
+                        <h5 class="mb-2">{{ selectedInquiry.property.title }}</h5>
+                        <p class="mb-1"><strong>Address:</strong> {{ selectedInquiry.property.address }}</p>
+                        <p class="mb-1"><strong>Type:</strong> {{ selectedInquiry.property.type }}</p>
+                        <p class="mb-1"><strong>Price:</strong> {{ selectedInquiry.property.price }}</p>
+                        <p class="mb-1"><strong>Status:</strong> {{ selectedInquiry.property.propertyStats === 2 ? 'Rented' : 'Available' }}</p>
+                        <img v-if="selectedInquiry.property.image_url" :src="selectedInquiry.property.image_url" class="img-fluid rounded mt-2" />
+                    </div>
+
                 </div>
+
+                <div v-if="selectedInquiry" class="mt-3 d-flex gap-2">
+                    <input type="text" v-model="newMessage" class="form-control rounded-pill px-3" placeholder="Type your message..." @keyup.enter="sendMessage">
+                    <button class="btn btn-primary rounded-pill px-4" @click="sendMessage">Send</button>
+                </div>
+
             </div>
 
-            <div 
-                v-if="selectedInquiry && selectedInquiry.property && !isMobileView"
-                class="card border-0 rounded shadow-sm p-3 property-details col-md-3 desktop-view"
-            >
-                <img 
-                    :src="getPhotoUrl(selectedInquiry.property.photo_1)" 
-                    class="img-fluid rounded mb-2" 
-                    alt="Property Image"
-                />
-                <h2 class="mb-0">{{ selectedInquiry.property.title }}</h2>
-                <p class="mb-0">{{ selectedInquiry.property.address }}</p>
-                <p class="mb-0"><strong>Price:</strong> {{ selectedInquiry.property.price }}</p>
-                <p class="mb-0"><strong>Size:</strong> {{ selectedInquiry.property.size }} sqm</p>
-                <p class="mb-0"><strong>Description:</strong> {{ selectedInquiry.property.description }}</p>
-            </div>
         </div>
     </div>
 </template>
@@ -255,7 +229,9 @@ export default
             {
                 await this.loadMessages()
                 this.loadingMessages = false
+
                 inquiry.unread = false
+
                 await this.markMessagesAsRead(inquiry.id)
             }, 1000)
         },
@@ -265,6 +241,7 @@ export default
             try
             {
                 await apiClient.post(`/inquiry/${inquiryId}/messages/read`)
+
                 const inquiry = this.items.find(i => i.id === inquiryId)
                 if (inquiry && inquiry.messages)
                 {
@@ -372,12 +349,23 @@ export default
                 if (el) el.scrollTop = el.scrollHeight
             })
         },
+        
 
         getPhotoUrl(photoPath)
         {
-            if (!photoPath) return "/default-avatar.png"
-            if (photoPath.startsWith("http")) return photoPath
-            return `${process.env.VUE_APP_API_URL}/storage/${photoPath}`
+            if (!photoPath) return "/default-avatar.png";
+            if (photoPath.startsWith("http")) return photoPath;
+            // return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`;
+            return `${process.env.VUE_APP_API_URL}/storage/${photoPath}`;
+        },
+    },
+
+    filters:
+    {
+        currency(value)
+        {
+            if (!value) return ''
+            return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(value)
         }
     }
 }
@@ -393,6 +381,13 @@ export default
     padding: 20px;
     display: flex;
     flex-direction: column;
+}
+
+.property-details
+{
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    padding: 15px;
 }
 
 .chat-sidebar
@@ -471,35 +466,14 @@ export default
     animation: shimmer 1.5s infinite;
 }
 
-.desktop-view
+.unread-dot
 {
-    display: block;
-}
-
-.property-image
-{
-    width: 50px;
-    height: 50px;
-    border-radius: 8px;
-}
-
-.property-image img
-{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.property-view-top
-{
-    display: block;
-}
-
-.property-view
-{
-    background-color: #ffffff;
-    border-radius: 15px;
-    padding: 20px;
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+    margin-left: 5px;
 }
 
 @keyframes shimmer
@@ -508,24 +482,11 @@ export default
     100% { background-position: 200% 0; }
 }
 
-@media (max-width: 768px)
+@media (min-height: 768px)
 {
-    .desktop-view
-    {
-        display: none;
-    }
-
     .message
     {
         height: 400px;
-    }
-}
-
-@media (min-width: 769px)
-{
-    .property-view-top
-    {
-        display: none;
-    }
+    }    
 }
 </style>

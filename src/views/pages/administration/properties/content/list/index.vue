@@ -173,10 +173,21 @@ export default
     display: flex;
     gap: 5px;
 }
-.table-scrollable
-{
+.table-scrollable {
     max-height: 500px;
+    overflow-x: auto; /* horizontal scroll for small screens */
+    overflow-y: auto; /* vertical scroll if content exceeds height */
+    -webkit-overflow-scrolling: touch; /* smooth scrolling for mobile */
+}
 
+.table-scrollable table thead th
+{
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #007bff;
+    color: #fff;
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.4);
 }
 .table-scrollable:hover
 {
@@ -189,6 +200,20 @@ export default
 
     table {
         min-width: 600px; /* ensure table is wider than container to allow scrolling */
+    }
+
+        .table-scrollable table {
+        min-width: 600px; /* ensure table is wider than container to trigger scroll */
+    }
+
+    .table-scrollable table thead th
+    {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background-color: #007bff;
+        color: #fff;
+        box-shadow: 0 2px 2px -1px rgba(0,0,0,0.4);
     }
 }
 

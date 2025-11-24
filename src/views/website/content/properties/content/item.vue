@@ -13,9 +13,7 @@
             </div>
         </template>
         <template v-else>
-            <a
-                href="javascript:void(0)"
-                style="text-decoration: none;"
+            <div
                 @click="navigateToProperty(item)"
                 :class="{ 'blurred': item.propertyStats === 2 }">
                 <div class="card h-100 shadow-sm">
@@ -47,7 +45,7 @@
                         <div class="fw-bold text-primary">{{ formatPrice(item.price) }} / Monthly</div>
                     </div>
                 </div>
-            </a>
+            </div>
         </template>
     </div>
 </template>

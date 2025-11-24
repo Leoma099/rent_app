@@ -3,26 +3,20 @@
     <tr>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>
-                <small>
-                    {{ item.address }}
-                </small>
+            <span v-else style="font-size: 18px;">
+                {{ item.address }}
             </span>
         </td>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>
-                <small>
-                    {{ item.landlord.account.full_name }}
-                </small>
+            <span v-else style="font-size: 18px;">
+                {{ item.landlord.account.full_name }}
             </span>
         </td>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>
-                <small>
-                    {{ formatDate(item.created_at) }}
-                </small>
+            <span v-else style="font-size: 18px;">
+                {{ formatDate(item.created_at) }}
             </span>
         </td>
         <td class="table-data">

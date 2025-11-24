@@ -4,7 +4,7 @@
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else>
-                <small>
+                <small style="font-size: 18px;">
                     {{ item.title }}
                 </small>
             </span>
@@ -12,7 +12,7 @@
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else>
-                <small>
+                <small style="font-size: 18px;">
                     {{ item.address }}
                 </small>
             </span>
@@ -20,7 +20,7 @@
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else>
-                <small>
+                <small style="font-size: 18px;">
                     {{ formatPropStats(item.propertyStats).label }}
                 </small>
             </span>
@@ -28,7 +28,7 @@
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else>
-                <small>
+                <small style="font-size: 18px;">
                     {{ item.property_type }}
                 </small>
             </span>
@@ -36,7 +36,7 @@
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else>
-                <small>
+                <small style="font-size: 18px;">
                     {{ formatPrice(item.price) }}
                 </small>
             </span>
@@ -44,8 +44,8 @@
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else>
-                <small>
-                    <small class="text-muted">{{ formatViewActivity(item.last_viewed_at) }}</small>
+                <small style="font-size: 18px;">
+                    {{ formatViewActivity(item.last_viewed_at) }}
                 </small>
             </span>
         </td>
@@ -63,20 +63,6 @@
                 </button>
             </span>
         </td>
-        <!-- <td class="table-data">
-            <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>
-                <button
-                    :disabled="item.status === 0"
-                    type="button"
-                    :class="formatFeature(item.is_featured).badgeClass"
-                    @click="openUpdateStatusModal"
-                    data-bs-toggle="modal"
-                    data-bs-target="#featuredModal">
-                    <small>{{ formatFeature(item.is_featured).label }}</small>
-                </button>
-            </span>
-        </td> -->
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else class="d-flex align-items-center">
@@ -114,6 +100,15 @@ export default
 
     methods:
     {
+        textShortener(text, max)
+        {
+            if (!text) return '';
+
+            return text.length > max
+                ? text.slice(0, max) + '.....'
+                : text;
+        },
+
         formatStatus(status)
         {
             const statuses =
@@ -260,5 +255,13 @@ span
 {
     pointer-events: none;
     opacity: 0.6;
+}
+
+.ellipsis
+{
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 </style>

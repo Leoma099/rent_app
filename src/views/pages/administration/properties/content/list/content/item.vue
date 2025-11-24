@@ -3,19 +3,19 @@
     <tr>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.title }}</span>
+            <span v-else style="font-size: 18px;">{{ item.title }}</span>
         </td>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.landlord.account.full_name }}</span>
+            <span v-else style="font-size: 18px;">{{ item.landlord.account.full_name }}</span>
         </td>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.address }}</span>
+            <span v-else style="font-size: 18px;">{{ item.address }}</span>
         </td>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.price }}</span>
+            <span v-else style="font-size: 18px;">{{ item.price }}</span>
         </td>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
@@ -68,6 +68,12 @@ export default
 
     methods:
     {
+        textShortener(text, max)
+        {
+            if(text) return '';
+            return text.length > max ? text.slice(0, max) + '.....' : text;
+        },
+
         formatStatus(status)
         {
             const statuses =
@@ -141,5 +147,12 @@ span
 {
     font-size: 1rem;
     font-weight: 600;
+}
+.ellipsis
+{
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 </style>

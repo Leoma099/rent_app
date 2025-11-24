@@ -187,6 +187,16 @@ export default
     -webkit-overflow-scrolling: touch; /* smooth scrolling for mobile */
 }
 
+.table-scrollable table thead th
+{
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #007bff;
+    color: #fff;
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.4);
+}
+
 /* Optional: make table scroll nicely on mobile */
 @media (max-width: 767px) {
     .table-scrollable {
@@ -197,6 +207,16 @@ export default
 
     .table-scrollable table {
         min-width: 600px; /* ensure table is wider than container to trigger scroll */
+    }
+
+    .table-scrollable table thead th
+    {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background-color: #007bff;
+        color: #fff;
+        box-shadow: 0 2px 2px -1px rgba(0,0,0,0.4);
     }
 }
 </style>

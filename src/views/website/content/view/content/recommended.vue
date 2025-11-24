@@ -10,7 +10,7 @@
 
         <div v-if="properties.length > 0" class="row mt-3">
             <div class="col-md-4 mb-3" v-for="property in properties" :key="property.id">
-                <a href="javascript:void(0)" @click="navigateToProperty(property.id)" style="text-decoration: none;">
+                <div @click="navigateToProperty(property.id)">
                     <div class="card h-100 shadow-sm">
                         <img :src="getPhotoUrl(property.photo_1)" :alt="property.property_name"
                             style="height: 200px; object-fit: cover" class="card-img-top" />
@@ -33,7 +33,7 @@
                             <span class="fw-bold text-primary">{{ formatPrice(property.price) }} / Monthly</span>
                         </div>
                     </div>
-                </a>
+                </div>
             </div>
         </div>
 
@@ -77,13 +77,14 @@ export default
 
     watch:
     {
-        propertyId:
-        {
-            immediate: true,
-            handler(newId)
-            {
-                this.loadRecommended(newId);
-            }
+        immediate: true,
+        handler(newId) {
+            this.showSplash = true;
+            this.property = null;
+            this.loadProperty(newId).then(() => {
+                this.showSplash = false;
+                window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+            });
         }
     },
 

@@ -5,12 +5,9 @@
         tabindex="-1"
         aria-labelledby="updateStatusModalLabel"
         aria-hidden="true">
-
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-0">
-
                 <div class="modal-body">
-
                     <div class="d-flex justify-content-between mb-3">
                         <div>
                             <h3 class="mb-0">
@@ -28,7 +25,7 @@
                     </div>
 
                     <p class="mb-3">
-                        You're about to update the lease contract for <strong>{{ selectedProperty?.title }}</strong>
+                        You're about to {{ selectedProperty?.status === 2 ? 'Pending' : 'Active' }} <strong>{{ selectedProperty?.title.toUpperCase() }}</strong>
                     </p>
 
                     <p>Do you want to continue?</p>
@@ -37,22 +34,20 @@
                         <button
                             type="button"
                             class="btn btn-sm btn-outline-secondary me-3 rounded-0"
-                            data-bs-dismiss="modal">
+                            data-bs-dismiss="modal"
+                            :disabled="isUpdating">
                             No
                         </button>
                         <button
                             type="button"
                             class="btn btn-sm btn-primary rounded-0"
-                            @click="updateStatus()"
-                            data-bs-dismiss="modal">
-                            Yes
+                            @click="updateStatus"
+                            :disabled="isUpdating">
+                            <span v-if="isUpdating" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            {{ isUpdating ? 'Updating...' : 'Yes' }}
                         </button>
-
                     </div>
-
-
                 </div>
-
             </div>
         </div>
     </div>
@@ -71,7 +66,7 @@ export default
 
     data()
     {
-        return {
+        return{
             isUpdating: false,
             toast: useToast()
         };
@@ -87,14 +82,20 @@ export default
 
                 const newStatus = this.selectedProperty.status === 0 ? 2 : 0;
 
-                const response = await apiClient.put(`/properties/${this.selectedProperty.id}/approved`,
+                const response = await apiClient.put(`/admin/property/${this.selectedProperty.id}/approved`,
                 {
                     status: newStatus
                 });
 
-                // ✅ Only success toast now
                 this.toast.success("Status updated successfully!");
                 this.$emit("refresh-list");
+
+                // Close the modal using data-bs-dismiss automatically
+                const modalEl = document.getElementById('updateStatusModal');
+                modalEl.classList.remove('show');
+                modalEl.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                document.querySelector('.modal-backdrop')?.remove();
 
                 console.log(response.data);
             }

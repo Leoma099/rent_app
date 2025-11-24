@@ -71,7 +71,6 @@ export default
                 photo_2: "",
                 photo_3: "",
                 photo_4: "",
-                floor_plan: "",
                 size: "",
                 propertyStats: "",
                 landmarks: [],
@@ -147,14 +146,10 @@ export default
                 {
                     formData.append("photo_4", this.form.photo_4)
                 }
-                if (this.form.floor_plan instanceof File)
-                {
-                    formData.append("floor_plan", this.form.floor_plan)
-                }
 
                 for (const key in this.form)
                 {
-                    if (!["photo_1","photo_2","photo_3","photo_4","floor_plan","schedules","landmarks"].includes(key))
+                    if (!["photo_1","photo_2","photo_3","photo_4","schedules","landmarks"].includes(key))
                     {
                         formData.append(key, this.form[key])
                     }

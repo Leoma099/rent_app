@@ -3,7 +3,7 @@
         <h1 class="mb-4">Inquiries</h1>
         <div class="row g-3">
             <div 
-                class="col-md-4"
+                class="col-md-3"
                 v-show="!isMobileView || showSidebar"
             >
                 <div class="chat-sidebar bg-white rounded shadow-sm p-2">
@@ -15,17 +15,19 @@
                         :class="{ active: selectedInquiry && selectedInquiry.id === item.id }"
                     >
                         <p class="mb-0"><strong>{{ item.property?.title }}</strong></p>
-                        <span class="text-muted"><small>Inquired by</small> <strong>{{ item.tenant?.account?.full_name }}</strong></span>
+                        <span class="text-muted">
+                            <small>Inquired by</small> 
+                            <strong>{{ item.tenant?.account?.full_name }}</strong>
+                        </span>
                         <small class="text-secondary text-truncate">
                             {{ item.unread ? 'New messages' : 'No new messages' }}
                         </small>
-
                     </div>
                 </div>
             </div>
 
             <div 
-                class="col-md-8 d-flex flex-column"
+                class="col-md-6 d-flex flex-column"
                 v-show="!isMobileView || !showSidebar"
             >
                 <button 
@@ -35,6 +37,28 @@
                 >
                     ← Back to Chats
                 </button>
+
+                <div
+                    v-if="selectedInquiry && selectedInquiry.property && isMobileView"
+                    class="card mb-2 property-view-top bg-white rounded shadow-sm p-3"
+                >
+                    <div class="d-flex">
+                        <div class="property-image">
+                            <img 
+                                :src="getPhotoUrl(selectedInquiry.property.photo_1)" 
+                                class="img-fluid rounded mb-2" 
+                                alt="Property Image"
+                            />
+                        </div>
+                        <div class="ms-2">
+                            <h4 class="mb-0">{{ selectedInquiry.property.title }}</h4>
+                            <p class="mb-0">{{ selectedInquiry.property.address }}</p>
+                        </div>
+                    </div>
+                    <p class="mb-0"><strong>Price:</strong> {{ selectedInquiry.property.price }}</p>
+                    <p class="mb-0"><strong>Size:</strong> {{ selectedInquiry.property.size }} sqm</p>
+                    <p class="mb-0"><strong>Description:</strong> {{ selectedInquiry.property.description }}</p>
+                </div>
 
                 <div
                     v-if="selectedInquiry"
@@ -67,15 +91,44 @@
                     </div>
                 </div>
 
-                <div v-else class="card flex-grow-1 border-0 rounded shadow-sm d-flex justify-content-center align-items-center text-muted p-3">
+                <div 
+                    v-else 
+                    class="card flex-grow-1 border-0 rounded shadow-sm d-flex justify-content-center align-items-center text-muted p-3"
+                >
                     Select a chat to view messages
                 </div>
 
                 <div class="mt-3 d-flex gap-2">
-                    <input type="text" v-model="newMessage" class="form-control rounded-pill px-3" placeholder="Type your message..." @keyup.enter="sendMessage">
-                    <button class="btn btn-primary rounded-pill px-4" @click="sendMessage">Send</button>
+                    <input 
+                        type="text" 
+                        v-model="newMessage" 
+                        class="form-control rounded-pill px-3" 
+                        placeholder="Type your message..." 
+                        @keyup.enter="sendMessage"
+                    />
+                    <button 
+                        class="btn btn-primary rounded-pill px-4" 
+                        @click="sendMessage"
+                    >
+                        Send
+                    </button>
                 </div>
+            </div>
 
+            <div 
+                v-if="selectedInquiry && selectedInquiry.property && !isMobileView"
+                class="card border-0 rounded shadow-sm p-3 property-details col-md-3 desktop-view"
+            >
+                <img 
+                    :src="getPhotoUrl(selectedInquiry.property.photo_1)" 
+                    class="img-fluid rounded mb-2" 
+                    alt="Property Image"
+                />
+                <h2 class="mb-0">{{ selectedInquiry.property.title }}</h2>
+                <p class="mb-0">{{ selectedInquiry.property.address }}</p>
+                <p class="mb-0"><strong>Price:</strong> {{ selectedInquiry.property.price }}</p>
+                <p class="mb-0"><strong>Size:</strong> {{ selectedInquiry.property.size }} sqm</p>
+                <p class="mb-0"><strong>Description:</strong> {{ selectedInquiry.property.description }}</p>
             </div>
         </div>
     </div>
@@ -158,57 +211,53 @@ export default
         {
             try
             {
-                const response = await apiClient.get('/inquiries');
+                const response = await apiClient.get('/inquiries')
                 this.items = response.data.map(item =>
                 {
                     const hasUnread = item.messages?.some(msg =>
                     {
-                        const senderId = msg.sender?.id || msg.sender?.account?.id;
-                        return !msg.read_at && senderId !== this.userId;
-                    }) || false;
+                        const senderId = msg.sender?.id || msg.sender?.account?.id
+                        return !msg.read_at && senderId !== this.userId
+                    }) || false
 
-                    return { ...item, unread: hasUnread };
-                });
+                    return { ...item, unread: hasUnread }
+                })
 
                 this.items.sort((a, b) =>
                 {
-                    const aTime = a.messages?.length ? new Date(a.messages[a.messages.length - 1].created_at) : 0;
-                    const bTime = b.messages?.length ? new Date(b.messages[b.messages.length - 1].created_at) : 0;
-                    return bTime - aTime;
-                });
+                    const aTime = a.messages?.length ? new Date(a.messages[a.messages.length - 1].created_at) : 0
+                    const bTime = b.messages?.length ? new Date(b.messages[b.messages.length - 1].created_at) : 0
+                    return bTime - aTime
+                })
 
                 if (this.items.length > 0)
                 {
-                    this.selectInquiry(this.items[0]);
+                    this.selectInquiry(this.items[0])
                 }
             }
             catch (error)
             {
-                console.error("Failed to load senders:", error);
+                console.error("Failed to load senders:", error)
             }
         },
 
         async selectInquiry(inquiry)
         {
-            this.selectedInquiry = inquiry;
-            this.loadingMessages = true;
+            this.selectedInquiry = inquiry
+            this.loadingMessages = true
 
             if (this.isMobileView)
             {
-                this.showSidebar = false;
+                this.showSidebar = false
             }
 
             setTimeout(async () =>
             {
-                await this.loadMessages();
-                this.loadingMessages = false;
-
-                // mark as read locally
-                inquiry.unread = false;
-
-                // mark as read on backend
-                await this.markMessagesAsRead(inquiry.id);
-            }, 1000);
+                await this.loadMessages()
+                this.loadingMessages = false
+                inquiry.unread = false
+                await this.markMessagesAsRead(inquiry.id)
+            }, 1000)
         },
 
         async markMessagesAsRead(inquiryId)
@@ -216,7 +265,6 @@ export default
             try
             {
                 await apiClient.post(`/inquiry/${inquiryId}/messages/read`)
-
                 const inquiry = this.items.find(i => i.id === inquiryId)
                 if (inquiry && inquiry.messages)
                 {
@@ -323,6 +371,13 @@ export default
                 const el = this.$refs.messageContainer
                 if (el) el.scrollTop = el.scrollHeight
             })
+        },
+
+        getPhotoUrl(photoPath)
+        {
+            if (!photoPath) return "/default-avatar.png"
+            if (photoPath.startsWith("http")) return photoPath
+            return `${process.env.VUE_APP_API_URL}/storage/${photoPath}`
         }
     }
 }
@@ -416,14 +471,35 @@ export default
     animation: shimmer 1.5s infinite;
 }
 
-.unread-dot
+.desktop-view
 {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    background-color: red;
-    border-radius: 50%;
-    margin-left: 5px;
+    display: block;
+}
+
+.property-image
+{
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+}
+
+.property-image img
+{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.property-view-top
+{
+    display: block;
+}
+
+.property-view
+{
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 20px;
 }
 
 @keyframes shimmer
@@ -432,11 +508,24 @@ export default
     100% { background-position: 200% 0; }
 }
 
-@media (min-height: 768px)
+@media (max-width: 768px)
 {
+    .desktop-view
+    {
+        display: none;
+    }
+
     .message
     {
         height: 400px;
-    }    
+    }
+}
+
+@media (min-width: 769px)
+{
+    .property-view-top
+    {
+        display: none;
+    }
 }
 </style>

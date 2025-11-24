@@ -2,15 +2,15 @@
     <tr>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.tenant.account.full_name }}</span>
+            <span v-else style="font-size: 18px;">{{ item.tenant.account.full_name }}</span>
         </td>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.property?.title || 'Deleted Property' }}</span>
+            <span v-else style="font-size: 18px;">{{ item.property?.title || 'Deleted Property' }}</span>
         </td>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>{{ item.property?.property_type || '-' }}</span>
+            <span v-else style="font-size: 18px;">{{ item.property?.property_type || '-' }}</span>
         </td>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>

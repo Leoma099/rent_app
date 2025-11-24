@@ -63,6 +63,7 @@ export default
             form:
             {
                 title: "",
+                code: "",
                 description: "",
                 address: "",
                 barangay: "",
@@ -74,7 +75,6 @@ export default
                 photo_2: "",
                 photo_3: "",
                 photo_4: "",
-                floor_plan: "",
                 size: "",
                 search_address: "",
                 schedules: [],
@@ -111,8 +111,7 @@ export default
                     if ((key === "photo_1" ||
                         key === "photo_2" ||
                         key === "photo_3" ||
-                        key === "photo_4" ||
-                        key === "floor_plan") &&
+                        key === "photo_4") &&
                         this.form[key])
                     {
                         formData.append(key, this.form[key]);

@@ -28,8 +28,10 @@
                     </div>
 
                     <p class="mb-3">
-                        You're about to update the lease contract for <strong>{{ selectedProperty?.title }}</strong>
+                        You're about to {{ selectedProperty?.status === 2 ? 'Inactive' : 'Active' }}
+                        <strong>{{ selectedProperty?.title.toUpperCase() }}</strong>
                     </p>
+
 
                     <p>Do you want to continue?</p>
 

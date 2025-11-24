@@ -4,7 +4,7 @@
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else>
-                <small>
+                <small style="font-size: 18px;">
                     {{ item.title }}
                 </small>
             </span>
@@ -12,14 +12,14 @@
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
             <span v-else>
-                <small>
+                <small style="font-size: 18px;">
                     {{ item.address }}
                 </small>
             </span>
         </td>
         <td class="table-data">
             <div v-if="isLoading" class="shimmer-loader"></div>
-            <span v-else>
+            <span v-else style="font-size: 18px;">
                 <small>{{ item.property_type }}</small>
             </span>
         </td>
