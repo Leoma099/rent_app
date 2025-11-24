@@ -78,7 +78,7 @@
                                         </li>
                                         <li>
                                             <i class="bx bx-user-plus me-2" style="color: #fff;"></i>
-                                            <a href="/register">Register</a>
+                                            <a href="/registration">Register</a>
                                         </li>
                                     </div>
 
