@@ -1,7 +1,9 @@
 <template>
     <div class="mb-3">
-        <strong>Nearby area:</strong>
-        <div class="mt-3">
+
+        <h3 class="mb-3">Business Density Type:</h3>
+
+        <div>
             <span 
                 v-for="(b, index) in sortedLandmarks" 
                 :key="index" 
@@ -24,84 +26,86 @@
             </span>
         </div>
 
-        <div class="row mt-3">
-            <div class="col-md-8">
-                <div ref="mapRef" class="map-container rounded-0 shadow-sm"></div>
-            </div>
+    </div>
 
-            <div class="col-md-4">
-                <div class="d-flex align-items-center mb-2">
-                    <select 
-                        v-model="selectedBusinessTypeLocal" 
-                        @change="showBusinessMarkers" 
-                        class="form-select rounded-0 me-2">
-                        <option value="">-- View All --</option>
-                        <option
-                            v-for="(b, index) in sortedLandmarks"
-                            :key="index"
-                            :value="String(b.type_id).toLowerCase()">
-                            {{ b.label }} ({{ b.count }})
-                        </option>
-                    </select>
+    <div class="mb-3">
+        <h3 class="mb-3">Map:</h3>
+        <div ref="mapRef" class="map-container rounded-0 shadow-sm" style="height: 800px;"></div>
+    </div>
+
+    <div>
+        <h3 class="mb-3">Landmarks:</h3>
+
+        <div class="mb-2">
+            <select 
+                v-model="selectedBusinessTypeLocal" 
+                @change="showBusinessMarkers" 
+                class="form-select rounded-0 me-2">
+                <option value="">-- View All --</option>
+                <option
+                    v-for="(b, index) in sortedLandmarks"
+                    :key="index"
+                    :value="String(b.type_id).toLowerCase()">
+                    {{ b.label }} ({{ b.count }})
+                </option>
+            </select>
+        </div>
+
+        <div class="places-list card rounded-0 shadow-sm mt-3 p-2">
+            <template v-if="!selectedBusinessTypeLocal">
+                <div 
+                    v-for="(landmark, index) in sortedLandmarks" 
+                    :key="index" 
+                    class="mb-3">
+                    <div v-if="landmark.count > 0">
+                        <h6 class="fw-bold text-primary mb-1">
+                            {{ landmark.label }}:
+                        </h6>
+                        <ul class="list-group ms-3">
+                            <li 
+                                v-for="(place, i) in landmark.places" 
+                                :key="i" 
+                                class="list-group-item border-0 px-1 py-1">
+                                <p class="mb-0 fw-semibold d-flex align-items-center">
+                                    <img 
+                                        v-if="place?.icon" 
+                                        :src="place.icon" 
+                                        alt="" 
+                                        class="place-icon me-2" />
+                                    <small>{{ place.name }}</small>
+                                </p>
+                                <small>
+                                    {{ place.vicinity }}
+                                    <span v-if="place.distance"> ({{ place.distance }})</span>
+                                </small>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
+            </template>
 
-                <div class="places-list card rounded-0 shadow-sm mt-3 p-2">
-                    <template v-if="!selectedBusinessTypeLocal">
-                        <div 
-                            v-for="(landmark, index) in sortedLandmarks" 
-                            :key="index" 
-                            class="mb-3">
-                            <div v-if="landmark.count > 0">
-                                <h6 class="fw-bold text-primary mb-1">
-                                    {{ landmark.label }}:
-                                </h6>
-                                <ul class="list-group ms-3">
-                                    <li 
-                                        v-for="(place, i) in landmark.places" 
-                                        :key="i" 
-                                        class="list-group-item border-0 px-1 py-1">
-                                        <p class="mb-0 fw-semibold d-flex align-items-center">
-                                            <img 
-                                                v-if="place?.icon" 
-                                                :src="place.icon" 
-                                                alt="" 
-                                                class="place-icon me-2" />
-                                            <small>{{ place.name }}</small>
-                                        </p>
-                                        <small>
-                                            {{ place.vicinity }}
-                                            <span v-if="place.distance"> ({{ place.distance }})</span>
-                                        </small>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </template>
-
-                    <ul 
-                        v-else 
-                        class="list-group" 
-                        style="max-height: 450px; overflow-y: auto;">
-                        <li 
-                            v-for="(place, index) in selectedBusinessPlaces" 
-                            :key="index" 
-                            class="px-2">
-                            <p class="mb-0 fw-semibold d-flex align-items-center">
-                                <img 
-                                    v-if="place?.icon" 
-                                    :src="place.icon" 
-                                    alt="" 
-                                    class="place-icon me-2" />
-                                <small>{{ place.name }}</small>
-                            </p>
-                            <small>
-                                {{ place.vicinity }}
-                                <span v-if="place.distance"> ({{ place.distance }})</span>
-                            </small>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            <ul 
+                v-else 
+                class="list-group" 
+                style="max-height: 450px; overflow-y: auto;">
+                <li 
+                    v-for="(place, index) in selectedBusinessPlaces" 
+                    :key="index" 
+                    class="px-2">
+                    <p class="mb-0 fw-semibold d-flex align-items-center">
+                        <img 
+                            v-if="place?.icon" 
+                            :src="place.icon" 
+                            alt="" 
+                            class="place-icon me-2" />
+                        <small>{{ place.name }}</small>
+                    </p>
+                    <small>
+                        {{ place.vicinity }}
+                        <span v-if="place.distance"> ({{ place.distance }})</span>
+                    </small>
+                </li>
+            </ul>
         </div>
     </div>
 </template>
