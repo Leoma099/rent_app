@@ -3,7 +3,7 @@
 
         <div class="row mt-3">
 
-            <div class="col-md-7">
+            <div class="col-md-5">
                 <div class="card card-body card-white rounded-0 p-4">
                     <primary-component :errors="errors" />
                 </div>
@@ -13,7 +13,7 @@
                 </div>
             </div>
 
-            <div class="col-md-5">
+            <div class="col-md-7">
                 <location-component :errors="errors" />
             </div>
 

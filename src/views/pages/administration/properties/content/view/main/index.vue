@@ -1,7 +1,7 @@
 <template>
     <form @submit.prevent="submit()">
         <div class="row mt-3">
-            <div class="col-md-7">
+            <div class="col-md-5">
                 <div class="card card-body card-white rounded-0 p-4">
                     <primary-component />
                 </div>
@@ -9,7 +9,7 @@
                     <schedule-component />
                 </div>
             </div>
-            <div class="col-md-5">
+            <div class="col-md-7">
                 <location-component />
             </div>
         </div>

@@ -14,8 +14,7 @@
         </template>
         <template v-else>
             <div
-                @click="navigateToProperty(item)"
-                :class="{ 'blurred': item.propertyStats === 2 }">
+                @click="navigateToProperty(item)">
                 <div class="card h-100 shadow-sm">
                     <img
                         :src="getPhotoUrl(item.photo_1)"
@@ -126,13 +125,6 @@ export default
 
         navigateToProperty(item)
         {
-            // Block rented property
-            if (item.propertyStats === 2)
-            {
-                alert("This property is already rented. Please look a new one.");
-                return;
-            }
-
             this.scrollToTop();
             this.$router.push({ name: 'CommercialHubView', params: { id: item.id } });
         },
@@ -217,11 +209,5 @@ export default
 {
     width: 40%;
     height: 18px;
-}
-
-.blurred
-{
-    filter: blur(3px);
-    opacity: 0.6;         /* faded look */
 }
 </style>
