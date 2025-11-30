@@ -26,15 +26,7 @@
                 @click="selectBusinessType(b.type_id)">
                 <div class="d-flex align-items-center">
                     <div>
-                        <img 
-                            v-if="b?.icon" 
-                            :src="b.icon" 
-                            alt="" 
-                            class="landmark-icon" />
-                    </div>
-                    <div>
                         {{ b?.label || 'Unknown' }}
-                        <strong>({{ b?.count || 0 }})</strong>
                     </div>
                 </div>
             </span>
