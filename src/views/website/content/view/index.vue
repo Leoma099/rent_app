@@ -214,19 +214,28 @@
                             </div>
                         </div>
 
-                        <div class="mt-3" v-if="!isLoggedIn">
-                            <router-link
-                                :to="`/signin`"
-                                class="btn btn-primary rounded-0 w-100">
-                                Book Schedule
-                            </router-link>
-                        </div>
-                        <div class="mt-3" v-else>
+                        <div v-if="property.propertyStats === 2">
                             <button
-                                type="submit"
-                                class="btn btn-primary rounded-0 w-100">
-                                Book Schedule
+                                class="btn btn-secondary rounded-0 w-100"
+                                disabled>
+                                Occupied
                             </button>
+                        </div>
+                        <div v-else>
+                            <div class="mt-3" v-if="!isLoggedIn">
+                                <router-link
+                                    :to="`/signin`"
+                                    class="btn btn-primary rounded-0 w-100">
+                                    Book Schedule
+                                </router-link>
+                            </div>
+                            <div class="mt-3" v-else>
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary rounded-0 w-100">
+                                    Book Schedule
+                                </button>
+                            </div>
                         </div>
                     </div>
 
