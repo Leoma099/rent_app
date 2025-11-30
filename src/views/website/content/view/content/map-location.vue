@@ -19,18 +19,35 @@
 
         <div class="mt-3 d-flex gap-2 flex-wrap" v-if="activeTab === 'business'">
             <span 
-                v-for="(b, index) in sortedLandmarks" 
-                :key="index" 
+                v-for="(b, index) in sortedLandmarks.filter(x => 
+                    ['restaurant', 'convenience_store', 'supermarket', 'bank', 'atm', 'hotel', 'gym']
+                    .includes(String(x.type_id).toLowerCase())
+                )"
+                :key="index"
                 class="badge fs-6 rounded-pill me-2 mb-2"
-                :class="{'bg-primary text-white': selectedBusinessTypeLocal === String(b.type_id).toLowerCase(), 'bg-secondary': selectedBusinessTypeLocal !== String(b.type_id).toLowerCase()}"
-                @click="selectBusinessType(b.type_id)">
+                :class="{
+                    'bg-primary text-white': selectedBusinessTypeLocal === String(b.type_id).toLowerCase(),
+                    'bg-secondary': selectedBusinessTypeLocal !== String(b.type_id).toLowerCase()
+                }"
+                @click="selectBusinessType(b.type_id)"
+            >
                 <div class="d-flex align-items-center">
                     <div>
+                        <img 
+                            v-if="b?.icon" 
+                            :src="b.icon" 
+                            alt="" 
+                            class="landmark-icon"
+                        />
+                    </div>
+                    <div>
                         {{ b?.label || 'Unknown' }}
+                        <strong>({{ b?.count || 0 }})</strong>
                     </div>
                 </div>
             </span>
         </div>
+
 
         <div class="mb-3" v-if="activeTab === 'landmarks'">
             <strong>Landmark Tagging:</strong>
@@ -207,7 +224,7 @@ function initMap()
         styles: [
             { featureType: "all", elementType: "labels.text.fill", stylers: [{ color: "#333" }] },
             { featureType: "all", elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
-            { featureType: "poi", elementType: "labels.iocns", stylers: [{ visibility: "off" }] },
+            { featureType: "poi", elementType: "labels.icon", stylers: [{ visibility: "off" }] },
             { featureType: "road", elementType: "geometry", stylers: [{ color: "#e6e6e6" }] },
             { featureType: "water", elementType: "geometry.fill", stylers: [{ color: "#d6e6f2" }] },
             { featureType: "landscape", elementType: "geometry.fill", stylers: [{ color: "#f8f8f8" }] }
@@ -218,7 +235,7 @@ function initMap()
         position: center,
         map,
         title: props.property.title || "Property",
-        icon: { url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png" },
+        icon: { url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png" },
         zIndex: 9999
     });
 
