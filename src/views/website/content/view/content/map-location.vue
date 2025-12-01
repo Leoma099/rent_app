@@ -22,8 +22,7 @@
         <div class="mt-3 d-flex gap-2 flex-wrap" v-if="activeTab === 'business'">
             <span 
                 v-for="(b, index) in sortedLandmarks.filter(x => 
-                    ['restaurant', 'convenience_store', 'supermarket', 'bank', 'atm', 'hotel', 'gym']
-                    .includes(String(x.type_id).toLowerCase())
+                    businessDensityTypes.includes(String(x.type_id).toLowerCase())
                 )"
                 :key="index"
                 class="badge fs-6 rounded-pill me-2 mb-2"
@@ -163,6 +162,23 @@ let circle10km = null;
 const markersReady = ref(false);
 const defaultZoom = 14;
 const activeTab = ref("business");
+const businessDensityTypes = [
+    "office space",
+    "retail shop",
+    "restaurant",
+    "warehouse",
+    "industrial",
+    "co-working",
+    "hotel",
+    "clinic",
+    "house",
+    "apartment",
+    "townhouse",
+    "studio",
+    "land",
+    "commercial",
+    "parking space"
+];
 
 // ✅ Use local reactive copy of landmarks
 const localLandmarks = ref([...props.property.landmarksSummary]);
@@ -363,8 +379,11 @@ function fetchBusinessDensity(center, type)
                     places: placesWithDistance
                 };
 
-                // ✅ Push into local reactive array instead of prop
-                localLandmarks.value.push(summary);
+                // Only add if this type_id doesn't already exist
+                if (!localLandmarks.value.some(l => l.type_id === summary.type_id)) 
+                {
+                    localLandmarks.value.push(summary);
+                }
 
                 const markers = results.map(function (place)
                 {
