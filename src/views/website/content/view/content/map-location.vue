@@ -183,12 +183,11 @@ const selectedBusinessPlaces = computed(() =>
 });
 
 // Initialize map
-onMounted(() =>
-{
-    if (!props.property) return;
-
+onMounted(() => {
+    if (!props.property || !props.property.lat || !props.property.lng) return;
     nextTick(initMap);
 });
+
 
 // Watch selection changes
 watch(selectedBusinessTypeLocal, () =>
