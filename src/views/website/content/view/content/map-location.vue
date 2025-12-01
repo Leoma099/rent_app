@@ -6,13 +6,15 @@
             <button
                 class="btn"
                 :class="activeTab === 'business' ? 'btn-primary' : 'btn-outline-primary'"
-                @click="activeTab = 'business'">
+                @click="activeTab = 'business'"
+            >
                 Business Density
             </button>
             <button
                 class="btn"
                 :class="activeTab === 'landmarks' ? 'btn-primary' : 'btn-outline-primary'"
-                @click="activeTab = 'landmarks'">
+                @click="activeTab = 'landmarks'"
+            >
                 Landmarks
             </button>
         </div>
@@ -48,7 +50,6 @@
             </span>
         </div>
 
-
         <div class="mb-3" v-if="activeTab === 'landmarks'">
             <strong>Landmark Tagging:</strong>
             <div class="mt-3">
@@ -56,12 +57,14 @@
                     <select 
                         v-model="selectedBusinessTypeLocal" 
                         @change="showBusinessMarkers" 
-                        class="form-select rounded-0 me-2">
+                        class="form-select rounded-0 me-2"
+                    >
                         <option value="">-- View All --</option>
                         <option
                             v-for="(b, index) in sortedLandmarks"
                             :key="index"
-                            :value="String(b.type_id).toLowerCase()">
+                            :value="String(b.type_id).toLowerCase()"
+                        >
                             {{ b.label }} ({{ b.count }})
                         </option>
                     </select>
@@ -72,7 +75,8 @@
                         <div 
                             v-for="(landmark, index) in sortedLandmarks" 
                             :key="index" 
-                            class="mb-3">
+                            class="mb-3"
+                        >
                             <div v-if="landmark.count > 0">
                                 <h6 class="fw-bold text-primary mb-1">
                                     {{ landmark.label }}:
@@ -81,13 +85,15 @@
                                     <li 
                                         v-for="(place, i) in landmark.places" 
                                         :key="i" 
-                                        class="list-group-item border-0 px-1 py-1">
+                                        class="list-group-item border-0 px-1 py-1"
+                                    >
                                         <p class="mb-0 fw-semibold d-flex align-items-center">
                                             <img 
                                                 v-if="place?.icon" 
                                                 :src="place.icon" 
                                                 alt="" 
-                                                class="place-icon me-2" />
+                                                class="place-icon me-2" 
+                                            />
                                             <small>{{ place.name }}</small>
                                         </p>
                                         <small>
@@ -103,17 +109,20 @@
                     <ul 
                         v-else 
                         class="list-group" 
-                        style="max-height: 450px; overflow-y: auto;">
+                        style="max-height: 450px; overflow-y: auto;"
+                    >
                         <li 
                             v-for="(place, index) in selectedBusinessPlaces" 
                             :key="index" 
-                            class="px-2">
+                            class="px-2"
+                        >
                             <p class="mb-0 fw-semibold d-flex align-items-center">
                                 <img 
                                     v-if="place?.icon" 
                                     :src="place.icon" 
                                     alt="" 
-                                    class="place-icon me-2" />
+                                    class="place-icon me-2" 
+                                />
                                 <small>{{ place.name }}</small>
                             </p>
                             <small>
@@ -138,7 +147,8 @@
 <script setup>
 import { ref, computed, watch, onMounted, nextTick, defineProps } from "vue";
 
-const props = defineProps({
+const props = defineProps(
+{
     property: Object,
     businessTypes: Object
 });
@@ -152,45 +162,71 @@ let circle1km = null;
 let circle10km = null;
 const markersReady = ref(false);
 const defaultZoom = 14;
-const activeTab = ref("business")
+const activeTab = ref("business");
+
+// ✅ Use local reactive copy of landmarks
+const localLandmarks = ref([...props.property.landmarksSummary]);
 
 const selectedBusinessTypeLocal = ref("");
 
 // Computed for sorted landmarks
-const sortedLandmarks = computed(() =>
+const sortedLandmarks = computed(
+function ()
 {
-    return [...props.property.landmarksSummary].sort((a, b) => a.label.localeCompare(b.label));
+    return [...localLandmarks.value].sort(function (a, b)
+    {
+        return a.label.localeCompare(b.label);
+    });
 });
 
 // Computed for selected business places
-const selectedBusinessPlaces = computed(() =>
+const selectedBusinessPlaces = computed(
+function ()
 {
     if (!selectedBusinessTypeLocal.value)
     {
-        return [].concat(...props.property.landmarksSummary.map(l => l.places));
+        return [].concat(...localLandmarks.value.map(function (l)
+        {
+            return l.places;
+        }));
     }
 
-    const selected = props.property.landmarksSummary.find(
-        l => String(l.type_id) === String(selectedBusinessTypeLocal.value)
-    );
+    const selected = localLandmarks.value.find(function (l)
+    {
+        return String(l.type_id) === String(selectedBusinessTypeLocal.value);
+    });
 
-    return selected ? selected.places.map(place => ({
-        name: place.name,
-        vicinity: place.vicinity,
-        distance: place.distance || "",
-        icon: selected.icon || place.icon || props.businessTypes[selected.type_id]?.icon || ""
-    })) : [];
+    return selected ? selected.places.map(function (place)
+    {
+        return {
+            name: place.name,
+            vicinity: place.vicinity,
+            distance: place.distance || "",
+            icon: selected.icon || place.icon || props.businessTypes[selected.type_id]?.icon || ""
+        };
+    }) : [];
 });
 
+// Watch property changes in case user selects new property
+watch(() => props.property, function(newProp)
+{
+    if (!newProp) return;
+    localLandmarks.value = [...newProp.landmarksSummary];
+    nextTick(initMap);
+}, { immediate: true, deep: true });
+
 // Initialize map
-onMounted(() => {
+onMounted(
+function ()
+{
     if (!props.property || !props.property.lat || !props.property.lng) return;
     nextTick(initMap);
 });
 
-
 // Watch selection changes
-watch(selectedBusinessTypeLocal, () =>
+watch(
+selectedBusinessTypeLocal,
+function ()
 {
     showBusinessMarkers();
 });
@@ -211,7 +247,8 @@ function initMap()
 
     const center = { lat, lng };
 
-    map = new window.google.maps.Map(mapRef.value, {
+    map = new window.google.maps.Map(mapRef.value,
+    {
         center,
         zoom: defaultZoom,
         mapTypeId: "roadmap",
@@ -220,7 +257,8 @@ function initMap()
         mapTypeControl: false,
         fullscreenControl: true,
         scrollwheel: true,
-        styles: [
+        styles:
+        [
             { featureType: "all", elementType: "labels.text.fill", stylers: [{ color: "#333" }] },
             { featureType: "all", elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
             { featureType: "poi", elementType: "labels.icon", stylers: [{ visibility: "off" }] },
@@ -230,7 +268,8 @@ function initMap()
         ]
     });
 
-    mainMarker = new window.google.maps.Marker({
+    mainMarker = new window.google.maps.Marker(
+    {
         position: center,
         map,
         title: props.property.title || "Property",
@@ -242,11 +281,12 @@ function initMap()
     activeMarkers = [];
     drawSearchCircles(center);
 
-    const fetchPromises = Object.keys(props.businessTypes).map(type =>
-        fetchBusinessDensity(center, type)
-    );
+    const fetchPromises = Object.keys(props.businessTypes).map(function (type)
+    {
+        return fetchBusinessDensity(center, type);
+    });
 
-    Promise.all(fetchPromises).then(() =>
+    Promise.all(fetchPromises).then(function ()
     {
         markersReady.value = true;
         showBusinessMarkers();
@@ -261,7 +301,8 @@ function drawSearchCircles(center)
 
     const latLng = new window.google.maps.LatLng(center.lat, center.lng);
 
-    circle1km = new window.google.maps.Circle({
+    circle1km = new window.google.maps.Circle(
+    {
         strokeColor: "#007bff",
         strokeOpacity: 0.6,
         strokeWeight: 2,
@@ -272,7 +313,8 @@ function drawSearchCircles(center)
         radius: 1000
     });
 
-    circle10km = new window.google.maps.Circle({
+    circle10km = new window.google.maps.Circle(
+    {
         strokeColor: "#28a745",
         strokeOpacity: 0.5,
         strokeWeight: 2,
@@ -287,16 +329,16 @@ function drawSearchCircles(center)
 // Fetch markers
 function fetchBusinessDensity(center, type)
 {
-    return new Promise(resolve =>
+    return new Promise(function (resolve)
     {
         const request = { location: center, radius: 1000, type };
         const service = new window.google.maps.places.PlacesService(map);
 
-        service.nearbySearch(request, (results, status) =>
+        service.nearbySearch(request, function (results, status)
         {
             if (status === window.google.maps.places.PlacesServiceStatus.OK)
             {
-                const placesWithDistance = results.map(place =>
+                const placesWithDistance = results.map(function (place)
                 {
                     let distanceStr = "";
                     if (window.google && window.google.maps.geometry && place.geometry)
@@ -309,10 +351,11 @@ function fetchBusinessDensity(center, type)
                             ? Math.round(distanceMeters) + " m"
                             : (distanceMeters / 1000).toFixed(2) + " km";
                     }
-                    return { ...place, distance: distanceStr };
+                    return Object.assign({}, place, { distance: distanceStr });
                 });
 
-                const summary = {
+                const summary =
+                {
                     type_id: String(type),
                     label: props.businessTypes[type].name,
                     icon: props.businessTypes[type].icon,
@@ -320,22 +363,28 @@ function fetchBusinessDensity(center, type)
                     places: placesWithDistance
                 };
 
-                props.property.landmarksSummary.push(summary);
+                // ✅ Push into local reactive array instead of prop
+                localLandmarks.value.push(summary);
 
-                const markers = results.map(place =>
+                const markers = results.map(function (place)
                 {
-                    const marker = new window.google.maps.Marker({
+                    const marker = new window.google.maps.Marker(
+                    {
                         position: place.geometry.location,
                         map: null,
                         icon: { url: props.businessTypes[type].icon },
                         title: place.name
                     });
 
-                    const infoWindow = new window.google.maps.InfoWindow({
-                        content: `<strong>${place.name}</strong><br>${place.vicinity || ""}`
+                    const infoWindow = new window.google.maps.InfoWindow(
+                    {
+                        content: "<strong>" + place.name + "</strong><br>" + (place.vicinity || "")
                     });
 
-                    marker.addListener("click", () => infoWindow.open(map, marker));
+                    marker.addListener("click", function ()
+                    {
+                        infoWindow.open(map, marker);
+                    });
 
                     return marker;
                 });
@@ -352,14 +401,21 @@ function showBusinessMarkers()
 {
     if (!markersReady.value) return;
 
-    Object.values(landmarkMarkers).forEach(markers => markers.forEach(marker => marker.setMap(null)));
+    Object.values(landmarkMarkers).forEach(function (markers)
+    {
+        markers.forEach(function (marker)
+        {
+            marker.setMap(null);
+        });
+    });
+
     activeMarkers = [];
 
     if (!selectedBusinessTypeLocal.value)
     {
-        Object.keys(landmarkMarkers).forEach(type =>
+        Object.keys(landmarkMarkers).forEach(function (type)
         {
-            landmarkMarkers[type].forEach(marker =>
+            landmarkMarkers[type].forEach(function (marker)
             {
                 marker.setMap(map);
                 activeMarkers.push(marker);
@@ -372,7 +428,7 @@ function showBusinessMarkers()
     const typeToShow = selectedBusinessTypeLocal.value.toLowerCase();
     const markers = landmarkMarkers[typeToShow] || [];
 
-    markers.forEach(marker =>
+    markers.forEach(function (marker)
     {
         marker.setMap(map);
         activeMarkers.push(marker);
@@ -380,12 +436,15 @@ function showBusinessMarkers()
 
     const bounds = new window.google.maps.LatLngBounds();
     if (mainMarker?.getPosition) bounds.extend(mainMarker.getPosition());
-    activeMarkers.forEach(marker => bounds.extend(marker.getPosition()));
+    activeMarkers.forEach(function (marker)
+    {
+        bounds.extend(marker.getPosition());
+    });
 
     if (!bounds.isEmpty())
     {
         map.fitBounds(bounds);
-        const listener = window.google.maps.event.addListener(map, "idle", function()
+        const listener = window.google.maps.event.addListener(map, "idle", function ()
         {
             if (map.getZoom() > 19) map.setZoom(19);
             window.google.maps.event.removeListener(listener);
@@ -393,6 +452,7 @@ function showBusinessMarkers()
     }
 }
 </script>
+
 
 <style scoped>
 .map-container
