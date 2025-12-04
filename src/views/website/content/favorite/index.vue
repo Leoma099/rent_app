@@ -139,7 +139,7 @@ export default
                 return photoPath;
             }
 
-            return `${process.env.VUE_APP_API_URL}/${photoPath}`;
+            return `${process.env.VUE_APP_API_URL}/storage/${photoPath}`;
         },
 
         // NEW METHOD: Navigate to property with scroll to top
