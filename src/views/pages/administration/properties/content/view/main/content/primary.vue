@@ -219,7 +219,7 @@ export default
             }
 
             // Otherwise, append API base URL
-            return `${process.env.VUE_APP_API_URL}/uploads/${this.form[key]}`;
+            return `${process.env.VUE_APP_API_URL}/${this.form[key]}`;
         },
 
         handleBusinessTypeSelect(event)

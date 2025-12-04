@@ -377,7 +377,7 @@ export default
         {
             if (!photoPath) return "/default-avatar.png"
             if (photoPath.startsWith("http")) return photoPath
-            return `${process.env.VUE_APP_API_URL}/uploads/${photoPath}`
+            return `${process.env.VUE_APP_API_URL}/${photoPath}`
         }
     }
 }
